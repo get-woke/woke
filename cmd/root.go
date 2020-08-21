@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/parser"
@@ -53,6 +54,11 @@ to suit your needs.
 Provide a list of comma-separated file globs for files you'd like to check.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		start := time.Now()
+		defer log.Debug().
+			Dur("durationMS", time.Now().Sub(start)).
+			Msg("woke completed")
+
 		setLogLevel()
 
 		fileGlobs := []string{defaultGlob}
