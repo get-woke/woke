@@ -5,11 +5,13 @@ import (
 	"os"
 
 	"github.com/caitlinelfring/woke/pkg/config"
+	"github.com/caitlinelfring/woke/pkg/parser"
 )
 
 func main() {
 	c, _ := config.NewConfig("default.yaml")
-	results, err := c.Parse("README.md")
+	p := parser.Parser{Rules: c.Rules}
+	results, err := p.Parse("README.md")
 	if err != nil {
 		panic(err)
 	}
