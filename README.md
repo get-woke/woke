@@ -83,6 +83,17 @@ want to inform the author that they can make better word choices.
 If you're using `work` on PRs, you can choose to enforce these rules with a non-zero
 exit code, but running `work --exit-1-on-failure`.
 
+## TODO
+
+* Ignore file list
+* Benchmarking
+* Tests
+* What happens when run on a large repo?
+* GitHub Actions
+* More rules
+* Color output
+* Warn/error rule severities
+
 ## Resources
 
 * https://buffer.com/resources/inclusive-language-tech/
