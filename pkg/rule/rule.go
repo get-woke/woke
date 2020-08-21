@@ -12,6 +12,7 @@ type Rule struct {
 	Name         string         // `yaml:"name"`
 	Regexp       *regexp.Regexp // `yaml:"regexp"`
 	Alternatives string         // `yaml:"alternatives"`
+	Severity     Severity
 }
 
 func (r *Rule) String() string {
@@ -29,6 +30,7 @@ func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	}
 	r.Alternatives = a["alternatives"]
 	r.Name = a["name"]
+	r.Severity = NewSeverity(a["severity"])
 	if re, ok := a["regexp"]; !ok {
 		r.Regexp = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, r.Name))
 	} else {

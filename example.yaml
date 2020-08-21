@@ -5,6 +5,7 @@ rules:
   - word: whitelist
     regexp: \b(white-?list)\b
     alternatives: allowlist
+    # severity: info
 
   - word: blacklist
     regexp: \b(black-?list)\b

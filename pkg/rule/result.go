@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"strings"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -48,7 +49,16 @@ func (rs *Results) String() string {
 }
 
 func (rs *Results) Output() {
+	var logger *zerolog.Event
 	for _, r := range rs.Results {
-		log.Warn().Msg(r.String())
+		switch r.Rule.Severity {
+		case SevError:
+			logger = log.Error()
+		case SevInfo:
+			logger = log.Info()
+		case SevWarn:
+			logger = log.Warn()
+		}
+		logger.Msg(r.String())
 	}
 }

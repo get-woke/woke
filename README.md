@@ -90,7 +90,6 @@ exit code, but running `work --exit-1-on-failure`.
 * What happens when run on a large repo?
 * GitHub Actions
 * More rules
-* Warn/error rule severities
 
 ## Resources
 
