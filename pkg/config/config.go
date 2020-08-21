@@ -2,17 +2,20 @@ package config
 
 import (
 	"io/ioutil"
-	"path/filepath"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/caitlinelfring/woke/pkg/util"
+	"github.com/gobwas/glob"
+
 	"gopkg.in/yaml.v2"
 )
 
 // Config contains a list of rules
 type Config struct {
-	Rules       []*rule.Rule `yaml:"rules,omitempty"`
+	Rules       []*rule.Rule `yaml:"rules"`
 	IgnoreFiles []string     `yaml:"ignore_files"`
+
+	ignoreFilesGlob []glob.Glob
 
 	files []string
 }
@@ -34,21 +37,37 @@ func NewConfig(filename string, fileGlobs []string) (*Config, error) {
 
 	// Ignore the config filename, it will always match on its own rules
 	c.IgnoreFiles = append(c.IgnoreFiles, filename)
+	c.compileIgnoreGlobs()
 
-	allFiles, _ := util.GetFilesInGlobs(fileGlobs)
-	for _, f := range allFiles {
-		if c.shouldIgnoreFile(f) {
-			continue
-		}
-		c.files = append(c.files, f)
-	}
+	// Must come after compiling ignore globs
+	c.setFiles(fileGlobs)
 
 	return &c, err
 }
 
-func (c *Config) shouldIgnoreFile(f string) bool {
+func (c *Config) setFiles(fileGlobs []string) {
+	allFiles, _ := util.GetFilesInGlobs(fileGlobs)
+	for _, f := range allFiles {
+		if c.ignoreFile(f) {
+			continue
+		}
+		c.files = append(c.files, f)
+	}
+}
+
+// compileIgnoreGlobs pre-compiles globs
+// See https://github.com/gobwas/glob#performance
+func (c *Config) compileIgnoreGlobs() {
+	c.ignoreFilesGlob = make([]glob.Glob, 0)
+
 	for _, ignore := range c.IgnoreFiles {
-		if match, _ := filepath.Match(ignore, f); match {
+		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(ignore))
+	}
+}
+
+func (c *Config) ignoreFile(f string) bool {
+	for _, ignore := range c.ignoreFilesGlob {
+		if ignore.Match(f) {
 			return true
 		}
 	}
