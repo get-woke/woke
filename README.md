@@ -74,6 +74,19 @@ rules:
     alternatives: allowlist
 ```
 
+### Ignoring files
+
+In your config file, you can ignore files by adding:
+
+```yaml
+ignore_files:
+  - .git/*
+  - other/files/in/repo
+  - globs/too/*
+```
+
+`woke` will also automatically ignore anything listed in `.gitignore`.
+
 ### Exit Code
 
 By default, `woke` will exit with a successful exit code when there are any rule failures.

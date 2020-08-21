@@ -1,11 +1,16 @@
 package config
 
 import (
+	"bufio"
 	"io/ioutil"
+	"os"
+	"regexp"
+	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/caitlinelfring/woke/pkg/util"
 	"github.com/gobwas/glob"
+	"github.com/rs/zerolog/log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -63,6 +68,40 @@ func (c *Config) compileIgnoreGlobs() {
 	for _, ignore := range c.IgnoreFiles {
 		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(ignore))
 	}
+
+	for _, g := range gitIgnore() {
+		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(g))
+	}
+}
+
+func gitIgnore() (lines []string) {
+	buffer, err := os.Open(".gitignore")
+	if err != nil {
+		return
+	}
+
+	defer func() {
+		if err = buffer.Close(); err != nil {
+			log.Error().Err(err).Msg("gitignore buffer failed to close")
+		}
+	}()
+
+	commentRe := regexp.MustCompile(`#(.*)$`)
+	scanner := bufio.NewScanner(buffer)
+	for scanner.Scan() {
+		// Remove comments
+		text := commentRe.ReplaceAllString(scanner.Text(), "")
+		text = strings.TrimSpace(text)
+		if text == "" {
+			continue
+		}
+		log.Debug().Str("entry", text).Msg("adding gitignore entry")
+		lines = append(lines, text)
+	}
+	if err = scanner.Err(); err != nil {
+		log.Info().Err(err).Msg("gitignore scanner error")
+	}
+	return
 }
 
 func (c *Config) ignoreFile(f string) bool {
