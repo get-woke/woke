@@ -73,6 +73,11 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 			cmd.SilenceUsage = true
 			return fmt.Errorf("Total failures: %d", len(results.Results))
 		}
+
+		if len(results.Results) == 0 {
+			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
+		}
+
 		return nil
 	},
 }
