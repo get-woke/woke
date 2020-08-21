@@ -1,4 +1,5 @@
 # woke
+
 [![GoDoc](https://godoc.org/github.com/caitlinelfring/woke?status.svg)](https://godoc.org/github.com/caitlinelfring/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](http://choosealicense.com/licenses/mit/)
 
@@ -11,7 +12,6 @@ productive culture, and an environment where everyone feels welcome and included
  non-inclusive language and replacing it with more inclusive alternatives.
 
 Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
-
 
 ## Installation
 
@@ -26,7 +26,7 @@ go get -u github.com/caitlinelfring/woke
 
 ## Usage
 
-```
+```bash
 $ woke --help
 
 woke is a linter that will check your source code for usage of non-inclusive
@@ -96,10 +96,10 @@ exit code, but running `work --exit-1-on-failure`.
 
 ## Resources
 
-* https://buffer.com/resources/inclusive-language-tech/
-* https://medium.com/pm101/inclusive-language-guide-for-tech-companies-and-startups-f5b254d4a5b7
-* https://www.marketplace.org/2020/06/17/tech-companies-update-language-to-avoid-offensive-terms/
-* https://tools.ietf.org/html/draft-knodel-terminology-02
+* <https://buffer.com/resources/inclusive-language-tech/>
+* <https://medium.com/pm101/inclusive-language-guide-for-tech-companies-and-startups-f5b254d4a5b7>
+* <https://www.marketplace.org/2020/06/17/tech-companies-update-language-to-avoid-offensive-terms/>
+* <https://tools.ietf.org/html/draft-knodel-terminology-02>
 
 ## License
 
