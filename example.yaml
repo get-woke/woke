@@ -1,3 +1,6 @@
+ignore_files:
+  - README.md
+
 rules:
   - word: whitelist
     regexp: \b(white-?list)\b

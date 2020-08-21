@@ -85,7 +85,6 @@ exit code, but running `work --exit-1-on-failure`.
 
 ## TODO
 
-* Ignore file list
 * Benchmarking
 * Tests
 * What happens when run on a large repo?

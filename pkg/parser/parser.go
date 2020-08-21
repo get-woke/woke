@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
@@ -18,9 +17,10 @@ type Parser struct {
 	Rules []*rule.Rule
 }
 
-func (p *Parser) ParseGlobs(fileGlobs []string) *rule.Results {
+func (p *Parser) ParseFiles(files []string) *rule.Results {
 	results := rule.Results{}
-	for _, f := range getFilesInGlobs(fileGlobs) {
+
+	for _, f := range files {
 		// skip rules config, which will always produce failures
 		// if f == ruleConfig {
 		// 	continue
@@ -107,16 +107,4 @@ func errIsNotTextFile(file *os.File) error {
 		return fmt.Errorf("%s is not a text file", file.Name())
 	}
 	return nil
-}
-
-func getFilesInGlobs(globs []string) (files []string) {
-	for _, glob := range globs {
-		filesInGlob, err := filepath.Glob(glob)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		files = append(files, filesInGlob...)
-	}
-	return
 }

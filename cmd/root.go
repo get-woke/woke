@@ -56,12 +56,12 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 			fileGlobs = strings.Split(args[0], ",")
 		}
 
-		c, err := config.NewConfig(ruleConfig)
+		c, err := config.NewConfig(ruleConfig, fileGlobs)
 		if err != nil {
 			return err
 		}
 		p := parser.Parser{Rules: c.Rules}
-		results := p.ParseGlobs(fileGlobs)
+		results := p.ParseFiles(c.GetFiles())
 		fmt.Println(results.String())
 
 		if len(results.Results) > 0 && exitOneOnFailure {
