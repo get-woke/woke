@@ -1,0 +1,8 @@
+rules:
+  - word: whitelist
+    regexp: \b(white-?list)\b
+    alternatives: allowlist
+
+  - word: blacklist
+    regexp: \b(black-?list)\b
+    alternatives: denylist,blocklist
