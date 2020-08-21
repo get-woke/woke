@@ -25,6 +25,10 @@ type Config struct {
 	files []string
 }
 
+var DefaultIgnore = []string{
+	".git/*",
+}
+
 // NewConfig returns a config from the provided yaml file containing rules
 func NewConfig(filename string, fileGlobs []string) (*Config, error) {
 	var c Config
@@ -70,6 +74,10 @@ func (c *Config) compileIgnoreGlobs() {
 	}
 
 	for _, g := range gitIgnore() {
+		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(g))
+	}
+
+	for _, g := range DefaultIgnore {
 		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(g))
 	}
 }

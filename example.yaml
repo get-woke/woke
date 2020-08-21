@@ -1,6 +1,5 @@
 ignore_files:
   - README.md
-  - .git/*
   - pkg/rule/default.go
 
 rules:
