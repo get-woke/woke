@@ -69,7 +69,7 @@ to match, and a string of alternatives.
 
 ```yaml
 rules:
-  - word: whitelist
+  - name: whitelist
     regexp: \b(white-?list)\b
     alternatives: allowlist
 ```
