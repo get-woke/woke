@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Result contains data about the result of a broken rule
 type Result struct {
 	Rule     *Rule
 	Match    string
@@ -24,6 +25,7 @@ func (r *Result) String() string {
 	return fmt.Sprintf("[%s] %s", r.Position.String(), r.Reason())
 }
 
+// Results contains a list of Result
 type Results struct {
 	Results []Result
 }
@@ -48,6 +50,7 @@ func (rs *Results) String() string {
 	return strings.Join(s, "\n")
 }
 
+// Output is the logger output of results
 func (rs *Results) Output() {
 	var logger *zerolog.Event
 	for _, r := range rs.Results {

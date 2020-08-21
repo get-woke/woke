@@ -25,6 +25,7 @@ type Config struct {
 	files []string
 }
 
+// DefaultIgnore is the default list of file globs that will be ignored
 var DefaultIgnore = []string{
 	".git/*",
 }
@@ -36,11 +37,11 @@ func NewConfig(filename string, fileGlobs []string) (*Config, error) {
 
 	// No filename given, use default rules
 	if filename == "" {
-		c.AddDefaultRules()
+		c.SetDefaultRules()
 	} else {
 		err = c.load(filename)
 		if len(c.Rules) == 0 {
-			c.AddDefaultRules()
+			c.SetDefaultRules()
 		}
 	}
 
@@ -121,11 +122,13 @@ func (c *Config) ignoreFile(f string) bool {
 	return false
 }
 
+// GetFiles returns files that may be parsed
 func (c *Config) GetFiles() []string {
 	return c.files
 }
 
-func (c *Config) AddDefaultRules() {
+// SetDefaultRules sets the config Rules to DefaultRules
+func (c *Config) SetDefaultRules() {
 	c.Rules = rule.DefaultRules
 }
 

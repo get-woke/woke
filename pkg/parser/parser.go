@@ -18,6 +18,7 @@ type Parser struct {
 	Rules []*rule.Rule
 }
 
+// ParseFiles parses all files provided and returns the results
 func (p *Parser) ParseFiles(files []string) *rule.Results {
 	results := rule.Results{}
 

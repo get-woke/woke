@@ -7,6 +7,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// GetFilesInGlobs returns all known files in the provided globs using
+// filepath.Glob and filepath.Walk
 func GetFilesInGlobs(globs []string) ([]string, error) {
 	var files []string
 	for _, glob := range globs {

@@ -1,7 +1,8 @@
 # woke
 
-[![GoDoc](https://godoc.org/github.com/caitlinelfring/woke?status.svg)](https://godoc.org/github.com/caitlinelfring/woke)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](http://choosealicense.com/licenses/mit/)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/caitlinelfring/woke)](https://pkg.go.dev/github.com/caitlinelfring/woke)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/caitlinelfring/woke)](https://goreportcard.com/report/github.com/caitlinelfring/woke)
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
