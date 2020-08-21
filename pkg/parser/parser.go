@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/rs/zerolog/log"
@@ -33,6 +34,12 @@ func (p *Parser) ParseFiles(files []string) *rule.Results {
 
 // Parse reads the file and returns results of places where rules are broken
 func (p *Parser) Parse(filename string) (results rule.Results, err error) {
+	start := time.Now()
+	defer log.Debug().
+		Str("file", filename).
+		Dur("durationMS", time.Now().Sub(start)).
+		Msg("finished Parse")
+
 	f, err := os.Open(filename)
 	if err != nil {
 		return
