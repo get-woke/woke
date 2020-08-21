@@ -87,6 +87,9 @@ ignore_files:
 
 `woke` will also automatically ignore anything listed in `.gitignore`.
 
+`woke` uses [gobwas/glob](https://github.com/gobwas/glob) to parse ignore globs.
+See link for more details on matching
+
 ### Exit Code
 
 By default, `woke` will exit with a successful exit code when there are any rule failures.
