@@ -2,8 +2,7 @@
 # Autoreloads go application on file changes
 # From https://github.com/caitlinelfring/go_autoreload
 
-TARGET=${1:-"app"}
-FILES_TO_WATCH=${2:-"./*.go"}
+FILES_TO_WATCH=${1:-"./*.go"}
 
 wait_for_changes() {
   echo "Waiting for changes"
@@ -17,38 +16,17 @@ wait_for_changes() {
   fi
 }
 
-build() {
-  echo "Rebuilding..."
-  rm -vf $TARGET
-  go build -v -o $TARGET
+tests() {
+  echo "Running tests"
+  go test ./...
 }
 
-kill_server() {
-  if [[ -n $SERVER_PID ]]; then
-    echo
-    echo "Stopping server (PID: $SERVER_PID)"
-    kill $SERVER_PID
-  fi
+run() {
+  echo "Running..."
+  go run main.go
 }
 
-serve() {
-  echo "Starting server"
-  ./$TARGET &
-  SERVER_PID=$!
-}
-
-# Exit on ctrl-c (without this, ctrl-c would go to inotifywait, causing it to
-# reload instead of exit):
-trap "exit 0" SIGINT SIGTERM
-trap kill_server "EXIT"
-
-build
-serve
+run
 while wait_for_changes; do
-  kill_server
-  if ! build; then
-    echo "Error building server"
-    continue
-  fi
-  serve
+  run
 done

@@ -5,6 +5,6 @@ build:
 run:
 	docker run --rm -it \
 		-v `pwd`:/go/src/github.com/caitlinelfring/woke \
-		woke bin/woke "./*.go ./**/*.go ./**/**/*.go"
+		woke "./*.go ./**/*.go ./**/**/*.go"
 
 .PHONY: build run
