@@ -1,7 +1,10 @@
 package util
 
 import (
+	"os"
 	"path/filepath"
+
+	"github.com/rs/zerolog/log"
 )
 
 func GetFilesInGlobs(globs []string) ([]string, error) {
@@ -11,7 +14,19 @@ func GetFilesInGlobs(globs []string) ([]string, error) {
 		if err != nil {
 			return files, err
 		}
-		files = append(files, filesInGlob...)
+
+		for _, p := range filesInGlob {
+			err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
+				files = append(files, path)
+				return err
+			})
+
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msgf("error walking %s", p)
+			}
+		}
 	}
 	return files, nil
 }
