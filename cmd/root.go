@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/parser"
@@ -32,34 +33,40 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var FileGlob string
-var ExitOneOnFailure bool
-var RuleConfig string
+const defaultGlob = "**"
+
+var (
+	exitOneOnFailure bool
+	ruleConfig       string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "woke",
+	Use:   "woke (file globs to check)",
 	Short: "Check for usage of non-inclusive language in your code and provide alternatives",
-	Long: `woke is a linter that will check your source code for usage of non-inclusive
-	language and provide suggestions for alternatives. Rules can be customized to suit your needs.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
+	Long: `
+woke is a linter that will check your source code for usage of non-inclusive
+language and provide suggestions for alternatives. Rules can be customized
+to suit your needs.
+
+Provide a list of comma-separated file globs for files you'd like to check.`,
+	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cmd.SilenceUsage = true
-		c, err := config.NewConfig(RuleConfig)
+		fileGlobs := []string{defaultGlob}
+		if len(args) > 0 {
+			fileGlobs = strings.Split(args[0], ",")
+		}
+
+		c, err := config.NewConfig(ruleConfig)
 		if err != nil {
 			return err
 		}
 		p := parser.Parser{Rules: c.Rules}
-		files, err := filepath.Glob(FileGlob)
-		if err != nil {
-			return err
-		}
 
 		allResults := []*rule.Result{}
-		for _, f := range files {
+		for _, f := range getFileGlobs(fileGlobs) {
 			// skip rules config, which will always produce failures
-			if f == RuleConfig {
+			if f == ruleConfig {
 				continue
 			}
 			results, err := p.Parse(f)
@@ -72,7 +79,9 @@ var rootCmd = &cobra.Command{
 		for _, r := range allResults {
 			fmt.Println(r)
 		}
-		if len(allResults) > 0 && ExitOneOnFailure {
+		if len(allResults) > 0 && exitOneOnFailure {
+			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
+			cmd.SilenceUsage = true
 			return fmt.Errorf("Total failures: %d", len(allResults))
 		}
 		return nil
@@ -89,7 +98,18 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&FileGlob, "file-glob", "f", "**", "File glob of files to check for inclusive language")
-	rootCmd.PersistentFlags().StringVarP(&RuleConfig, "rule-config", "r", "default.yaml", "YAML file with list of rules")
-	rootCmd.PersistentFlags().BoolVar(&ExitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
+	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "default.yaml", "YAML file with list of rules")
+	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
+}
+
+func getFileGlobs(globs []string) (files []string) {
+	for _, glob := range globs {
+		filesInGlob, err := filepath.Glob(glob)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		files = append(files, filesInGlob...)
+	}
+	return
 }
