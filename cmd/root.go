@@ -23,12 +23,13 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/parser"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +38,7 @@ const defaultGlob = "**"
 var (
 	exitOneOnFailure bool
 	ruleConfig       string
+	debug            bool
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -51,6 +53,8 @@ to suit your needs.
 Provide a list of comma-separated file globs for files you'd like to check.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		setLogLevel()
+
 		fileGlobs := []string{defaultGlob}
 		if len(args) > 0 {
 			fileGlobs = strings.Split(args[0], ",")
@@ -62,7 +66,7 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 		}
 		p := parser.Parser{Rules: c.Rules}
 		results := p.ParseFiles(c.GetFiles())
-		fmt.Println(results.String())
+		results.Output()
 
 		if len(results.Results) > 0 && exitOneOnFailure {
 			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
@@ -77,13 +81,22 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatalln(err)
+		log.Fatal().Err(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "", "YAML file with list of rules")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
+	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
+}
+
+func setLogLevel() {
+	// Default level for this example is info, unless debug flag is present
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	if debug {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
+
 }

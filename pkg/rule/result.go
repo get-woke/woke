@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"go/token"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Result struct {
@@ -43,4 +45,10 @@ func (rs *Results) String() string {
 		s = append(s, r.String())
 	}
 	return strings.Join(s, "\n")
+}
+
+func (rs *Results) Output() {
+	for _, r := range rs.Results {
+		log.Warn().Msg(r.String())
+	}
 }

@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"go/token"
-	"log"
 	"net/http"
 	"os"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/rs/zerolog/log"
 )
 
 // Parser parses files and finds lines that break rules
@@ -21,13 +21,9 @@ func (p *Parser) ParseFiles(files []string) *rule.Results {
 	results := rule.Results{}
 
 	for _, f := range files {
-		// skip rules config, which will always produce failures
-		// if f == ruleConfig {
-		// 	continue
-		// }
 		r, err := p.Parse(f)
 		if err != nil {
-			log.Printf("parser failed on %s: %s\n", f, err)
+			log.Debug().Err(err).Msg("parser failed")
 			continue
 		}
 		results.Push(r.Results...)
