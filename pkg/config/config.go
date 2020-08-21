@@ -9,15 +9,23 @@ import (
 
 // Config contains a list of rules
 type Config struct {
-	Rules []*rule.Rule `yaml:"rules"`
+	Rules       []*rule.Rule `yaml:"rules,omitempty"`
+	IgnoreFiles []string     `yaml:"ignore_files"`
 }
 
 // NewConfig returns a config from the provided yaml file containing rules
 func NewConfig(filename string) (*Config, error) {
 	var c Config
-	err := c.load(filename)
-	if len(c.Rules) == 0 {
+	var err error
+
+	// No filename given, use default rules
+	if filename == "" {
 		c.Rules = rule.DefaultRules
+	} else {
+		err = c.load(filename)
+		if len(c.Rules) == 0 {
+			c.Rules = rule.DefaultRules
+		}
 	}
 	return &c, err
 }

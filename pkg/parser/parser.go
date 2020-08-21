@@ -2,9 +2,12 @@ package parser
 
 import (
 	"bufio"
+	"fmt"
 	"go/token"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
@@ -15,24 +18,34 @@ type Parser struct {
 	Rules []*rule.Rule
 }
 
+func (p *Parser) ParseGlobs(fileGlobs []string) *rule.Results {
+	results := rule.Results{}
+	for _, f := range getFilesInGlobs(fileGlobs) {
+		// skip rules config, which will always produce failures
+		// if f == ruleConfig {
+		// 	continue
+		// }
+		r, err := p.Parse(f)
+		if err != nil {
+			log.Printf("parser failed on %s: %s\n", f, err)
+			continue
+		}
+		results.Push(r.Results...)
+	}
+	return &results
+}
+
 // Parse reads the file and returns results of places where rules are broken
-func (p *Parser) Parse(filename string) ([]*rule.Result, error) {
+func (p *Parser) Parse(filename string) (results rule.Results, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
-		return nil, err
+		return
 	}
-
 	defer f.Close()
 
-	if !isTextFile(f) {
-		// fmt.Printf("Skipping %s, is not a text file...\n", filename)
-		return nil, nil
+	if err = errIsNotTextFile(f); err != nil {
+		return
 	}
-
-	// Reset the file since we read it when checking the content-type
-	_, _ = f.Seek(0, 0)
-
-	var results []*rule.Result
 
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
@@ -48,7 +61,7 @@ func (p *Parser) Parse(filename string) ([]*rule.Result, error) {
 			}
 
 			for _, i := range idx {
-				result := rule.Result{
+				rs := rule.Result{
 					Rule:  r,
 					Match: text[i[0]:i[1]],
 					Position: &token.Position{
@@ -57,12 +70,13 @@ func (p *Parser) Parse(filename string) ([]*rule.Result, error) {
 						Column:   i[0],
 					},
 				}
-				results = append(results, &result)
+				results.Add(&rs)
 			}
 		}
 
 		line++
 	}
+
 	return results, scanner.Err()
 }
 
@@ -70,6 +84,9 @@ func detectContentType(file *os.File) (string, error) {
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 	n, err := file.Read(buffer)
+	// Reset the file so a scanner can scan
+	_, _ = file.Seek(0, 0)
+
 	if err != nil {
 		return "", err
 	}
@@ -83,4 +100,23 @@ func isTextFile(file *os.File) bool {
 	}
 
 	return strings.HasPrefix(contentType, "text/plain")
+}
+
+func errIsNotTextFile(file *os.File) error {
+	if !isTextFile(file) {
+		return fmt.Errorf("%s is not a text file", file.Name())
+	}
+	return nil
+}
+
+func getFilesInGlobs(globs []string) (files []string) {
+	for _, glob := range globs {
+		filesInGlob, err := filepath.Glob(glob)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		files = append(files, filesInGlob...)
+	}
+	return
 }

@@ -23,13 +23,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/parser"
-	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/spf13/cobra"
 )
 
@@ -62,27 +61,13 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 			return err
 		}
 		p := parser.Parser{Rules: c.Rules}
+		results := p.ParseGlobs(fileGlobs)
+		fmt.Println(results.String())
 
-		allResults := []*rule.Result{}
-		for _, f := range getFileGlobs(fileGlobs) {
-			// skip rules config, which will always produce failures
-			if f == ruleConfig {
-				continue
-			}
-			results, err := p.Parse(f)
-			if err != nil {
-				fmt.Printf("parser failed on %s: %s\n", f, err)
-			}
-			allResults = append(allResults, results...)
-		}
-
-		for _, r := range allResults {
-			fmt.Println(r)
-		}
-		if len(allResults) > 0 && exitOneOnFailure {
+		if len(results.Results) > 0 && exitOneOnFailure {
 			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
 			cmd.SilenceUsage = true
-			return fmt.Errorf("Total failures: %d", len(allResults))
+			return fmt.Errorf("Total failures: %d", len(results.Results))
 		}
 		return nil
 	},
@@ -92,24 +77,13 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "default.yaml", "YAML file with list of rules")
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "", "YAML file with list of rules")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
-}
-
-func getFileGlobs(globs []string) (files []string) {
-	for _, glob := range globs {
-		filesInGlob, err := filepath.Glob(glob)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		files = append(files, filesInGlob...)
-	}
-	return
 }
