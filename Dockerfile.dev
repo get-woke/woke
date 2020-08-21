@@ -1,0 +1,13 @@
+
+FROM golang:1.14
+
+RUN apt-get update && apt-get install -y inotify-tools
+
+ENV ROOT_PATH /go/src/github.com/caitlinelfring/woke
+WORKDIR $ROOT_PATH
+COPY . $ROOT_PATH
+
+RUN go build ./...
+
+ENTRYPOINT ["./autoreload.sh"]
+CMD ["woke"]
