@@ -15,14 +15,13 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 
 ## Installation
 
-Using `woke` is straightforward. First, use `go get` to install the latest version
-_(requires go, more instructions for non-go installation coming soon)_.
-
 ```bash
 go get -u github.com/caitlinelfring/woke
 ```
 
-`woke` should be installed to `$GOPATH/bin/woke`.
+`woke` will be installed to `$GOPATH/bin/woke`.
+
+Alternatively, download the latest binary from [Releases](https://github.com/caitlinelfring/woke/releases/latest)
 
 ## Usage
 
