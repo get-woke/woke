@@ -55,12 +55,12 @@ to suit your needs.
 Provide a list of comma-separated file globs for files you'd like to check.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		setLogLevel()
+
 		start := time.Now()
 		defer log.Debug().
 			Dur("durationMS", time.Now().Sub(start)).
 			Msg("woke completed")
-
-		setLogLevel()
 
 		fileGlobs := []string{defaultGlob}
 		if len(args) > 0 {
