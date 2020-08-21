@@ -6,6 +6,8 @@
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
+![woke.gif](img/woke.gif)
+
 Creating an inclusive work environment is imperitive to a healthy, supportive, and
 productive culture, and an environment where everyone feels welcome and included.
 
