@@ -16,6 +16,9 @@ type Config struct {
 func NewConfig(filename string) (*Config, error) {
 	var c Config
 	err := c.load(filename)
+	if len(c.Rules) == 0 {
+		c.Rules = rule.DefaultRules
+	}
 	return &c, err
 }
 

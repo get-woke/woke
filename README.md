@@ -61,7 +61,7 @@ $ woke test.txt
 
 ### Rules
 
-A set of default rules is provided in [`default.yaml`](default.yaml).
+A set of default rules is provided in [`example.yaml`](example.yaml).
 You can supply your own rules with `-r path/to/rules.yaml`
 
 The syntax for rules is very basic. You just need a name, a regex used
