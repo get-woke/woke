@@ -23,7 +23,7 @@ tests() {
 
 run() {
   echo "Running..."
-  go run main.go
+  go run main.go -r example.yaml
 }
 
 run
