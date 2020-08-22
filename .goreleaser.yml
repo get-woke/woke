@@ -46,5 +46,5 @@ dockers:
       - woke
     image_templates:
       - "celfring/woke:latest"
-      - "celfring/woke:{{ .Tag }}"
-      - "celfring/woke:v{{ .Major }}.{{ .Minor }}"
+      - "celfring/woke:{{ .Major }}"
+      - "celfring/woke:{{ .Major }}.{{ .Minor }}"
