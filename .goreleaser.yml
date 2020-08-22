@@ -11,7 +11,7 @@ builds:
       - linux
       - windows
       - darwin
-    ldflags: -s -w -X github.com/caitlinelfring/woke/cmd.Version={{.Version}} -X github.com/caitlinelfring/woke/cmd.Commit={{.ShortCommit}} -X cmd.Date={{.Date}}
+    ldflags: -s -w -X github.com/caitlinelfring/woke/cmd.Version={{.Version}} -X github.com/caitlinelfring/woke/cmd.Commit={{.ShortCommit}} -X github.com/caitlinelfring/woke/cmd.Date={{.Date}}
 
 archives:
   - format: tar.gz
@@ -46,5 +46,5 @@ dockers:
       - woke
     image_templates:
       - "celfring/woke:latest"
-      - "celfring/woke:{{ .Major }}"
       - "celfring/woke:{{ .Major }}.{{ .Minor }}"
+      - "celfring/woke:{{ .RawVersion }}"
