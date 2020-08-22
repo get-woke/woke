@@ -7,7 +7,7 @@
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
-![woke.gif](img/woke.gif)
+![woke.gif](https://raw.githubusercontent.com/caitlinelfring/woke/main/img/woke.gif)
 
 Creating an inclusive work environment is imperitive to a healthy, supportive, and
 productive culture, and an environment where everyone feels welcome and included.
@@ -77,7 +77,7 @@ $ woke test.txt
 
 ### Rules
 
-A set of default rules is provided in [`example.yaml`](example.yaml).
+A set of default rules is provided in [`example.yaml`](https://github.com/caitlinelfring/woke/blob/main/example.yaml).
 You can supply your own rules with `-r path/to/rules.yaml`
 
 The syntax for rules is very basic. You just need a name, a regex used
@@ -132,4 +132,5 @@ exit code, but running `work --exit-1-on-failure`.
 
 ## License
 
-This application is licensed under the MIT License, you may obtain a copy of it [here](LICENSE).
+This application is licensed under the MIT License, you may obtain a copy of it
+[here](https://github.com/caitlinelfring/woke/blob/main/LICENSE).
