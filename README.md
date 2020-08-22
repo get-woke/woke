@@ -1,5 +1,6 @@
 # woke
 
+[![Build](https://github.com/caitlinelfring/woke/workflows/Build/badge.svg?branch=main)](https://github.com/caitlinelfring/woke/actions)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/caitlinelfring/woke)](https://pkg.go.dev/github.com/caitlinelfring/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/caitlinelfring/woke)](https://goreportcard.com/report/github.com/caitlinelfring/woke)
