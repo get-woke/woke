@@ -2,14 +2,12 @@ package parser
 
 import (
 	"bufio"
-	"fmt"
 	"go/token"
-	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/caitlinelfring/woke/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -47,7 +45,7 @@ func (p *Parser) Parse(filename string) (results rule.Results, err error) {
 	}
 	defer f.Close()
 
-	if err = errIsNotTextFile(f); err != nil {
+	if err = util.IsTextFile(f); err != nil {
 		return
 	}
 
@@ -82,33 +80,4 @@ func (p *Parser) Parse(filename string) (results rule.Results, err error) {
 	}
 
 	return results, scanner.Err()
-}
-
-func detectContentType(file *os.File) (string, error) {
-	// Only the first 512 bytes are used to sniff the content type.
-	buffer := make([]byte, 512)
-	n, err := file.Read(buffer)
-	// Reset the file so a scanner can scan
-	_, _ = file.Seek(0, 0)
-
-	if err != nil {
-		return "", err
-	}
-	return http.DetectContentType(buffer[:n]), nil
-}
-
-func isTextFile(file *os.File) bool {
-	contentType, err := detectContentType(file)
-	if err != nil {
-		return false
-	}
-
-	return strings.HasPrefix(contentType, "text/plain")
-}
-
-func errIsNotTextFile(file *os.File) error {
-	if !isTextFile(file) {
-		return fmt.Errorf("%s is not a text file", file.Name())
-	}
-	return nil
 }
