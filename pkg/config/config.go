@@ -31,8 +31,7 @@ var DefaultIgnore = []string{
 	".git/*",
 }
 
-// NewConfig returns a config from the provided yaml file containing rules
-func NewConfig(filename string, fileGlobs []string) (*Config, error) {
+func NewConfig(filename string) (*Config, error) {
 	var c Config
 	var err error
 
@@ -50,13 +49,11 @@ func NewConfig(filename string, fileGlobs []string) (*Config, error) {
 	c.IgnoreFiles = append(c.IgnoreFiles, filename)
 	c.compileIgnoreGlobs()
 
-	// Must come after compiling ignore globs
-	c.setFiles(fileGlobs)
-
 	return &c, err
 }
 
-func (c *Config) setFiles(fileGlobs []string) {
+// SetFiles computes the list of files that will be checked
+func (c *Config) SetFiles(fileGlobs []string) {
 	allFiles, _ := util.GetFilesInGlobs(fileGlobs)
 	for _, f := range allFiles {
 		if c.ignoreFile(f) {
