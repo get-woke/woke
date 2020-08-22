@@ -83,15 +83,14 @@ func (c *Config) compileIgnoreGlobs() {
 	}
 }
 
-func (c *Config) addIgnoreGlob(s string) {
-	path := s
+func (c *Config) addIgnoreGlob(path string) {
 	if c.hasAbsolutePath {
 		var err error
-		path, err = filepath.Abs(s)
+		path, err = filepath.Abs(path)
 		if err != nil {
 			log.Error().
 				Err(err).
-				Str("path", s).
+				Str("path", path).
 				Msg("failed to get absolute path")
 			return
 		}
@@ -107,7 +106,9 @@ func gitIgnore() (lines []string) {
 
 	defer func() {
 		if err = buffer.Close(); err != nil {
-			log.Error().Err(err).Msg("gitignore buffer failed to close")
+			log.Error().
+				Err(err).
+				Msg("gitignore buffer failed to close")
 		}
 	}()
 
