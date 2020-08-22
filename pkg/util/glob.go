@@ -9,21 +9,31 @@ import (
 
 // GetFilesInGlobs returns all known files in the provided globs using
 // filepath.Glob and filepath.Walk
-func GetFilesInGlobs(globs []string) ([]string, error) {
+func GetFilesInGlobs(globs []string) ([]string, bool, error) {
 	var files []string
+	useAbsolutePath := false
+	for _, glob := range globs {
+		if filepath.IsAbs(glob) {
+			useAbsolutePath = true
+		}
+	}
 	for _, glob := range globs {
 		filesInGlob, err := filepath.Glob(glob)
 		if err != nil {
-			return files, err
+			return files, useAbsolutePath, err
 		}
 
 		for _, p := range filesInGlob {
 			err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
-				abs, err := filepath.Abs(path)
-				if err != nil {
-					return err
+				if useAbsolutePath {
+					abs, err := filepath.Abs(path)
+					if err != nil {
+						return err
+					}
+					files = append(files, abs)
+				} else {
+					files = append(files, path)
 				}
-				files = append(files, abs)
 				return err
 			})
 
@@ -34,5 +44,5 @@ func GetFilesInGlobs(globs []string) ([]string, error) {
 			}
 		}
 	}
-	return files, nil
+	return files, useAbsolutePath, nil
 }

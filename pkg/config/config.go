@@ -22,6 +22,7 @@ type Config struct {
 	IgnoreFiles []string     `yaml:"ignore_files"`
 
 	ignoreFilesGlob []glob.Glob
+	hasAbsolutePath bool
 
 	files []string
 }
@@ -54,7 +55,8 @@ func NewConfig(filename string) (*Config, error) {
 
 // SetFiles computes the list of files that will be checked
 func (c *Config) SetFiles(fileGlobs []string) {
-	allFiles, _ := util.GetFilesInGlobs(fileGlobs)
+	allFiles, hasAbsolutePath, _ := util.GetFilesInGlobs(fileGlobs)
+	c.hasAbsolutePath = hasAbsolutePath
 	for _, f := range allFiles {
 		if c.ignoreFile(f) {
 			continue
@@ -82,15 +84,19 @@ func (c *Config) compileIgnoreGlobs() {
 }
 
 func (c *Config) addIgnoreGlob(s string) {
-	abs, err := filepath.Abs(s)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("path", s).
-			Msg("failed to get absolute path")
-		return
+	path := s
+	if c.hasAbsolutePath {
+		var err error
+		path, err = filepath.Abs(s)
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("path", s).
+				Msg("failed to get absolute path")
+			return
+		}
 	}
-	c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(abs))
+	c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(path))
 }
 
 func gitIgnore() (lines []string) {
