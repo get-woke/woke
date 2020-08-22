@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -71,16 +72,28 @@ func (c *Config) compileIgnoreGlobs() {
 	c.ignoreFilesGlob = make([]glob.Glob, 0)
 
 	for _, ignore := range c.IgnoreFiles {
-		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(ignore))
+		c.addIgnoreGlob(ignore)
 	}
 
-	for _, g := range gitIgnore() {
-		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(g))
+	for _, ignore := range gitIgnore() {
+		c.addIgnoreGlob(ignore)
 	}
 
-	for _, g := range DefaultIgnore {
-		c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(g))
+	for _, ignore := range DefaultIgnore {
+		c.addIgnoreGlob(ignore)
 	}
+}
+
+func (c *Config) addIgnoreGlob(s string) {
+	abs, err := filepath.Abs(s)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("path", s).
+			Msg("failed to get absolute path")
+		return
+	}
+	c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(abs))
 }
 
 func gitIgnore() (lines []string) {
