@@ -19,7 +19,11 @@ func GetFilesInGlobs(globs []string) ([]string, error) {
 
 		for _, p := range filesInGlob {
 			err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
-				files = append(files, path)
+				abs, err := filepath.Abs(path)
+				if err != nil {
+					return err
+				}
+				files = append(files, abs)
 				return err
 			})
 
