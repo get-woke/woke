@@ -4,8 +4,6 @@ before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod download
-    # you may remove this if you don't need go generate
-    - go generate ./...
 builds:
   - env:
       - CGO_ENABLED=0
@@ -13,20 +11,40 @@ builds:
       - linux
       - windows
       - darwin
+    ldflags: -s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.ShortCommit}} -X cmd.Date={{.Date}}
+
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
-checksum:
-  name_template: 'checksums.txt'
+  - format: tar.gz
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: '{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    files:
+      - LICENSE
+      - README.md
+
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: SNAPSHOT-{{ .Commit }}
+
+checksum:
+  name_template: '{{ .ProjectName }}-{{ .Version }}-checksums.txt'
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+    - '^docs:'
+    - '^test:'
+    - '^dev:'
+    - 'README'
+    - Merge pull request
+    - Merge branch
+
+dockers:
+  - dockerfile: build/Dockerfile
+    binaries:
+      - woke
+    image_templates:
+      - "celfring/woke:latest"
+      - "celfring/woke:{{ .Tag }}"
+      - "celfring/woke:v{{ .Major }}.{{ .Minor }}"

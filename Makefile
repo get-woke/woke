@@ -1,6 +1,6 @@
 
 build:
-	docker build -t woke -f Dockerfile.dev .
+	docker build -t woke -f dev/Dockerfile .
 
 run:
 	docker run --rm -it \
