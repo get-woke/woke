@@ -7,20 +7,24 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GOLANGCI_LINT_TOKEN }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install Go
+
+      - name: Setup Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.14
+
       - name: Unshallow
         run: git fetch --prune --unshallow
+
+      - name: Login docker.io
+        run: docker login -u celfring -p ${{ secrets.DOCKER_TOKEN }}
+
       - name: Create release
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
           args: release --rm-dist
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
