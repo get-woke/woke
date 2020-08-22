@@ -38,9 +38,15 @@ import (
 const defaultGlob = "**"
 
 var (
+	// flags
 	exitOneOnFailure bool
 	ruleConfig       string
 	debug            bool
+
+	// Populated by goreleaser during build
+	Version = "main"
+	Commit  = "000000"
+	Date    = "today"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -56,6 +62,7 @@ Provide a list of comma-separated file globs for files you'd like to check.`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setLogLevel()
+		log.Debug().Msg(getVersion("default"))
 
 		start := time.Now()
 		defer log.Debug().
@@ -99,6 +106,8 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Version = getVersion("short")
+
 	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "", "YAML file with list of rules")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
@@ -110,5 +119,13 @@ func setLogLevel() {
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
+}
 
+func getVersion(t string) string {
+	switch strings.ToLower(t) {
+	case "short":
+		return Version
+	default:
+		return fmt.Sprintf("woke version %s built from %s on %s", Version, Commit, Date)
+	}
 }
