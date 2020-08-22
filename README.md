@@ -27,6 +27,19 @@ go get -u github.com/caitlinelfring/woke
 
 Alternatively, download the latest binary from [Releases](https://github.com/caitlinelfring/woke/releases/latest)
 
+### Docker
+
+You can run `woke` within docker. You will need to mount a volume that contains your source code and/or rules.
+
+```bash
+## Run with all defaults, within the mounted /src directory
+docker run -v $(pwd):/src -w /src celfring/woke
+
+## Provide rules config
+docker run -v $(pwd):/src -w /src celfring/woke \
+  woke -r my-rules.yaml
+```
+
 ## Usage
 
 ```bash
