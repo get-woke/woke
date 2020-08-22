@@ -5,9 +5,9 @@ RUN apt-get update && apt-get install -y inotify-tools
 
 ENV ROOT_PATH /go/src/github.com/caitlinelfring/woke
 WORKDIR $ROOT_PATH
-COPY . $ROOT_PATH
+COPY go.mod ./
+COPY go.sum ./
 
-RUN go build ./...
+RUN go mod download
 
-ENTRYPOINT ["./autoreload.sh"]
-CMD ["woke"]
+ENTRYPOINT ["./dev/autoreload.sh"]
