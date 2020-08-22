@@ -49,23 +49,26 @@ woke is a linter that will check your source code for usage of non-inclusive
 language and provide suggestions for alternatives. Rules can be customized
 to suit your needs.
 
-Provide a list of comma-separated file globs for files you'd like to check.
+Provide a list file globs for files you'd like to check.
 
 Usage:
-  woke (file globs to check) [flags]
+  woke [globs ...] [flags]
 
 Flags:
+      --debug                Enable debug logging
       --exit-1-on-failure    Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur
   -h, --help                 help for woke
-  -r, --rule-config string   YAML file with list of rules (default "default.yaml")
+  -r, --rule-config string   YAML file with list of rules
+      --stdin                Read from stdin
+  -v, --version              version for woke
 ```
 
 ### File globs
 
 By default, `woke` will run against all text files in your current directory.
-To change this, supply a comma-separated list of globs as the first argument.
+To change this, supply a space-separated list of globs as the first argument.
 
-This can be something like `**/*.go`, or a comma-separated list of filenames.
+This can be something like `**/*.go`, or a space-separated list of filenames.
 
 ```bash
 $ woke test.txt
@@ -73,6 +76,15 @@ $ woke test.txt
 [test.txt:3:2] Instead of 'White-list', consider the following alternative(s): 'allowlist'
 [test.txt:4:2] Instead of 'whitelist', consider the following alternative(s): 'allowlist'
 [test.txt:5:2] Instead of 'blacklist', consider the following alternative(s): 'denylist,blocklist'
+```
+
+### stdin
+
+You can also provide text to `woke` via stdin
+
+```bash
+$ echo "This has whitelist from stdin" | woke --stdin
+[/dev/stdin:1:9] Instead of 'whitelist', consider the following alternative(s): 'allowlist'
 ```
 
 ### Rules

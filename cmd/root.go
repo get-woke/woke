@@ -30,6 +30,7 @@ import (
 
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/parser"
+	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -42,6 +43,7 @@ var (
 	exitOneOnFailure bool
 	ruleConfig       string
 	debug            bool
+	stdin            bool
 
 	// Populated by goreleaser during build
 	Version = "main"
@@ -51,47 +53,53 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "woke (file globs to check)",
+	Use:   "woke [globs ...]",
 	Short: "Check for usage of non-inclusive language in your code and provide alternatives",
 	Long: `
 woke is a linter that will check your source code for usage of non-inclusive
 language and provide suggestions for alternatives. Rules can be customized
 to suit your needs.
 
-Provide a list of comma-separated file globs for files you'd like to check.`,
-	Args: cobra.MaximumNArgs(1),
+Provide a list file globs for files you'd like to check.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setLogLevel()
 		log.Debug().Msg(getVersion("default"))
 
 		start := time.Now()
-		defer log.Debug().
-			Dur("durationMS", time.Now().Sub(start)).
-			Msg("woke completed")
+		defer func() {
+			log.Debug().
+				Dur("durationMS", time.Now().Sub(start)).
+				Msg("woke completed")
+		}()
 
-		fileGlobs := []string{defaultGlob}
-		if len(args) > 0 {
-			fileGlobs = strings.Split(args[0], ",")
-		}
-
-		c, err := config.NewConfig(ruleConfig, fileGlobs)
+		c, err := config.NewConfig(ruleConfig)
 		if err != nil {
 			return err
 		}
 		p := parser.Parser{Rules: c.Rules}
-		results := p.ParseFiles(c.GetFiles())
+
+		var results rule.Results
+		if stdin {
+			results, _ = p.Parse(os.Stdin)
+		} else {
+			if len(args) == 0 {
+				args = []string{defaultGlob}
+			}
+			c.SetFiles(args)
+			results = p.ParseFiles(c.GetFiles())
+		}
+
 		results.Output()
+
+		if len(results.Results) == 0 {
+			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
+		}
 
 		if len(results.Results) > 0 && exitOneOnFailure {
 			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
 			cmd.SilenceUsage = true
 			return fmt.Errorf("Total failures: %d", len(results.Results))
 		}
-
-		if len(results.Results) == 0 {
-			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
-		}
-
 		return nil
 	},
 }
@@ -110,6 +118,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "", "YAML file with list of rules")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
+	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 }
 
