@@ -89,7 +89,7 @@ Provide a list file globs for files you'd like to check.`,
 			results = p.ParseFiles(c.GetFiles())
 		}
 
-		results.Output()
+		cmd.Println(results.String())
 
 		if len(results.Results) == 0 {
 			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
