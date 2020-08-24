@@ -25,16 +25,18 @@ func GetFilesInGlobs(globs []string) ([]string, bool, error) {
 
 		for _, p := range filesInGlob {
 			err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
-				if useAbsolutePath {
-					abs, err := filepath.Abs(path)
-					if err != nil {
-						return err
+				// Ignore directories
+				if !f.IsDir() {
+					if useAbsolutePath {
+						var err error
+						path, err = filepath.Abs(f.Name())
+						if err != nil {
+							return err
+						}
 					}
-					files = append(files, abs)
-				} else {
 					files = append(files, path)
 				}
-				return err
+				return nil
 			})
 
 			if err != nil {
