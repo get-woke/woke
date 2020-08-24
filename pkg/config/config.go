@@ -1,18 +1,13 @@
 package config
 
 import (
-	"bufio"
 	"io/ioutil"
-	"os"
-	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/caitlinelfring/woke/pkg/util"
-	"github.com/gobwas/glob"
-	"github.com/rs/zerolog/log"
 
+	gitignore "github.com/sabhiram/go-gitignore"
 	"gopkg.in/yaml.v2"
 )
 
@@ -21,7 +16,7 @@ type Config struct {
 	Rules       []*rule.Rule `yaml:"rules"`
 	IgnoreFiles []string     `yaml:"ignore_files"`
 
-	ignoreFilesGlob []glob.Glob
+	_gitIgnore      *gitignore.GitIgnore
 	hasAbsolutePath bool
 
 	files []string
@@ -29,28 +24,24 @@ type Config struct {
 
 // DefaultIgnore is the default list of file globs that will be ignored
 var DefaultIgnore = []string{
-	".git/*",
+	".git",
 }
 
 func NewConfig(filename string) (*Config, error) {
 	var c Config
-	var err error
 
-	// No filename given, use default rules
-	if filename == "" {
-		c.SetDefaultRules()
-	} else {
-		err = c.load(filename)
-		if len(c.Rules) == 0 {
-			c.SetDefaultRules()
+	if filename != "" {
+		if err := c.load(filename); err != nil {
+			return &c, err
 		}
 	}
+	c.AddDefaultRules()
 
 	// Ignore the config filename, it will always match on its own rules
 	c.IgnoreFiles = append(c.IgnoreFiles, filename)
 	c.compileIgnoreGlobs()
 
-	return &c, err
+	return &c, nil
 }
 
 // SetFiles computes the list of files that will be checked
@@ -58,7 +49,7 @@ func (c *Config) SetFiles(fileGlobs []string) {
 	allFiles, hasAbsolutePath, _ := util.GetFilesInGlobs(fileGlobs)
 	c.hasAbsolutePath = hasAbsolutePath
 	for _, f := range allFiles {
-		if c.ignoreFile(f) {
+		if c._gitIgnore.MatchesPath(f) {
 			continue
 		}
 		c.files = append(c.files, f)
@@ -68,75 +59,13 @@ func (c *Config) SetFiles(fileGlobs []string) {
 // compileIgnoreGlobs pre-compiles globs
 // See https://github.com/gobwas/glob#performance
 func (c *Config) compileIgnoreGlobs() {
-	c.ignoreFilesGlob = make([]glob.Glob, 0)
-
-	for _, ignore := range c.IgnoreFiles {
-		c.addIgnoreGlob(ignore)
+	ignoreLines := []string{}
+	if buffer, err := ioutil.ReadFile(".gitignore"); err == nil {
+		ignoreLines = append(ignoreLines, strings.Split(string(buffer), "\n")...)
 	}
-
-	for _, ignore := range gitIgnore() {
-		c.addIgnoreGlob(ignore)
-	}
-
-	for _, ignore := range DefaultIgnore {
-		c.addIgnoreGlob(ignore)
-	}
-}
-
-func (c *Config) addIgnoreGlob(path string) {
-	if c.hasAbsolutePath {
-		var err error
-		path, err = filepath.Abs(path)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("path", path).
-				Msg("failed to get absolute path")
-			return
-		}
-	}
-	c.ignoreFilesGlob = append(c.ignoreFilesGlob, glob.MustCompile(path))
-}
-
-func gitIgnore() (lines []string) {
-	buffer, err := os.Open(".gitignore")
-	if err != nil {
-		return
-	}
-
-	defer func() {
-		if err = buffer.Close(); err != nil {
-			log.Error().
-				Err(err).
-				Msg("gitignore buffer failed to close")
-		}
-	}()
-
-	commentRe := regexp.MustCompile(`#(.*)$`)
-	scanner := bufio.NewScanner(buffer)
-	for scanner.Scan() {
-		// Remove comments
-		text := commentRe.ReplaceAllString(scanner.Text(), "")
-		text = strings.TrimSpace(text)
-		if text == "" {
-			continue
-		}
-		log.Debug().Str("entry", text).Msg("adding gitignore entry")
-		lines = append(lines, text)
-	}
-	if err = scanner.Err(); err != nil {
-		log.Info().Err(err).Msg("gitignore scanner error")
-	}
-	return
-}
-
-func (c *Config) ignoreFile(f string) bool {
-	for _, ignore := range c.ignoreFilesGlob {
-		if ignore.Match(f) {
-			return true
-		}
-	}
-	return false
+	ignoreLines = append(ignoreLines, c.IgnoreFiles...)
+	ignoreLines = append(ignoreLines, DefaultIgnore...)
+	c._gitIgnore, _ = gitignore.CompileIgnoreLines(ignoreLines...)
 }
 
 // GetFiles returns files that may be parsed
@@ -144,9 +73,9 @@ func (c *Config) GetFiles() []string {
 	return c.files
 }
 
-// SetDefaultRules sets the config Rules to DefaultRules
-func (c *Config) SetDefaultRules() {
-	c.Rules = rule.DefaultRules
+// AddDefaultRules adds the config Rules to DefaultRules
+func (c *Config) AddDefaultRules() {
+	c.Rules = append(c.Rules, rule.DefaultRules...)
 }
 
 func (c *Config) load(filename string) error {
