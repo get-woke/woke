@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"errors"
 	"fmt"
 	"go/token"
 	"regexp"
@@ -29,9 +30,18 @@ func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(a); err != nil {
 		return err
 	}
-	r.Alternatives = a["alternatives"]
-	r.Name = a["name"]
+	var ok bool
+
+	if r.Name, ok = a["name"]; !ok || r.Name == "" {
+		return errors.New("name is required")
+	}
+
+	if r.Alternatives, ok = a["alternatives"]; !ok || r.Alternatives == "" {
+		return errors.New("alternatives is required")
+	}
+
 	r.Severity = NewSeverity(a["severity"])
+
 	if re, ok := a["regexp"]; !ok {
 		r.Regexp = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, r.Name))
 	} else {

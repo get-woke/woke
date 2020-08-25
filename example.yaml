@@ -3,11 +3,11 @@ ignore_files:
   - pkg/rule/default.go
 
 rules:
-  - word: whitelist
+  - name: whitelist
     regexp: \b(white-?list)\b
     alternatives: allowlist
     # severity: info
 
-  - word: blacklist
+  - name: blacklist
     regexp: \b(black-?list)\b
     alternatives: denylist,blocklist

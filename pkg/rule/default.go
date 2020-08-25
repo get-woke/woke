@@ -7,6 +7,7 @@ var WhitelistRule = Rule{
 	Name:         "whitelist",
 	Regexp:       regexp.MustCompile(`\b(white-?list)\b`),
 	Alternatives: "allowlist",
+	Severity:     SevWarn,
 }
 
 // BlacklistRule is the default rule for whitelist
@@ -14,6 +15,7 @@ var BlacklistRule = Rule{
 	Name:         "blacklist",
 	Regexp:       regexp.MustCompile(`\b(black-?list)\b`),
 	Alternatives: "denylist,blocklist",
+	Severity:     SevWarn,
 }
 
 // DefaultRules are the default rules in case a config file with rules is not provided
