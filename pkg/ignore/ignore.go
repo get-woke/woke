@@ -1,9 +1,12 @@
 package ignore
 
 import (
+	"errors"
 	"io/ioutil"
+	"os"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	gitignore "github.com/sabhiram/go-gitignore"
 )
 
@@ -33,10 +36,21 @@ func (i *Ignore) Match(f string) bool {
 
 func compileIgnoreLines(lines []string) (*gitignore.GitIgnore, error) {
 	lines = append(lines, DefaultIgnores...)
-
-	if buffer, err := ioutil.ReadFile(".gitignore"); err == nil {
-		lines = append(lines, strings.Split(string(buffer), "\n")...)
-	}
+	lines = append(lines, readIgnoreFile(".gitignore")...)
+	lines = append(lines, readIgnoreFile(".wokeignore")...)
 
 	return gitignore.CompileIgnoreLines(lines...)
+}
+
+func readIgnoreFile(file string) []string {
+	buffer, err := ioutil.ReadFile(file)
+	if err != nil {
+		_event := log.Warn()
+		if errors.Is(err, os.ErrNotExist) {
+			_event = log.Debug()
+		}
+		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
+	}
+
+	return strings.Split(string(buffer), "\n")
 }

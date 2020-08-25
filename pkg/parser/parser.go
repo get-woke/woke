@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/caitlinelfring/woke/pkg/ignore"
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/caitlinelfring/woke/pkg/util"
 	"github.com/rs/zerolog/log"
@@ -16,30 +17,9 @@ type Parser struct {
 }
 
 // ParseFiles parses all files provided and returns the results
-func (p *Parser) ParseFiles(files []string) rule.Results {
-	results := rule.Results{}
-
-	for _, f := range files {
-		file, err := os.Open(f)
-		if err != nil {
-			log.Error().Err(err).Str("file", file.Name()).Msg("could not open file")
-			continue
-		}
-		defer file.Close()
-
-		if err = util.IsTextFile(file); err != nil {
-			log.Debug().Err(err).Str("file", file.Name()).Msg("not a text file")
-			continue
-		}
-
-		r, err := p.Parse(file)
-		if err != nil {
-			log.Debug().Err(err).Msg("parser failed")
-			continue
-		}
-		results.Push(r.Results...)
-	}
-	return results
+func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) rule.Results {
+	parsable := ParsableFiles(files, ignorer)
+	return p.parseFiles(parsable.Files)
 }
 
 // Parse reads the file and returns results of places where rules are broken
@@ -69,4 +49,32 @@ func (p *Parser) Parse(file *os.File) (results rule.Results, err error) {
 	}
 
 	return results, scanner.Err()
+}
+
+func (p *Parser) parseFiles(files []string) rule.Results {
+	results := rule.Results{}
+
+	for _, f := range files {
+		file, err := os.Open(f)
+		if err != nil {
+			log.Error().Err(err).Str("file", f).Msg("could not open file")
+			continue
+		}
+		defer file.Close()
+
+		if err = util.IsTextFile(file); err != nil {
+			log.Debug().Err(err).Str("file", file.Name()).Msg("not a text file")
+			continue
+		}
+
+		r, err := p.Parse(file)
+		if err != nil {
+			log.Debug().Err(err).Msg("parser failed")
+			continue
+		}
+
+		results.Push(r.Results...)
+	}
+
+	return results
 }
