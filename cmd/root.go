@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"github.com/caitlinelfring/woke/pkg/config"
+	"github.com/caitlinelfring/woke/pkg/ignore"
 	"github.com/caitlinelfring/woke/pkg/parser"
 	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/rs/zerolog"
@@ -82,11 +83,8 @@ Provide a list file globs for files you'd like to check.`,
 		if stdin {
 			results, _ = p.Parse(os.Stdin)
 		} else {
-			if len(args) == 0 {
-				args = []string{defaultGlob}
-			}
-			c.SetFiles(args)
-			results = p.ParseFiles(c.GetFiles())
+			ignorer, _ := ignore.NewIgnore(c.IgnoreFiles)
+			results = p.ParseFiles(args, ignorer)
 		}
 
 		cmd.Println(results.String())
