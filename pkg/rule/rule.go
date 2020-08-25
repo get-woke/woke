@@ -2,6 +2,7 @@ package rule
 
 import (
 	"fmt"
+	"go/token"
 	"regexp"
 
 	"gopkg.in/yaml.v2"
@@ -37,4 +38,25 @@ func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		r.Regexp = regexp.MustCompile(fmt.Sprintf(`(?i)%s`, re))
 	}
 	return nil
+}
+
+// FindResults returns the results that match the rule for the given text.
+// filename and line are only used for the Position
+func (r *Rule) FindResults(text, filename string, line int) (rs []Result) {
+	idxs := r.Regexp.FindAllStringIndex(text, -1)
+
+	for _, idx := range idxs {
+		newResult := Result{
+			Rule:  r,
+			Match: text[idx[0]:idx[1]],
+			Position: &token.Position{
+				Filename: filename,
+				Line:     line,
+				Column:   idx[0],
+			},
+		}
+
+		rs = append(rs, newResult)
+	}
+	return
 }
