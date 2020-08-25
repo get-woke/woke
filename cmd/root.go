@@ -46,10 +46,13 @@ var (
 	debug            bool
 	stdin            bool
 
-	// Populated by goreleaser during build
+	// Version is populated by goreleaser during build
+	// Version...
 	Version = "main"
-	Commit  = "000000"
-	Date    = "today"
+	// Commit ...
+	Commit = "000000"
+	// Date ...
+	Date = "today"
 )
 
 // rootCmd represents the base command when called without any subcommands

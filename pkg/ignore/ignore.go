@@ -15,6 +15,7 @@ var DefaultIgnores = []string{
 	".git",
 }
 
+// Ignore is a gitignore-style object to ignore files/directories
 type Ignore struct {
 	compiled *gitignore.GitIgnore
 }

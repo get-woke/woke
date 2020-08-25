@@ -14,6 +14,7 @@ type Config struct {
 	IgnoreFiles []string     `yaml:"ignore_files"`
 }
 
+// NewConfig returns a new Config
 func NewConfig(filename string) (*Config, error) {
 	var c Config
 	c.AddDefaultRules()
