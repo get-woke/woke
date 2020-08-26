@@ -122,7 +122,7 @@ func Execute() {
 func init() {
 	rootCmd.Version = getVersion("short")
 
-	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "rule-config", "r", "", "YAML file with list of rules")
+	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "config", "c", "", "YAML file with list of rules")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")

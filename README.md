@@ -35,7 +35,7 @@ docker run -v $(pwd):/src -w /src celfring/woke
 
 ## Provide rules config
 docker run -v $(pwd):/src -w /src celfring/woke \
-  woke -r my-rules.yaml
+  woke -c my-rules.yaml
 ```
 
 ## Usage
@@ -53,12 +53,12 @@ Usage:
   woke [globs ...] [flags]
 
 Flags:
-      --debug                Enable debug logging
-      --exit-1-on-failure    Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur
-  -h, --help                 help for woke
-  -r, --rule-config string   YAML file with list of rules
-      --stdin                Read from stdin
-  -v, --version              version for woke
+  -c, --config string       YAML file with list of rules
+      --debug               Enable debug logging
+      --exit-1-on-failure   Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur
+  -h, --help                help for woke
+      --stdin               Read from stdin
+  -v, --version             version for woke
 ```
 
 ### File globs
@@ -88,7 +88,7 @@ $ echo "This has whitelist from stdin" | woke --stdin
 ### Rules
 
 A set of default rules is provided in [`example.yaml`](https://github.com/caitlinelfring/woke/blob/main/example.yaml).
-You can supply your own rules with `-r path/to/rules.yaml`
+You can supply your own rules with `-c path/to/rules.yaml`
 
 The syntax for rules is very basic. You just need a name, a regex used
 to match, and a string of alternatives.
