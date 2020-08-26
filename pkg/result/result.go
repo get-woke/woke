@@ -11,21 +11,23 @@ import (
 type Result struct {
 	Rule          *rule.Rule
 	Match         string
+	Filename      string
 	StartPosition *token.Position
 	EndPosition   *token.Position
 }
 
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
-func FindResults(r *rule.Rule, text string, line int) (rs []Result) {
+func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 	idxs := r.Regexp.FindAllStringIndex(text, -1)
 
 	for _, idx := range idxs {
 		start := idx[0]
 		end := idx[1]
 		newResult := Result{
-			Rule:  r,
-			Match: text[start:end],
+			Rule:     r,
+			Match:    text[start:end],
+			Filename: filename,
 			StartPosition: &token.Position{
 				Line:   line,
 				Column: start,

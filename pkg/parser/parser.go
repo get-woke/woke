@@ -48,9 +48,16 @@ func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) (results []*
 	parsable := WalkDirsWithIgnores(files, ignorer)
 
 	for _, f := range parsable {
-		if fileResult, err := p.ParseFile(f); fileResult != nil && err == nil {
-			results = append(results, fileResult)
+		fileResult, err := p.ParseFile(f)
+		if err != nil {
+			log.Error().Err(err).Str("file", f).Msg("parse failed")
+			continue
 		}
+		if fileResult == nil {
+			continue
+		}
+		results = append(results, fileResult)
+
 	}
 
 	return
@@ -79,9 +86,8 @@ func (p *Parser) parseFile(file *os.File) (*result.FileResults, error) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		for _, r := range p.Rules {
-			lineResults := result.FindResults(r, text, line)
+			lineResults := result.FindResults(r, results.Filename, text, line)
 			results.Results = append(results.Results, lineResults...)
-			// results.Push(lineResults...)
 		}
 		line++
 	}
