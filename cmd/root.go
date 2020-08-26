@@ -45,6 +45,7 @@ var (
 	ruleConfig       string
 	debug            bool
 	stdin            bool
+	output           string
 
 	// Version is populated by goreleaser during build
 	// Version...
@@ -92,8 +93,9 @@ Provide a list file globs for files you'd like to check.`,
 		}
 
 		if len(results) > 0 {
-			for _, fr := range results {
-				cmd.Println(fr.String())
+			print := config.CreatePrinter(output)
+			for _, res := range results {
+				print.Print(res)
 			}
 
 			if exitOneOnFailure {
@@ -127,6 +129,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
+	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", config.OutFormatText, fmt.Sprintf("Output type [%s]", config.OutFormatsString))
 }
 
 func setLogLevel() {
