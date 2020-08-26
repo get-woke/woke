@@ -31,7 +31,6 @@ import (
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/ignore"
 	"github.com/caitlinelfring/woke/pkg/parser"
-	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -82,24 +81,30 @@ Provide a list file globs for files you'd like to check.`,
 		}
 		p := parser.Parser{Rules: c.Rules}
 
-		var results rule.Results
+		// var results result.FileResults
+		var ignorer *ignore.Ignore
+		var fileArgs []string
 		if stdin {
-			results, _ = p.Parse(os.Stdin)
+			fileArgs = []string{"/dev/stdin"}
 		} else {
-			ignorer, _ := ignore.NewIgnore(c.IgnoreFiles)
-			results = p.ParseFiles(args, ignorer)
+			ignorer, _ = ignore.NewIgnore(c.IgnoreFiles)
+			fileArgs = args
+		}
+		results := p.ParseFiles(fileArgs, ignorer)
+		for _, fr := range results {
+			cmd.Println(fr.String())
 		}
 
-		cmd.Println(results.String())
+		// cmd.Println(results.OutputString(output))
 
-		if len(results.Results) == 0 {
+		if len(results) == 0 {
 			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
 		}
 
-		if len(results.Results) > 0 && exitOneOnFailure {
+		if len(results) > 0 && exitOneOnFailure {
 			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
 			cmd.SilenceUsage = true
-			return fmt.Errorf("Total failures: %d", len(results.Results))
+			return fmt.Errorf("Total failures: %d", len(results))
 		}
 		return nil
 	},

@@ -1,29 +1,12 @@
-package rule
+package result
 
 import (
-	"fmt"
-	"go/token"
 	"strings"
 
+	"github.com/caitlinelfring/woke/pkg/rule"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
-
-// Result contains data about the result of a broken rule
-type Result struct {
-	Rule     *Rule
-	Match    string
-	Position *token.Position
-}
-
-// Reason outputs the suggested alternatives for this rule
-func (r *Result) Reason() string {
-	return fmt.Sprintf("Instead of '%s', consider the following alternative(s): '%s'", r.Match, r.Rule.Alternatives)
-}
-
-func (r *Result) String() string {
-	return fmt.Sprintf("[%s] %s", r.Position.String(), r.Reason())
-}
 
 // Results contains a list of Result
 type Results struct {
@@ -55,13 +38,42 @@ func (rs *Results) Output() {
 	var logger *zerolog.Event
 	for _, r := range rs.Results {
 		switch r.Rule.Severity {
-		case SevError:
+		case rule.SevError:
 			logger = log.Error()
-		case SevInfo:
+		case rule.SevInfo:
 			logger = log.Info()
-		case SevWarn:
+		case rule.SevWarn:
 			logger = log.Warn()
 		}
 		logger.Msg(r.String())
 	}
 }
+
+// func (rs *Results) Pretty() string {
+// 	// TODO: Implement this
+// 	return rs.String()
+// }
+
+// func (rs *Results) Simple() string {
+// 	// TODO: Implement this
+// 	return rs.String()
+// }
+
+// func (rs *Results) JSON() string {
+// 	b, _ := json.Marshal(rs)
+// 	return string(b)
+// }
+
+// func (rs *Results) OutputString(t string) string {
+// 	switch NewOutputType(t) {
+// 	case OutputTypePretty:
+// 		return rs.Pretty()
+// 	case OutputTypeSimple:
+// 		return rs.String()
+// 	case OutputTypeJSON:
+// 		b, _ := json.Marshal(rs)
+// 		return string(b)
+// 	}
+
+// 	return fmt.Sprintf("Unsupported output type: %s", t)
+// }
