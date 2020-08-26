@@ -1,32 +1,56 @@
 package parser
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/caitlinelfring/woke/pkg/ignore"
-	"github.com/caitlinelfring/woke/pkg/util"
+	"github.com/rs/zerolog/log"
 )
 
 const defaultPath = "."
 
-// Parsable contains the list of files that can be parsed
-type Parsable struct {
-	Files []string
-}
-
-// ParsableFiles returns a list of files that can be parsed after the ignorer has
+// WalkDirsWithIgnores returns a list of files that can be parsed after the ignorer has
 // excluded files that should be ignored
-func ParsableFiles(fileGlobs []string, ignorer *ignore.Ignore) *Parsable {
-	if len(fileGlobs) == 0 {
-		fileGlobs = []string{defaultPath}
+func WalkDirsWithIgnores(paths []string, ignorer *ignore.Ignore) (files []string) {
+	if len(paths) == 0 {
+		paths = []string{defaultPath}
 	}
 
-	var p Parsable
-	allFiles, _, _ := util.GetFilesInGlobs(fileGlobs)
+	allFiles, _ := WalkDirs(paths)
+	if ignorer == nil {
+		return allFiles
+	}
+
 	for _, f := range allFiles {
 		if ignorer.Match(f) {
 			continue
 		}
-		p.Files = append(p.Files, f)
+		files = append(files, f)
 	}
 
-	return &p
+	return
+}
+
+// WalkDirs returns all known files in the provided paths using filepath.Walk
+func WalkDirs(paths []string) ([]string, error) {
+	var files []string
+
+	for _, p := range paths {
+		err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
+			// Ignore directories
+			if !f.IsDir() {
+				files = append(files, path)
+			}
+			return nil
+		})
+
+		if err != nil {
+			log.Error().
+				Err(err).
+				Msgf("error walking %s", p)
+		}
+	}
+
+	return files, nil
 }

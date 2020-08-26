@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	gitignore "github.com/sabhiram/go-gitignore"
@@ -23,6 +24,13 @@ type Ignore struct {
 // NewIgnore produces an Ignore object, with compiled lines from .gitignore and DefaultIgnores
 // which you can match files against
 func NewIgnore(lines []string) (*Ignore, error) {
+	start := time.Now()
+	defer func() {
+		log.Debug().
+			Dur("durationMS", time.Now().Sub(start)).
+			Msg("finished compiling ignores")
+	}()
+
 	compiled, err := compileIgnoreLines(lines)
 	if err != nil {
 		return nil, err
