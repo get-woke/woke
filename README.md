@@ -9,6 +9,8 @@ _I stay woke - Erykah Badu_
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
+## About
+
 Creating an inclusive work environment is imperitive to a healthy, supportive, and
 productive culture, and an environment where everyone feels welcome and included.
 
@@ -42,7 +44,7 @@ docker run -v $(pwd):/src -w /src celfring/woke \
 
 ## Usage
 
-```bash
+```text
 $ woke --help
 
 woke is a linter that will check your source code for usage of non-inclusive
@@ -57,7 +59,7 @@ Usage:
 Flags:
   -c, --config string       YAML file with list of rules
       --debug               Enable debug logging
-      --exit-1-on-failure   Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur
+      --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
       --stdin               Read from stdin
   -v, --version             version for woke
