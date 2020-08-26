@@ -90,22 +90,24 @@ Provide a list file globs for files you'd like to check.`,
 		} else {
 			results = p.Parse(args, ignorer)
 		}
-		for _, fr := range results {
-			cmd.Println(fr.String())
-		}
 
-		// cmd.Println(results.OutputString(output))
+		if len(results) > 0 {
+			for _, fr := range results {
+				cmd.Println(fr.String())
+			}
+
+			if exitOneOnFailure {
+				// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
+				cmd.SilenceUsage = true
+				err = fmt.Errorf("Total failures: %d", len(results))
+			}
+		}
 
 		if len(results) == 0 {
 			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
 		}
 
-		if len(results) > 0 && exitOneOnFailure {
-			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
-			cmd.SilenceUsage = true
-			return fmt.Errorf("Total failures: %d", len(results))
-		}
-		return nil
+		return err
 	},
 }
 
@@ -122,7 +124,7 @@ func init() {
 	rootCmd.Version = getVersion("short")
 
 	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "config", "c", "", "YAML file with list of rules")
-	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures. Otherwise, will always exit 0 if any failures occur")
+	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 }
