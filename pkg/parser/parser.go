@@ -17,6 +17,32 @@ type Parser struct {
 	Rules []*rule.Rule
 }
 
+// Parse can parse different types of inputs and return the results
+func (p *Parser) Parse(t interface{}, ignorer *ignore.Ignore) (results []*result.FileResults) {
+	switch v := t.(type) {
+	case []string:
+		return p.ParseFiles(v, ignorer)
+
+	case string:
+		r, err := p.ParseFile(v)
+		if err != nil {
+			log.Error().Err(err).Str("input", v).Msg("error parsing file provided by string input")
+		}
+		return append(results, r)
+
+	case *os.File:
+		r, err := p.parseFile(v)
+		if err != nil {
+			log.Error().Err(err).Str("input", v.Name()).Msg("error parsing file provided by os.File input")
+		}
+		return append(results, r)
+
+	default:
+		log.Panic().Interface("v", v).Msg("Parse does not support type")
+	}
+	return nil
+}
+
 // ParseFiles parses all files provided and returns the results
 func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) (results []*result.FileResults) {
 	parsable := WalkDirsWithIgnores(files, ignorer)
@@ -30,9 +56,9 @@ func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) (results []*
 	return
 }
 
-// Parse reads the file and returns results of places where rules are broken
+// parseFile reads the file and returns results of places where rules are broken
 // this function will not close the file, that should be handled by the caller
-func (p *Parser) Parse(file *os.File) (*result.FileResults, error) {
+func (p *Parser) parseFile(file *os.File) (*result.FileResults, error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
@@ -75,7 +101,7 @@ func (p *Parser) ParseFile(f string) (*result.FileResults, error) {
 		return nil, err
 	}
 
-	r, err := p.Parse(file)
+	r, err := p.parseFile(file)
 	if err != nil {
 		return nil, err
 	}

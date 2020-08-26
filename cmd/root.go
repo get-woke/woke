@@ -31,6 +31,7 @@ import (
 	"github.com/caitlinelfring/woke/pkg/config"
 	"github.com/caitlinelfring/woke/pkg/ignore"
 	"github.com/caitlinelfring/woke/pkg/parser"
+	"github.com/caitlinelfring/woke/pkg/result"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -81,16 +82,14 @@ Provide a list file globs for files you'd like to check.`,
 		}
 		p := parser.Parser{Rules: c.Rules}
 
-		// var results result.FileResults
-		var ignorer *ignore.Ignore
-		var fileArgs []string
+		var results []*result.FileResults
+		ignorer, _ := ignore.NewIgnore(c.IgnoreFiles)
+
 		if stdin {
-			fileArgs = []string{"/dev/stdin"}
+			results = p.Parse(os.Stdin, ignorer)
 		} else {
-			ignorer, _ = ignore.NewIgnore(c.IgnoreFiles)
-			fileArgs = args
+			results = p.Parse(args, ignorer)
 		}
-		results := p.ParseFiles(fileArgs, ignorer)
 		for _, fr := range results {
 			cmd.Println(fr.String())
 		}
