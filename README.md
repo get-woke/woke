@@ -107,7 +107,9 @@ $ echo "This has whitelist from stdin" | woke --stdin
 
 ### Rules
 
-A set of default rules is provided in [`example.yaml`](https://github.com/caitlinelfring/woke/blob/main/example.yaml).
+A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/caitlinelfring/woke/blob/main/pkg/rule/default.go).
+
+See [example.yaml](https://github.com/caitlinelfring/woke/blob/example.yaml) for an example of adding custom rules.
 You can supply your own rules with `-c path/to/rules.yaml`
 
 The syntax for rules is very basic. You just need a name, a regex used
