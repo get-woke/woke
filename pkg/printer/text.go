@@ -2,7 +2,6 @@ package printer
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/caitlinelfring/woke/pkg/result"
 )
@@ -14,18 +13,16 @@ func NewText() *Text {
 }
 
 func (t *Text) Print(fs *result.FileResults) error {
-	var err error
-	if _, err = fmt.Fprintln(os.Stdout, fs.Filename); err != nil {
-		return err
-	}
-	for _, r := range fs.Results {
-		pos := fmt.Sprintf("%s-%s",
-			r.StartPosition.String(),
-			r.EndPosition.String())
+	fmt.Println(fs.Filename)
 
-		if _, err = fmt.Fprintf(os.Stdout, "    %-14s %-10s %s\n", pos, r.Rule.Severity, r.Reason()); err != nil {
-			return err
-		}
+	for _, r := range fs.Results {
+		pos := fmt.Sprintf("%d:%d-%d:%d",
+			r.StartPosition.Line,
+			r.StartPosition.Column,
+			r.EndPosition.Line,
+			r.EndPosition.Column)
+
+		fmt.Printf("\t%-14s %-10s %s\n", pos, r.Rule.Severity, r.Reason())
 	}
 	return nil
 }
