@@ -4,16 +4,25 @@ import (
 	"fmt"
 
 	"github.com/caitlinelfring/woke/pkg/result"
+	"github.com/fatih/color"
 )
 
-type Text struct{}
-
-func NewText() *Text {
-	return &Text{}
+// Text is a text printer meant for humans to read
+type Text struct {
+	enableColor bool
 }
 
+// NewText returns a text Printer with color optionally disabled
+func NewText(enableColor bool) *Text {
+	return &Text{
+		enableColor: enableColor,
+	}
+}
+
+// Print prints the file results
 func (t *Text) Print(fs *result.FileResults) error {
-	fmt.Println(fs.Filename)
+	color.NoColor = !t.enableColor
+	color.New(color.Underline, color.Bold).Println(fs.Filename)
 
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d:%d",
@@ -21,8 +30,9 @@ func (t *Text) Print(fs *result.FileResults) error {
 			r.StartPosition.Column,
 			r.EndPosition.Line,
 			r.EndPosition.Column)
-
-		fmt.Printf("\t%-14s %-10s %s\n", pos, r.Rule.Severity, r.Reason())
+		sev := r.Rule.Severity.Colorize()
+		fmt.Printf("\t%-14s %-20s %s\n", pos, sev, r.Reason())
 	}
+	fmt.Println()
 	return nil
 }

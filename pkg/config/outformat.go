@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/caitlinelfring/woke/pkg/printer"
+	"github.com/caitlinelfring/woke/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,7 +24,7 @@ func CreatePrinter(f string) printer.Printer {
 	var p printer.Printer
 	switch f {
 	case OutFormatText:
-		p = printer.NewText()
+		p = printer.NewText(util.GetEnvBoolDefault("ENABLE_COLORS", true))
 	case OutFormatSimple:
 		p = printer.NewSimple()
 	}

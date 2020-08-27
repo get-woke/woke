@@ -1,5 +1,7 @@
 package rule
 
+import "github.com/fatih/color"
+
 // Severity is a log severity
 type Severity int
 
@@ -27,4 +29,16 @@ func NewSeverity(s string) Severity {
 
 func (s Severity) String() string {
 	return [...]string{"info", "warn", "error"}[s]
+}
+
+func (s *Severity) Colorize() string {
+	switch *s {
+	case SevInfo:
+		return color.GreenString(s.String())
+	case SevWarn:
+		return color.YellowString(s.String())
+	case SevError:
+		return color.RedString(s.String())
+	}
+	return ""
 }
