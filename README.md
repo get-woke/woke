@@ -63,6 +63,7 @@ Flags:
       --debug               Enable debug logging
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
+  -o, --output string       Output type [text,simple] (default "text")
       --stdin               Read from stdin
   -v, --version             version for woke
 ```
@@ -77,10 +78,8 @@ This can be something like `**/*.go`, or a space-separated list of filenames.
 ```bash
 $ woke test.txt
 test.txt
-    2:2-2:11       warn       Instead of 'Blacklist', consider the following alternative(s): 'denylist,blocklist'
-    3:2-3:12       warn       Instead of 'White-list', consider the following alternative(s): 'allowlist'
-    4:2-4:11       warn       Instead of 'whitelist', consider the following alternative(s): 'allowlist'
-    5:2-5:11       warn       Instead of 'blacklist', consider the following alternative(s): 'denylist,blocklist'
+        4:2-4:11       warn        Instead of 'whitelist', consider the following alternative(s): 'allowlist'
+        5:2-5:11       warn        Instead of 'blacklist', consider the following alternative(s): 'denylist,blocklist'
 ```
 
 ### stdin
@@ -90,7 +89,7 @@ You can also provide text to `woke` via stdin
 ```bash
 $ echo "This has whitelist from stdin" | woke --stdin
 /dev/stdin
-    1:8-1:17       warn       Instead of 'whitelist', consider the following alternative(s): 'allowlist'
+        1:8-1:17       warn       Instead of 'whitelist', consider the following alternative(s): 'allowlist'
 ```
 
 ### Rules
