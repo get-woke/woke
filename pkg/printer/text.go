@@ -10,19 +10,21 @@ import (
 
 // Text is a text printer meant for humans to read
 type Text struct {
-	enableColor bool
+	disableColor bool
 }
 
 // NewText returns a text Printer with color optionally disabled
-func NewText(enableColor bool) *Text {
+func NewText(disableColor bool) *Text {
 	return &Text{
-		enableColor: enableColor,
+		disableColor: disableColor,
 	}
 }
 
 // Print prints the file results
 func (t *Text) Print(fs *result.FileResults) error {
-	color.NoColor = !t.enableColor
+	if t.disableColor {
+		color.NoColor = true
+	}
 	color.New(color.Underline, color.Bold).Println(fs.Filename)
 
 	for _, r := range fs.Results {

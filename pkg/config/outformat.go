@@ -24,7 +24,7 @@ func CreatePrinter(f string) printer.Printer {
 	var p printer.Printer
 	switch f {
 	case OutFormatText:
-		p = printer.NewText(util.GetEnvBoolDefault("ENABLE_COLORS", true))
+		p = printer.NewText(util.GetEnvBoolDefault("DISABLE_COLORS", false))
 	case OutFormatSimple:
 		p = printer.NewSimple()
 	}
