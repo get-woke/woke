@@ -6,9 +6,10 @@ import (
 	"github.com/caitlinelfring/woke/pkg/result"
 )
 
-// Simple
+// Simple is a simple printer meant for a machine to read
 type Simple struct{}
 
+// NewSimple returns a new simple printer
 func NewSimple() *Simple {
 	return &Simple{}
 }
