@@ -105,10 +105,6 @@ Provide a list file globs for files you'd like to check.`,
 			}
 		}
 
-		if len(results) == 0 {
-			log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
-		}
-
 		return err
 	},
 }

@@ -18,7 +18,7 @@ func NewSimple() *Simple {
 // based on golint's output: https://github.com/golang/lint/blob/738671d3881b9731cc63024d5d88cf28db875626/golint/golint.go#L121
 func (p *Simple) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Printf("%v: [%s] %s",
+		fmt.Printf("%v: [%s] %s\n",
 			r.StartPosition,
 			r.Rule.Severity,
 			r.Reason())
