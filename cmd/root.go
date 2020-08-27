@@ -81,7 +81,7 @@ Provide a list file globs for files you'd like to check.`,
 		if err != nil {
 			return err
 		}
-		p := parser.Parser{Rules: c.Rules}
+		p := parser.NewParser(c.Rules)
 
 		var results []*result.FileResults
 		ignorer, _ := ignore.NewIgnore(c.IgnoreFiles)
