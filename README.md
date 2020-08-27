@@ -2,6 +2,7 @@
 
 _I stay woke - Erykah Badu_
 
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/caitlinelfring/woke?logo=github&sort=semver)](https://github.com/caitlinelfring/woke/releases)
 [![Build](https://github.com/caitlinelfring/woke/workflows/Build/badge.svg?branch=main)](https://github.com/caitlinelfring/woke/actions)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/caitlinelfring/woke)](https://pkg.go.dev/github.com/caitlinelfring/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -10,6 +11,27 @@ _I stay woke - Erykah Badu_
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
 ![woke.gif](https://raw.githubusercontent.com/caitlinelfring/woke/main/img/woke.gif)
+
+**Table of Contents**
+
+- [woke](#woke)
+  - [About](#about)
+  - [Installation](#installation)
+    - [Simple installation](#simple-installation)
+    - [Build from source](#build-from-source)
+    - [Releases](#releases)
+    - [Docker](#docker)
+  - [Usage](#usage)
+    - [File globs](#file-globs)
+    - [stdin](#stdin)
+    - [Rules](#rules)
+    - [Ignoring files](#ignoring-files)
+      - [`.wokeignore`](#wokeignore)
+    - [Exit Code](#exit-code)
+  - [Tools](#tools)
+  - [TODO](#todo)
+  - [Resources](#resources)
+  - [License](#license)
 
 ## About
 
@@ -154,12 +176,15 @@ want to inform the author that they can make better word choices.
 If you're using `work` on PRs, you can choose to enforce these rules with a non-zero
 exit code, but running `work --exit-1-on-failure`.
 
+## Tools
+
+- [GitHub Action](https://github.com/marketplace/actions/run-woke)
+
 ## TODO
 
 * Benchmarking
 * Tests
 * What happens when run on a large repo?
-* GitHub Actions
 * More rules
 
 ## Resources
