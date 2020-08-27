@@ -38,6 +38,9 @@ func WalkDirs(paths []string) ([]string, error) {
 
 	for _, p := range paths {
 		err := filepath.Walk(p, func(path string, f os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
 			// Ignore directories
 			if !f.IsDir() {
 				files = append(files, path)
