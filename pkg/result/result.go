@@ -10,7 +10,7 @@ import (
 // Result contains data about the result of a broken rule
 type Result struct {
 	Rule          *rule.Rule
-	Match         string
+	Violation     string
 	StartPosition *token.Position
 	EndPosition   *token.Position
 }
@@ -18,14 +18,14 @@ type Result struct {
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
 func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
-	idxs := r.Regexp.FindAllStringIndex(text, -1)
+	idxs := r.FindAllStringIndex(text)
 
 	for _, idx := range idxs {
 		start := idx[0]
 		end := idx[1]
 		newResult := Result{
-			Rule:  r,
-			Match: text[start:end],
+			Rule:      r,
+			Violation: text[start:end],
 			StartPosition: &token.Position{
 				Filename: filename,
 				Line:     line,
@@ -45,7 +45,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 
 // Reason outputs the suggested alternatives for this rule
 func (r *Result) Reason() string {
-	return fmt.Sprintf("Instead of '%s', consider the following alternative(s): '%s'", r.Match, r.Rule.Alternatives)
+	return r.Rule.Reason(r.Violation)
 }
 
 func (r *Result) String() string {

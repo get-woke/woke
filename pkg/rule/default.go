@@ -1,24 +1,22 @@
 package rule
 
-import "regexp"
-
 // WhitelistRule is the default rule for whitelist
 var WhitelistRule = Rule{
 	Name:         "whitelist",
-	Regexp:       regexp.MustCompile(`\b(white-?list)\b`),
-	Alternatives: "allowlist",
+	Terms:        []string{"whitelist", "white-list"},
+	Alternatives: []string{"allowlist"},
 	Severity:     SevWarn,
 }
 
-// BlacklistRule is the default rule for whitelist
+// BlacklistRule is the default rule for blacklist
 var BlacklistRule = Rule{
 	Name:         "blacklist",
-	Regexp:       regexp.MustCompile(`\b(black-?list)\b`),
-	Alternatives: "denylist,blocklist",
+	Terms:        []string{"blacklist", "black-list"},
+	Alternatives: []string{"blocklist"},
 	Severity:     SevWarn,
 }
 
-// DefaultRules are the default rules in case a config file with rules is not provided
+// DefaultRules are the default rules always used
 var DefaultRules = []*Rule{
 	&WhitelistRule,
 	&BlacklistRule,

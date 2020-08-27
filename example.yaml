@@ -4,10 +4,18 @@ ignore_files:
 
 rules:
   - name: whitelist
-    regexp: \b(white-?list)\b
-    alternatives: allowlist
-    # severity: info
+    terms:
+      - whitelist
+      - white-list
+    alternatives:
+      - allowlist
+    # severity: warn # disabled to show that error is the default
 
   - name: blacklist
-    regexp: \b(black-?list)\b
-    alternatives: denylist,blocklist
+    terms:
+      - blacklist
+      - black-list
+    alternatives:
+      - denylist
+      - blocklist
+    severity: warn
