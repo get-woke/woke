@@ -5,7 +5,6 @@ import (
 
 	"github.com/caitlinelfring/woke/pkg/result"
 	"github.com/fatih/color"
-	"github.com/rs/zerolog/log"
 )
 
 // Text is a text printer meant for humans to read
@@ -37,10 +36,6 @@ func (t *Text) Print(fs *result.FileResults) error {
 		fmt.Printf("\t%-14s %-20s %s\n", pos, sev, r.Reason())
 	}
 	fmt.Println()
-
-	if len(fs.Results) == 0 {
-		log.Info().Msg("👏 Great work using inclusive language in your code! Stay woke! 🙌")
-	}
 
 	return nil
 }
