@@ -1,8 +1,6 @@
 package result
 
-import (
-	"strings"
-)
+import "strings"
 
 // FileResults contains all the Results for the file
 type FileResults struct {

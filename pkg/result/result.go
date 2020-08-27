@@ -11,7 +11,6 @@ import (
 type Result struct {
 	Rule          *rule.Rule
 	Match         string
-	Filename      string
 	StartPosition *token.Position
 	EndPosition   *token.Position
 }
@@ -25,16 +24,17 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 		start := idx[0]
 		end := idx[1]
 		newResult := Result{
-			Rule:     r,
-			Match:    text[start:end],
-			Filename: filename,
+			Rule:  r,
+			Match: text[start:end],
 			StartPosition: &token.Position{
-				Line:   line,
-				Column: start,
+				Filename: filename,
+				Line:     line,
+				Column:   start,
 			},
 			EndPosition: &token.Position{
-				Line:   line,
-				Column: end,
+				Filename: filename,
+				Line:     line,
+				Column:   end,
 			},
 		}
 
