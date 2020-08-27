@@ -56,7 +56,7 @@ func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) (results []*
 	for _, f := range parsable {
 		fileResult, err := p.ParseFile(f)
 		if err != nil {
-			log.Error().Err(err).Str("file", f).Msg("parse failed")
+			log.Debug().Err(err).Str("file", f).Msg("parse failed")
 			continue
 		}
 		if fileResult == nil {
