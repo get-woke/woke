@@ -50,9 +50,11 @@ func main() {
 				c.Send(fmt.Sprintf("%c", char))
 				time.Sleep(time.Millisecond * 60)
 			}
+			time.Sleep(time.Millisecond * 500)
 			c.Send("\n")
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Millisecond * 1500)
 		}
+		time.Sleep(time.Millisecond * 2000)
 	}()
 
 	wg.Wait()
