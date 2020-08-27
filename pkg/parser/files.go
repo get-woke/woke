@@ -12,28 +12,18 @@ const defaultPath = "."
 
 // WalkDirsWithIgnores returns a list of files that can be parsed after the ignorer has
 // excluded files that should be ignored
-func WalkDirsWithIgnores(paths []string, ignorer *ignore.Ignore) (files []string) {
+func WalkDirsWithIgnores(paths []string, ignorer *ignore.Ignore) []string {
 	if len(paths) == 0 {
 		paths = []string{defaultPath}
 	}
 
-	allFiles, _ := WalkDirs(paths)
-	if ignorer == nil {
-		return allFiles
-	}
+	files, _ := WalkDirs(paths, ignorer)
 
-	for _, f := range allFiles {
-		if ignorer.Match(f) {
-			continue
-		}
-		files = append(files, f)
-	}
-
-	return
+	return files
 }
 
 // WalkDirs returns all known files in the provided paths using filepath.Walk
-func WalkDirs(paths []string) ([]string, error) {
+func WalkDirs(paths []string, ignorer *ignore.Ignore) ([]string, error) {
 	var files []string
 
 	for _, p := range paths {
@@ -41,8 +31,9 @@ func WalkDirs(paths []string) ([]string, error) {
 			if err != nil {
 				return err
 			}
-			// Ignore directories
-			if !f.IsDir() {
+
+			// Ignore directories and files that match the ignorer
+			if !f.IsDir() && !ignorer.Match(path) {
 				files = append(files, path)
 			}
 			return nil
