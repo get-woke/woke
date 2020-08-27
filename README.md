@@ -174,12 +174,13 @@ By default, `woke` will exit with a successful exit code when there are any rule
 The idea is, if you run `woke` on PRs, you may not want to block a merge, but you do
 want to inform the author that they can make better word choices.
 
-If you're using `work` on PRs, you can choose to enforce these rules with a non-zero
-exit code, but running `work --exit-1-on-failure`.
+If you're using `woke` on PRs, you can choose to enforce these rules with a non-zero
+exit code, but running `woke --exit-1-on-failure`.
 
 ## Tools
 
 - [GitHub Action](https://github.com/marketplace/actions/run-woke)
+- [GitHub Action (reviewdog)](https://github.com/marketplace/actions/run-woke-with-reviewdog)
 
 ## TODO
 
