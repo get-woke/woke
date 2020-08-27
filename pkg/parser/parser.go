@@ -17,6 +17,12 @@ type Parser struct {
 	Rules []*rule.Rule
 }
 
+func NewParser(rules []*rule.Rule) *Parser {
+	return &Parser{
+		Rules: rules,
+	}
+}
+
 // Parse can parse different types of inputs and return the results
 func (p *Parser) Parse(t interface{}, ignorer *ignore.Ignore) (results []*result.FileResults) {
 	switch v := t.(type) {
