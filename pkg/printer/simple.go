@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"go/token"
 
 	"github.com/caitlinelfring/woke/pkg/result"
 )
@@ -19,9 +20,23 @@ func NewSimple() *Simple {
 func (p *Simple) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
 		fmt.Printf("%v: [%s] %s\n",
-			r.StartPosition,
+			positionString(r.StartPosition),
 			r.Rule.Severity,
 			r.Reason())
 	}
 	return nil
+}
+
+// positionString is similar to Position.String, but includes the Column
+// even if the column is 0
+func positionString(pos *token.Position) string {
+	s := pos.Filename
+	if pos.IsValid() {
+		if s != "" {
+			s += ":"
+		}
+		s += fmt.Sprintf("%d", pos.Line)
+		s += fmt.Sprintf(":%d", pos.Column)
+	}
+	return s
 }
