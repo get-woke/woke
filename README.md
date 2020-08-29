@@ -46,7 +46,8 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 ### Simple installation
 
 ```bash
-curl -sSfL https://raw.githubusercontent.com/caitlinelfring/woke/main/install.sh | bash -s -- -b /usr/local/bin
+curl -sSfL https://git.io/get-woke | \
+  bash -s -- -b /usr/local/bin
 ```
 
 Feel free to change the path from `/usr/local/bin`, just make sure `woke`
