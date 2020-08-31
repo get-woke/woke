@@ -61,5 +61,5 @@ func readIgnoreFile(file string) []string {
 		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
 	}
 
-	return strings.Split(string(buffer), "\n")
+	return strings.Split(strings.TrimSpace(string(buffer)), "\n")
 }
