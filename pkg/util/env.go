@@ -20,5 +20,5 @@ func GetEnvBoolDefault(envVar string, defaultValue bool) bool {
 	if b, err := strconv.ParseBool(val); err == nil {
 		return b
 	}
-	return false
+	return defaultValue
 }
