@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/caitlinelfring/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/rs/zerolog/log"
 )
 

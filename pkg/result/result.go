@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go/token"
 
-	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/get-woke/woke/pkg/rule"
 )
 
 // Result contains data about the result of a broken rule

@@ -4,7 +4,7 @@ build:
 
 run:
 	docker run --rm -it \
-		-v `pwd`:/go/src/github.com/caitlinelfring/woke \
+		-v `pwd`:/go/src/github.com/get-woke/woke \
 		woke "./*.go ./**/*.go ./**/**/*.go *.yaml"
 
 .PHONY: build run

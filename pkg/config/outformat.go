@@ -3,8 +3,8 @@ package config
 import (
 	"strings"
 
-	"github.com/caitlinelfring/woke/pkg/printer"
-	"github.com/caitlinelfring/woke/pkg/util"
+	"github.com/get-woke/woke/pkg/printer"
+	"github.com/get-woke/woke/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 

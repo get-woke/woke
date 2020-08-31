@@ -3,8 +3,8 @@ package printer
 import (
 	"fmt"
 
-	"github.com/caitlinelfring/woke/pkg/result"
 	"github.com/fatih/color"
+	"github.com/get-woke/woke/pkg/result"
 )
 
 // Text is a text printer meant for humans to read

@@ -3,8 +3,8 @@ package printer
 import (
 	"fmt"
 
-	"github.com/caitlinelfring/woke/pkg/result"
-	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/rule"
 )
 
 // GitHubActions is a GitHubActions printer meant for use by a GitHub Action annotation

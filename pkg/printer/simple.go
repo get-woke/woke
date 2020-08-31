@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go/token"
 
-	"github.com/caitlinelfring/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/result"
 )
 
 // Simple is a simple printer meant for a machine to read

@@ -2,11 +2,11 @@
 
 _I stay woke - Erykah Badu_
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/caitlinelfring/woke?logo=github&sort=semver)](https://github.com/caitlinelfring/woke/releases)
-[![Build](https://github.com/caitlinelfring/woke/workflows/Build/badge.svg?branch=main)](https://github.com/caitlinelfring/woke/actions)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/caitlinelfring/woke)](https://pkg.go.dev/github.com/caitlinelfring/woke)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)](https://github.com/get-woke/woke/releases)
+[![Build](https://github.com/get-woke/woke/workflows/Build/badge.svg?branch=main)](https://github.com/get-woke/woke/actions)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/caitlinelfring/woke)](https://goreportcard.com/report/github.com/caitlinelfring/woke)
+[![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
@@ -58,14 +58,14 @@ is available on your `$PATH` (check with `woke --version`).
 Install the go toolchain: <https://golang.org/doc/install>
 
 ```bash
-go get -u github.com/caitlinelfring/woke
+go get -u github.com/get-woke/woke
 ```
 
 `woke` will be installed to `$GOPATH/bin/woke`.
 
 ### Releases
 
-Download the latest binary from [Releases](https://github.com/caitlinelfring/woke/releases/latest)
+Download the latest binary from [Releases](https://github.com/get-woke/woke/releases/latest)
 
 ### Docker
 
@@ -73,10 +73,10 @@ You can run `woke` within docker. You will need to mount a volume that contains 
 
 ```bash
 ## Run with all defaults, within the mounted /src directory
-docker run -v $(pwd):/src -w /src celfring/woke
+docker run -v $(pwd):/src -w /src getwoke/woke
 
 ## Provide rules config
-docker run -v $(pwd):/src -w /src celfring/woke \
+docker run -v $(pwd):/src -w /src getwoke/woke \
   woke -c my-rules.yaml
 ```
 
@@ -130,9 +130,9 @@ $ echo "This has whitelist from stdin" | woke --stdin
 
 ### Rules
 
-A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/caitlinelfring/woke/blob/main/pkg/rule/default.go).
+A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.go).
 
-See [example.yaml](https://github.com/caitlinelfring/woke/blob/example.yaml) for an example of adding custom rules.
+See [example.yaml](https://github.com/get-woke/woke/blob/example.yaml) for an example of adding custom rules.
 You can supply your own rules with `-c path/to/rules.yaml`
 
 The syntax for rules is very basic. You just need a name, a list of terms to match that violate the rule,
@@ -200,4 +200,4 @@ exit code, but running `woke --exit-1-on-failure`.
 ## License
 
 This application is licensed under the MIT License, you may obtain a copy of it
-[here](https://github.com/caitlinelfring/woke/blob/main/LICENSE).
+[here](https://github.com/get-woke/woke/blob/main/LICENSE).
