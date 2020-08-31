@@ -46,7 +46,7 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 ### Simple installation
 
 ```bash
-curl -sSfL https://git.io/get-woke | \
+curl -sSfL https://git.io/getwoke | \
   bash -s -- -b /usr/local/bin
 ```
 
