@@ -3,7 +3,7 @@ FROM golang:1.14
 
 RUN apt-get update && apt-get install -y inotify-tools
 
-ENV ROOT_PATH /go/src/github.com/caitlinelfring/woke
+ENV ROOT_PATH /go/src/github.com/get-woke/woke
 WORKDIR $ROOT_PATH
 COPY go.mod ./
 COPY go.sum ./

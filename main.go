@@ -25,7 +25,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/caitlinelfring/woke/cmd"
+	"github.com/get-woke/woke/cmd"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

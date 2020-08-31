@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/caitlinelfring/woke/pkg/util"
+	"github.com/get-woke/woke/pkg/util"
 )
 
 // Rule is a linter rule

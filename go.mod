@@ -1,4 +1,4 @@
-module github.com/caitlinelfring/woke
+module github.com/get-woke/woke
 
 go 1.14
 

@@ -3,7 +3,7 @@ package result
 import (
 	"strings"
 
-	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/get-woke/woke/pkg/rule"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

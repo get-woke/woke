@@ -3,7 +3,7 @@ package config
 import (
 	"io/ioutil"
 
-	"github.com/caitlinelfring/woke/pkg/rule"
+	"github.com/get-woke/woke/pkg/rule"
 
 	"gopkg.in/yaml.v2"
 )

@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/caitlinelfring/woke/pkg/ignore"
-	"github.com/caitlinelfring/woke/pkg/result"
-	"github.com/caitlinelfring/woke/pkg/rule"
-	"github.com/caitlinelfring/woke/pkg/util"
+	"github.com/get-woke/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/rule"
+	"github.com/get-woke/woke/pkg/util"
 	"github.com/rs/zerolog/log"
 )
 

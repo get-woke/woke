@@ -34,4 +34,4 @@ jobs:
         env:
           DOCKERHUB_USERNAME: celfring
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKERHUB_REPOSITORY: celfring/woke
+          DOCKERHUB_REPOSITORY: getwoke/woke
