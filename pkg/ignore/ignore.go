@@ -27,7 +27,7 @@ func NewIgnore(lines []string) (*Ignore, error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
-			Dur("durationMS", time.Now().Sub(start)).
+			Dur("durationMS", time.Since(start)).
 			Msg("finished compiling ignores")
 	}()
 

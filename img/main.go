@@ -15,7 +15,7 @@ import (
 func main() {
 	c, err := expect.NewConsole(expect.WithStdout(os.Stdout))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer c.Close()
 
@@ -58,5 +58,5 @@ func main() {
 	}()
 
 	wg.Wait()
-	cmd.Process.Signal(syscall.SIGTERM)
+	_ = cmd.Process.Signal(syscall.SIGTERM)
 }

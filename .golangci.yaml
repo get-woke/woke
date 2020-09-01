@@ -1,0 +1,4 @@
+# https://golangci-lint.run/usage/configuration/
+linters-settings:
+  errcheck:
+    ignore: fmt:.*,github.com/Netflix/go-expect:.*
