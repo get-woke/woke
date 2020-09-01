@@ -36,9 +36,13 @@ func TestNewConfig(t *testing.T) {
 	c, err = NewConfig("")
 	assert.NoError(t, err)
 
-	expected = &Config{
+	expectedEmpty := &Config{
 		Rules:       rule.DefaultRules,
-		IgnoreFiles: []string{},
+		IgnoreFiles: []string(nil),
 	}
-	assert.Equal(t, expected, c)
+	assert.Equal(t, expectedEmpty, c)
+
+	missing, err := NewConfig("testdata/missing.yaml")
+	assert.Error(t, err)
+	assert.Equal(t, expectedEmpty, missing)
 }
