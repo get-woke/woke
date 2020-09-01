@@ -1,0 +1,19 @@
+ignore_files:
+  - README.md
+  - pkg/rule/default.go
+
+rules:
+  - name: rule1
+    terms:
+      - rule1
+    alternatives:
+      - alt-rule1
+    severity: warn
+
+  - name: rule2
+    terms:
+      - rule2
+      - rule-2
+    alternatives:
+      - alt-rule2
+      - alt-rule-2
