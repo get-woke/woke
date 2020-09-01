@@ -31,6 +31,7 @@ import (
 	"github.com/get-woke/woke/pkg/config"
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/parser"
+	"github.com/get-woke/woke/pkg/printer"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -81,7 +82,7 @@ Provide a list file globs for files you'd like to check.`,
 		if err != nil {
 			return err
 		}
-		print, err := config.CreatePrinter(output)
+		print, err := printer.NewPrinter(output)
 		if err != nil {
 			return err
 		}
@@ -129,7 +130,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
-	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", config.OutFormatText, fmt.Sprintf("Output type [%s]", config.OutFormatsString))
+	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
 func setLogLevel() {
