@@ -4,10 +4,11 @@ _I stay woke - Erykah Badu_
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)](https://github.com/get-woke/woke/releases)
 [![Build](https://github.com/get-woke/woke/workflows/Build/badge.svg?branch=main)](https://github.com/get-woke/woke/actions)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
+[![GoDoc](https://godoc.org/github.com/get-woke/woke?status.svg)](https://godoc.org/github.com/get-woke/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
 [![Coverage Status](https://coveralls.io/repos/github/get-woke/woke/badge.svg?branch=main)](https://coveralls.io/github/get-woke/woke?branch=main)
+<!-- Not working -- keep getting 404 [![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke) -->
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
@@ -189,8 +190,7 @@ exit code, but running `woke --exit-1-on-failure`.
 ## TODO
 
 * Benchmarking
-* Tests
-* What happens when run on a large repo?
+  * What happens when run on a large repo?
 * More rules
 
 ## Resources
