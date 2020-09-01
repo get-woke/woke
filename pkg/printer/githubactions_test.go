@@ -35,3 +35,12 @@ func TestTranslateSeverityForAction(t *testing.T) {
 	assert.Equal(t, translateSeverityForAction(rule.SevWarn), "warning")
 	assert.Equal(t, translateSeverityForAction(rule.SevInfo), "warning")
 }
+
+func TestGitHubActions_Print(t *testing.T) {
+	p := NewGitHubActions()
+	got := captureOutput(func() {
+		assert.NoError(t, p.Print(generateFileResult()))
+	})
+	expected := "::warning file=foo.txt,line=5,col=3::`blacklist` may be insensitive, use `blocklist` instead\n"
+	assert.Equal(t, expected, got)
+}
