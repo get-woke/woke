@@ -24,7 +24,8 @@ func (t *Text) Print(fs *result.FileResults) error {
 	if t.disableColor {
 		color.NoColor = true
 	}
-	color.New(color.Underline, color.Bold).Println(fs.Filename)
+
+	fmt.Println(color.New(color.Underline, color.Bold).Sprint(fs.Filename))
 
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d:%d",
