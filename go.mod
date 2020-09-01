@@ -8,6 +8,6 @@ require (
 	github.com/rs/zerolog v1.19.0
 	github.com/sabhiram/go-gitignore v0.0.0-20180611051255-d3107576ba94
 	github.com/spf13/cobra v1.0.0
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.6.1
 	gopkg.in/yaml.v2 v2.3.0
 )
