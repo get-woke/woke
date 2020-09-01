@@ -118,10 +118,10 @@ This can be something like `**/*.go`, or a space-separated list of filenames.
 ```bash
 $ woke test.txt
 test.txt
-        2:2-2:11       warn        `Blacklist` maybe be insensitive, use `blocklist` instead
-        3:2-3:12       warn        `White-list` maybe be insensitive, use `allowlist` instead
-        4:2-4:11       warn        `whitelist` maybe be insensitive, use `allowlist` instead
-        5:2-5:11       warn        `blacklist` maybe be insensitive, use `blocklist` instead
+        2:2-2:11       warn        `Blacklist` may be insensitive, use `blocklist` instead
+        3:2-3:12       warn        `White-list` may be insensitive, use `allowlist` instead
+        4:2-4:11       warn        `whitelist` may be insensitive, use `allowlist` instead
+        5:2-5:11       warn        `blacklist` may be insensitive, use `blocklist` instead
 ```
 
 ### stdin
@@ -131,7 +131,7 @@ You can also provide text to `woke` via stdin
 ```bash
 $ echo "This has whitelist from stdin" | woke --stdin
 /dev/stdin
-        1:9-1:18       warn        `whitelist` maybe be insensitive, use `allowlist` instead
+        1:9-1:18       warn        `whitelist` may be insensitive, use `allowlist` instead
 ```
 
 ### Rules

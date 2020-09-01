@@ -32,7 +32,7 @@ func (r *Rule) String() string {
 
 // Reason returns a human-readable reason for the rule violation
 func (r *Rule) Reason(violation string) string {
-	reason := fmt.Sprintf("`%s` maybe be insensitive, ", violation)
+	reason := fmt.Sprintf("`%s` may be insensitive, ", violation)
 	if len(r.Alternatives) > 0 {
 		alt := make([]string, len(r.Alternatives))
 		for i, a := range r.Alternatives {
