@@ -16,7 +16,9 @@ type Config struct {
 
 // NewConfig returns a new Config
 func NewConfig(filename string) (*Config, error) {
-	var c Config
+	c := Config{
+		IgnoreFiles: []string{},
+	}
 	c.AddDefaultRules()
 
 	if filename != "" {
