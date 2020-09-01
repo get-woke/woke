@@ -38,8 +38,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const defaultGlob = "**"
-
 var (
 	// flags
 	exitOneOnFailure bool
@@ -74,7 +72,7 @@ Provide a list file globs for files you'd like to check.`,
 		start := time.Now()
 		defer func() {
 			log.Debug().
-				Dur("durationMS", time.Now().Sub(start)).
+				Dur("durationMS", time.Since(start)).
 				Msg("woke completed")
 		}()
 

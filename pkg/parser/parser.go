@@ -76,7 +76,7 @@ func (p *Parser) parseFile(file *os.File) (*result.FileResults, error) {
 	defer func() {
 		log.Debug().
 			Str("file", file.Name()).
-			Dur("durationMS", time.Now().Sub(start)).
+			Dur("durationMS", time.Since(start)).
 			Msg("finished Parse")
 	}()
 
