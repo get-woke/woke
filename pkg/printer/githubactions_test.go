@@ -27,7 +27,7 @@ func TestFormatResultForGitHubAction(t *testing.T) {
 		},
 	}
 	got := formatResultForGitHubAction(&testResult)
-	assert.Equal(t, "::warning file=my/file,line=5,col=3::`whitelist` maybe be insensitive, use `allowlist` instead", got)
+	assert.Equal(t, "::warning file=my/file,line=5,col=3::"+testResult.Rule.Reason(testResult.Violation), got)
 }
 
 func TestTranslateSeverityForAction(t *testing.T) {
