@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/get-woke/woke/pkg/printer"
@@ -22,7 +23,7 @@ var OutFormats = []string{
 
 var OutFormatsString = strings.Join(OutFormats, ",")
 
-func CreatePrinter(f string) printer.Printer {
+func CreatePrinter(f string) (printer.Printer, error) {
 	var p printer.Printer
 	switch f {
 	case OutFormatText:
@@ -31,7 +32,9 @@ func CreatePrinter(f string) printer.Printer {
 		p = printer.NewSimple()
 	case OutFormatGitHubActions:
 		p = printer.NewGitHubActions()
+	default:
+		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}
 	log.Debug().Str("printer", f).Msg("created new printer")
-	return p
+	return p, nil
 }

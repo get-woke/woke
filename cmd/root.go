@@ -81,6 +81,11 @@ Provide a list file globs for files you'd like to check.`,
 		if err != nil {
 			return err
 		}
+		print, err := config.CreatePrinter(output)
+		if err != nil {
+			return err
+		}
+
 		p := parser.NewParser(c.Rules)
 
 		var results []*result.FileResults
@@ -93,7 +98,6 @@ Provide a list file globs for files you'd like to check.`,
 		}
 
 		if len(results) > 0 {
-			print := config.CreatePrinter(output)
 			for _, res := range results {
 				print.Print(res)
 			}
