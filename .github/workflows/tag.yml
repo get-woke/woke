@@ -35,3 +35,9 @@ jobs:
           DOCKERHUB_USERNAME: celfring
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           DOCKERHUB_REPOSITORY: getwoke/woke
+
+      - name: Update pkg.go.dev
+        uses: andrewslotin/go-proxy-pull-action@v1.0.0
+
+      - name: Update go report card
+        uses: creekorful/goreportcard-action@v1.0
