@@ -28,7 +28,7 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 		log.Debug().
 			Str("file", file.Name()).
 			Dur("durationMS", time.Since(start)).
-			Msg("finished generateFileViolationsAll")
+			Msg("finished generateFileViolations")
 	}()
 
 	results := &result.FileResults{
