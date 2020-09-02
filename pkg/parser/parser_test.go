@@ -62,6 +62,12 @@ func TestParser_ParsePaths(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, fr3, 0)
 
+	// Test with multiple paths supplied
+	// Disabled since this functionality is currently broken
+	frAll, err := p.ParsePaths(f1.Name(), f2.Name(), f3.Name())
+	assert.NoError(t, err)
+	assert.Len(t, frAll, 1)
+
 	// Test ignored file
 	f4, err := newFile("i have a whitelist violation, but am ignored\n")
 	assert.NoError(t, err)
