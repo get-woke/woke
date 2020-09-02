@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"fmt"
 	"go/token"
 	"testing"
 
@@ -38,9 +39,10 @@ func TestSimple_positionString(t *testing.T) {
 
 func TestSimple_Print(t *testing.T) {
 	p := NewSimple()
+	res := generateFileResult()
 	got := captureOutput(func() {
-		assert.NoError(t, p.Print(generateFileResult()))
+		assert.NoError(t, p.Print(res))
 	})
-	expected := "foo.txt:5:3: [warn] `blacklist` may be insensitive, use `blocklist` instead\n"
+	expected := fmt.Sprintf("foo.txt:5:3: [warn] %s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }

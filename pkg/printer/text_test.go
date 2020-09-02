@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,9 +9,10 @@ import (
 
 func TestText_Print(t *testing.T) {
 	p := NewText(true)
+	res := generateFileResult()
 	got := captureOutput(func() {
-		assert.NoError(t, p.Print(generateFileResult()))
+		assert.NoError(t, p.Print(res))
 	})
-	expected := "foo.txt\n\t5:3-5:12       warn                 `blacklist` may be insensitive, use `blocklist` instead\n\n"
+	expected := fmt.Sprintf("foo.txt\n\t5:3-5:12       warn                 %s\n\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }
