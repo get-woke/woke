@@ -1,5 +1,6 @@
 ## BE SURE TO RUN `go generate` and commit the changes when changing
 rules:
+  # Most of these are based on https://twitter.com/TwitterEng/status/1278733303508418560
   - name: whitelist
     terms:
       - whitelist
@@ -16,3 +17,70 @@ rules:
       - denylist
       - blocklist
     severity: warning
+
+  - name: master-slave
+    terms:
+      - master-slave
+      - master/slave
+    alternatives:
+      - leader/follower
+      - primary/replica
+      - primary/standby
+
+  - name: slave
+    terms:
+      - slave
+    alternatives:
+      - follower
+      - replica
+      - standby
+
+  - name: grandfathered
+    terms:
+      - grandfathered
+    alternatives:
+      - legacy status
+
+  - name: man hours
+    terms:
+      - man hours
+      - man-hours
+    alternatives:
+      - person hours
+      - engineer hours
+
+  - name: sanity check
+    terms:
+      - sanity check
+      - sanity-check
+      - sanity
+    alternatives:
+      - quick check
+      - confidence check
+      - coherence check
+
+  - name: dummy
+    terms:
+      - dummy value
+      - dummy
+    alternatives:
+      - placeholder value
+      - sample value
+
+  - name: he
+    terms:
+      - he
+      - his
+      - him
+    alternatives:
+      - they
+      - them
+      - their
+  - name: guys
+    terms:
+      - guys
+    alternatives:
+      - folks
+      - people
+      - you all
+      - y'all

@@ -46,7 +46,7 @@ func (r *Rule) Reason(violation string) string {
 	return reason
 }
 
-// Reason returns a human-readable reason for the rule violation
+// ReasonWithNote returns a human-readable reason for the rule violation
 // with an additional note, if defined.
 func (r *Rule) ReasonWithNote(violation string) string {
 	if len(r.Note) == 0 {
