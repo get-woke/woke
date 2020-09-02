@@ -26,6 +26,10 @@ run() {
   go run main.go -c example.yaml --debug
 }
 
+# Exit on ctrl-c (without this, ctrl-c would go to inotifywait, causing it to
+# reload instead of exit):
+trap "exit 0" SIGINT SIGTERM
+
 run
 while wait_for_changes; do
   run
