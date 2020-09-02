@@ -45,6 +45,10 @@ func IsTextFile(file *os.File) error {
 		return ErrFileEmpty
 	}
 
+	if e.IsDir() {
+		return os.ErrInvalid
+	}
+
 	if !isTextFile(file) {
 		return ErrFileNotText
 	}

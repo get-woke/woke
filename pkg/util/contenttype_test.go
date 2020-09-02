@@ -27,4 +27,26 @@ func TestIsTextFile(t *testing.T) {
 	defer f4.Close()
 	err4 := IsTextFile(f4)
 	assert.Error(t, err4)
+
+	f5, _ := os.Open("testdata")
+	defer f5.Close()
+	err5 := IsTextFile(f5)
+	assert.EqualError(t, err5, os.ErrInvalid.Error())
+}
+
+func TestIsTextFileFromFilename(t *testing.T) {
+	err := IsTextFileFromFilename("testdata/empty.txt")
+	assert.EqualError(t, err, ErrFileEmpty.Error())
+
+	err2 := IsTextFileFromFilename("testdata/binary.dat")
+	assert.EqualError(t, err2, ErrFileNotText.Error())
+
+	err3 := IsTextFileFromFilename("testdata/text.txt")
+	assert.NoError(t, err3)
+
+	err4 := IsTextFileFromFilename("testdata/missing.txt")
+	assert.True(t, os.IsNotExist(err4))
+
+	err5 := IsTextFileFromFilename("testdata")
+	assert.EqualError(t, err5, os.ErrInvalid.Error())
 }
