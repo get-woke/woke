@@ -26,6 +26,15 @@ func isTextFile(file *os.File) bool {
 	return strings.HasPrefix(contentType, "text/plain")
 }
 
+func IsTextFileFromFilename(filename string) error {
+	f, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return IsTextFile(f)
+}
+
 // IsTextFile returns an error if the file is not of content-type 'text/plain'
 func IsTextFile(file *os.File) error {
 	e, err := file.Stat()
