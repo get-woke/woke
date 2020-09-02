@@ -1,0 +1,13 @@
+# First: Install pre-commit https://pre-commit.com/#install
+# Then, run `pre-commit install`
+repos:
+  - repo: git://github.com/caitlinelfring/pre-commit-golang
+    rev: master
+    hooks:
+      - id: go-fmt
+      - id: go-vet
+      - id: go-imports
+      - id: go-cyclo
+        args: [-over=15]
+      - id: golangci-lint
+      - id: go-mod-tidy
