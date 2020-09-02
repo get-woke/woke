@@ -11,7 +11,7 @@ _I stay woke - Erykah Badu_
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
-![woke.gif](https://raw.githubusercontent.com/get-woke/woke/main/img/woke.gif)
+![woke.gif](https://raw.githubusercontent.com/get-woke/get-woke.github.io/main/img/woke.gif)
 
 **Table of Contents**
 
