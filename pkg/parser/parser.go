@@ -11,7 +11,6 @@ import (
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
-	"github.com/rs/zerolog/log"
 )
 
 // Parser parses files and finds lines that break rules
@@ -27,25 +26,8 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	}
 }
 
-// Parse can parse different types of inputs and return the results
-func (p *Parser) Parse(t interface{}) ([]result.FileResults, error) {
-	var paths []string
-	switch v := t.(type) {
-	case []string:
-		paths = v
-
-	case string:
-		paths = []string{v}
-
-	default:
-		log.Panic().Interface("v", v).Msg("Parse does not support type")
-	}
-
-	return p.ParsePaths(paths)
-}
-
 // ParsePaths parses all files provided and returns the results
-func (p *Parser) ParsePaths(paths []string) (results []result.FileResults, err error) {
+func (p *Parser) ParsePaths(paths ...string) (results []result.FileResults, err error) {
 	// data provided through stdin
 	if pathsIncludeStdin(paths) {
 		r, err := generateFileViolations(os.Stdin, p.Rules)

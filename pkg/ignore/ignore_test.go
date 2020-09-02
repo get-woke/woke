@@ -7,7 +7,7 @@ import (
 )
 
 func TestIgnoreMatch(t *testing.T) {
-	i, err := NewIgnore([]string{"my/files/*"})
+	i, err := NewIgnore("my/fles/*")
 	assert.NoError(t, err)
 	assert.NotNil(t, i)
 
@@ -18,5 +18,5 @@ func TestIgnoreMatch(t *testing.T) {
 func TestReadIgnoreFIle(t *testing.T) {
 	lines := readIgnoreFile("testdata/.gitignore")
 
-	assert.Equal(t, []string{"*.DS_Store"}, lines)
+	assert.Equal(t, "*.DS_Store", lines)
 }

@@ -83,7 +83,7 @@ Provide a list file globs for files you'd like to check.`,
 			return err
 		}
 
-		ignorer, err := ignore.NewIgnore(cfg.IgnoreFiles)
+		ignorer, err := ignore.NewIgnore(cfg.IgnoreFiles...)
 		if err != nil {
 			return err
 		}
@@ -93,7 +93,7 @@ Provide a list file globs for files you'd like to check.`,
 		if stdin {
 			args = []string{os.Stdin.Name()}
 		}
-		results, err := p.ParsePaths(args)
+		results, err := p.ParsePaths(args...)
 		if err != nil {
 			return err
 		}
