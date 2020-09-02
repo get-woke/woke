@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"fmt"
 	"go/token"
 	"testing"
 
@@ -38,9 +39,10 @@ func TestTranslateSeverityForAction(t *testing.T) {
 
 func TestGitHubActions_Print(t *testing.T) {
 	p := NewGitHubActions()
+	res := generateFileResult()
 	got := captureOutput(func() {
-		assert.NoError(t, p.Print(generateFileResult()))
+		assert.NoError(t, p.Print(res))
 	})
-	expected := "::warning file=foo.txt,line=5,col=3::`blacklist` may be insensitive, use `blocklist` instead\n"
+	expected := fmt.Sprintf("::warning file=foo.txt,line=5,col=3::%s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }
