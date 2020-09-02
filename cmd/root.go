@@ -25,6 +25,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -32,7 +33,6 @@ import (
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
-	"github.com/get-woke/woke/pkg/result"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -67,6 +67,8 @@ to suit your needs.
 Provide a list file globs for files you'd like to check.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		setLogLevel()
+		runtime.GOMAXPROCS(runtime.NumCPU())
+
 		log.Debug().Msg(getVersion("default"))
 
 		start := time.Now()
@@ -76,29 +78,34 @@ Provide a list file globs for files you'd like to check.`,
 				Msg("woke completed")
 		}()
 
-		c, err := config.NewConfig(ruleConfig)
+		cfg, err := config.NewConfig(ruleConfig)
 		if err != nil {
 			return err
 		}
+
+		ignorer, err := ignore.NewIgnore(cfg.IgnoreFiles)
+		if err != nil {
+			return err
+		}
+
+		p := parser.NewParser(cfg.Rules, ignorer)
+
+		if stdin {
+			args = []string{os.Stdin.Name()}
+		}
+		results, err := p.ParsePaths(args)
+		if err != nil {
+			return err
+		}
+
 		print, err := printer.NewPrinter(output)
 		if err != nil {
 			return err
 		}
 
-		p := parser.NewParser(c.Rules)
-
-		var results []*result.FileResults
-		ignorer, _ := ignore.NewIgnore(c.IgnoreFiles)
-
-		if stdin {
-			results = p.Parse(os.Stdin, ignorer)
-		} else {
-			results = p.Parse(args, ignorer)
-		}
-
 		if len(results) > 0 {
 			for _, res := range results {
-				print.Print(res)
+				print.Print(&res)
 			}
 
 			if exitOneOnFailure {

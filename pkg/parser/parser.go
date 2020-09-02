@@ -1,9 +1,11 @@
 package parser
 
 import (
-	"bufio"
+	"errors"
+	"fmt"
 	"os"
-	"time"
+	"path/filepath"
+	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/result"
@@ -14,116 +16,144 @@ import (
 
 // Parser parses files and finds lines that break rules
 type Parser struct {
-	Rules []*rule.Rule
+	Rules   []*rule.Rule
+	Ignorer *ignore.Ignore
 }
 
-func NewParser(rules []*rule.Rule) *Parser {
+func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	return &Parser{
-		Rules: rules,
+		Rules:   rules,
+		Ignorer: ignorer,
 	}
 }
 
 // Parse can parse different types of inputs and return the results
-func (p *Parser) Parse(t interface{}, ignorer *ignore.Ignore) (results []*result.FileResults) {
+func (p *Parser) Parse(t interface{}) ([]result.FileResults, error) {
+	var paths []string
 	switch v := t.(type) {
 	case []string:
-		return p.ParseFiles(v, ignorer)
+		paths = v
 
 	case string:
-		r, err := p.ParseFile(v)
-		if err != nil {
-			log.Error().Err(err).Str("input", v).Msg("error parsing file provided by string input")
-		}
-		return append(results, r)
-
-	case *os.File:
-		r, err := p.parseFile(v)
-		if err != nil {
-			log.Error().Err(err).Str("input", v.Name()).Msg("error parsing file provided by os.File input")
-		}
-		return append(results, r)
+		paths = []string{v}
 
 	default:
 		log.Panic().Interface("v", v).Msg("Parse does not support type")
 	}
-	return nil
+
+	return p.ParsePaths(paths)
 }
 
-// ParseFiles parses all files provided and returns the results
-func (p *Parser) ParseFiles(files []string, ignorer *ignore.Ignore) (results []*result.FileResults) {
-	parsable := WalkDirsWithIgnores(files, ignorer)
-
-	for _, f := range parsable {
-		fileResult, err := p.ParseFile(f)
-		if err != nil {
-			log.Debug().Err(err).Str("file", f).Msg("parse failed")
-			continue
-		}
-		if fileResult == nil {
-			continue
-		}
-		results = append(results, fileResult)
-
+// ParsePaths parses all files provided and returns the results
+func (p *Parser) ParsePaths(paths []string) (results []result.FileResults, err error) {
+	// data provided through stdin
+	if pathsIncludeStdin(paths) {
+		r, err := generateFileViolations(os.Stdin, p.Rules)
+		return []result.FileResults{*r}, err
 	}
 
+	if len(paths) == 0 {
+		paths = []string{"."}
+	}
+
+	return p.processViolations(paths)
+}
+
+func pathsIncludeStdin(paths []string) bool {
+	if len(paths) == 0 {
+		return false
+	}
+	for _, p := range paths {
+		if p == os.Stdin.Name() {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err error) {
+	var wg sync.WaitGroup
+
+	done := make(chan struct{})
+	defer close(done)
+	rchan := make(chan *result.FileResults)
+
+	for i := range paths {
+		wg.Add(1)
+		go func(path string) {
+			defer wg.Done()
+			_ = p.processViolationInPath(path, done, rchan)
+		}(paths[i])
+	}
+
+	wg.Wait()
+
+	for r := range rchan {
+		fr = append(fr, *r)
+	}
 	return
 }
 
-// parseFile reads the file and returns results of places where rules are broken
-// this function will not close the file, that should be handled by the caller
-func (p *Parser) parseFile(file *os.File) (*result.FileResults, error) {
-	start := time.Now()
-	defer func() {
-		log.Debug().
-			Str("file", file.Name()).
-			Dur("durationMS", time.Since(start)).
-			Msg("finished Parse")
+func (p *Parser) processViolationInPath(path string, done <-chan struct{}, rchan chan *result.FileResults) error {
+	// TODO: Handler errors
+	files, _ := p.walkDir(path, done)
+
+	var wg sync.WaitGroup
+	for f := range files {
+		wg.Add(1)
+		go func(f string) {
+			defer wg.Done()
+
+			v, err := generateFileViolationsFromFilename(f, p.Rules)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			if len(v.Results) == 0 {
+				return
+			}
+
+			select {
+			case rchan <- v:
+			case <-done:
+			}
+		}(f)
+	}
+	go func() {
+		wg.Wait()
+		close(rchan)
 	}()
-
-	results := &result.FileResults{
-		Filename: file.Name(),
-	}
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-
-	line := 1
-	// https://golang.org/pkg/bufio/#Scanner.Scan
-	for scanner.Scan() {
-		text := scanner.Text()
-		for _, r := range p.Rules {
-			lineResults := result.FindResults(r, results.Filename, text, line)
-			results.Results = append(results.Results, lineResults...)
-		}
-		line++
-	}
-
-	return results, scanner.Err()
+	return nil
 }
 
-// ParseFile parses the files provided and returns the results
-func (p *Parser) ParseFile(f string) (*result.FileResults, error) {
-	file, err := os.Open(f)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
+func (p *Parser) walkDir(dirname string, done <-chan struct{}) (<-chan string, <-chan error) {
+	paths := make(chan string)
+	errc := make(chan error, 1)
+	go func() {
+		// Close the paths channel after Walk returns.
+		defer close(paths)
 
-	if err = util.IsTextFile(file); err != nil {
-		return nil, err
-	}
-
-	r, err := p.parseFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(r.Results) == 0 {
-		return nil, nil
-	}
-
-	return &result.FileResults{
-		Filename: file.Name(),
-		Results:  r.Results,
-	}, nil
+		errc <- filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.Mode().IsRegular() {
+				return nil
+			}
+			if p.Ignorer.Match(path) {
+				return nil
+			}
+			if util.IsTextFileFromFilename(path) != nil {
+				return nil
+			}
+			select {
+			case paths <- path:
+			case <-done:
+				return errors.New("walk canceled")
+			}
+			return nil
+		})
+	}()
+	return paths, errc
 }
