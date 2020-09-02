@@ -23,7 +23,7 @@ type Ignore struct {
 
 // NewIgnore produces an Ignore object, with compiled lines from .gitignore and DefaultIgnores
 // which you can match files against
-func NewIgnore(lines []string) (*Ignore, error) {
+func NewIgnore(lines ...string) (*Ignore, error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
