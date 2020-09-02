@@ -64,11 +64,20 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
-			_ = p.processViolationInPath(path, done, rchan)
+			innerrchan := p.processViolationInPath(path, done)
+			for r := range innerrchan {
+				select {
+				case rchan <- r:
+				case <-done:
+				}
+			}
 		}(paths[i])
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(rchan)
+	}()
 
 	for r := range rchan {
 		fr = append(fr, *r)
@@ -76,9 +85,10 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err
 	return
 }
 
-func (p *Parser) processViolationInPath(path string, done <-chan struct{}, rchan chan *result.FileResults) error {
+func (p *Parser) processViolationInPath(path string, done <-chan struct{}) chan *result.FileResults {
 	// TODO: Handler errors
 	files, _ := p.walkDir(path, done)
+	rchan := make(chan *result.FileResults)
 
 	var wg sync.WaitGroup
 	for f := range files {
@@ -106,7 +116,7 @@ func (p *Parser) processViolationInPath(path string, done <-chan struct{}, rchan
 		wg.Wait()
 		close(rchan)
 	}()
-	return nil
+	return rchan
 }
 
 func (p *Parser) walkDir(dirname string, done <-chan struct{}) (<-chan string, <-chan error) {
