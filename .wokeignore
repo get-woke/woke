@@ -1,0 +1,4 @@
+pkg/*
+internal/*
+example.yaml
+README.md
