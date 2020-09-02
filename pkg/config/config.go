@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 
 	"github.com/get-woke/woke/pkg/rule"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -25,6 +27,15 @@ func NewConfig(filename string) (*Config, error) {
 		}
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, filename)
+	}
+
+	// For debugging/informational purposes
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		enabledRules := make([]string, len(c.Rules))
+		for i := range c.Rules {
+			enabledRules[i] = c.Rules[i].Name
+		}
+		log.Debug().Strs("rules", enabledRules).Msg("rules enabled")
 	}
 
 	return &c, nil
