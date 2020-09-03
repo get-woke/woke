@@ -29,4 +29,4 @@ jobs:
         with:
           # Cause the check to fail on any broke rules
           fail-on-error: true
-          woke-args: ${{ steps.files.outputs.all }}
+          woke-args: ${{ steps.files.outputs.added_modified }}
