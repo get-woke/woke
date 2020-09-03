@@ -17,3 +17,11 @@ rules:
     alternatives:
       - alt-rule2
       - alt-rule-2
+
+  - name: whitelist
+    terms:
+      - rulewl
+      - rule-wl
+    alternatives:
+      - alt-rulewl
+      - alt-rule-wl

@@ -42,9 +42,22 @@ func NewConfig(filename string) (*Config, error) {
 	return &c, nil
 }
 
+func (c *Config) inExistingRules(r *rule.Rule) bool {
+	for _, n := range c.Rules {
+		if n.Name == r.Name {
+			return true
+		}
+	}
+	return false
+}
+
 // AddDefaultRules adds the config Rules to DefaultRules
 func (c *Config) AddDefaultRules() {
-	c.Rules = append(c.Rules, rule.DefaultRules...)
+	for _, r := range rule.DefaultRules {
+		if !c.inExistingRules(r) {
+			c.Rules = append(c.Rules, r)
+		}
+	}
 }
 
 func (c *Config) load(filename string) error {

@@ -39,13 +39,18 @@ func TestNewConfig(t *testing.T) {
 			Alternatives: []string{"alt-rule2", "alt-rule-2"},
 			Severity:     rule.SevError,
 		})
-
-		expectedRules = append(expectedRules, rule.DefaultRules...)
+		expectedRules = append(expectedRules, &rule.Rule{
+			Name:         "whitelist",
+			Terms:        []string{"rulewl", "rule-wl"},
+			Alternatives: []string{"alt-rulewl", "alt-rule-wl"},
+			Severity:     rule.SevError,
+		})
 
 		expected := &Config{
 			Rules:       expectedRules,
 			IgnoreFiles: []string{"README.md", "pkg/rule/default.go", "testdata/good.yaml"},
 		}
+		expected.AddDefaultRules()
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 	})
