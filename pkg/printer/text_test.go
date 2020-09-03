@@ -14,7 +14,7 @@ func TestText_Print(t *testing.T) {
 	got := captureOutput(func() {
 		assert.NoError(t, p.Print(res))
 	})
-	expected := fmt.Sprintf("foo.txt:1:6-15: %s (%s)\n%s\n      ^\n\n", res.Results[0].Reason(), res.Results[0].Rule.Severity, res.Results[0].Line)
+	expected := fmt.Sprintf("foo.txt:1:6-15: %s (%s)\n%s\n      ^\n", res.Results[0].Reason(), res.Results[0].Rule.Severity, res.Results[0].Line)
 	assert.Equal(t, expected, got)
 }
 
