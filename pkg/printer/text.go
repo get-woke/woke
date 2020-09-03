@@ -50,7 +50,6 @@ func (t *Text) Print(fs *result.FileResults) error {
 		fmt.Println(r.Line)
 		fmt.Printf("%s\n", t.arrowUnderLine(&r))
 	}
-	fmt.Println()
 
 	return nil
 }
