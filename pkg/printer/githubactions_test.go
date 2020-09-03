@@ -43,6 +43,6 @@ func TestGitHubActions_Print(t *testing.T) {
 	got := captureOutput(func() {
 		assert.NoError(t, p.Print(res))
 	})
-	expected := fmt.Sprintf("::warning file=foo.txt,line=5,col=3::%s\n", res.Results[0].Reason())
+	expected := fmt.Sprintf("::warning file=foo.txt,line=1,col=6::%s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }

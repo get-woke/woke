@@ -22,17 +22,18 @@ func generateResults(filename string) []result.Result {
 		{
 			Rule:      &rule.BlacklistRule,
 			Violation: "blacklist",
+			Line:      "this blacklist must change",
 			StartPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,
-				Line:     5,
-				Column:   3,
+				Line:     1,
+				Column:   6,
 			},
 			EndPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,
-				Line:     5,
-				Column:   12,
+				Line:     1,
+				Column:   15,
 			},
 		},
 	}
@@ -67,4 +68,13 @@ func captureOutput(f func()) string {
 	f()
 	writer.Close()
 	return <-out
+}
+
+func newPosition(f string, l, c int) *token.Position {
+	return &token.Position{
+		Filename: f,
+		Offset:   0,
+		Line:     l,
+		Column:   c,
+	}
 }

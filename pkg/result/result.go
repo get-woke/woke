@@ -3,6 +3,7 @@ package result
 import (
 	"fmt"
 	"go/token"
+	"strings"
 
 	"github.com/get-woke/woke/pkg/rule"
 )
@@ -11,6 +12,7 @@ import (
 type Result struct {
 	Rule          *rule.Rule
 	Violation     string
+	Line          string
 	StartPosition *token.Position
 	EndPosition   *token.Position
 }
@@ -18,6 +20,7 @@ type Result struct {
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
 func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
+	text = strings.TrimSpace(text)
 	idxs := r.FindAllStringIndex(text)
 
 	for _, idx := range idxs {
@@ -25,6 +28,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 		end := idx[1]
 		newResult := Result{
 			Rule:      r,
+			Line:      text,
 			Violation: text[start:end],
 			StartPosition: &token.Position{
 				Filename: filename,
