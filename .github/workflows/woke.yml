@@ -13,4 +13,4 @@ jobs:
         uses: get-woke/woke-action@v0
         with:
           # Cause the check to fail on any broke rules
-          fail_on_error: true
+          fail-on-error: true
