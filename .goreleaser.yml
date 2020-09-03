@@ -48,3 +48,14 @@ dockers:
       - "getwoke/woke:latest"
       - "getwoke/woke:{{ .Major }}.{{ .Minor }}"
       - "getwoke/woke:{{ .RawVersion }}"
+
+brews:
+  - tap:
+      owner: get-woke
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    homepage: https://getwoke.tech
+    description: A text file analysis tool that detects non-inclusive language in your source code.
+    test: |
+      system "#{bin}/woke --version"

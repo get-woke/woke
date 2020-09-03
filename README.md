@@ -18,6 +18,7 @@ _I stay woke - Erykah Badu_
 - [woke](#woke)
   - [About](#about)
   - [Installation](#installation)
+    - [macOS](#macos)
     - [Simple installation](#simple-installation)
     - [Build from source](#build-from-source)
     - [Releases](#releases)
@@ -44,6 +45,15 @@ productive culture, and an environment where everyone feels welcome and included
 Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
 
 ## Installation
+
+### macOS
+
+You can install a binary release on macOS using [brew](https://brew.sh)
+
+```bash
+brew install get-woke/tap/woke
+brew upgrade get-woke/tap/woke
+```
 
 ### Simple installation
 
