@@ -19,15 +19,16 @@ type Config struct {
 // NewConfig returns a new Config
 func NewConfig(filename string) (*Config, error) {
 	var c Config
-	c.AddDefaultRules()
 
 	if filename != "" {
 		if err := c.load(filename); err != nil {
-			return &c, err
+			return nil, err
 		}
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, filename)
 	}
+
+	c.AddDefaultRules()
 
 	// For debugging/informational purposes
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
