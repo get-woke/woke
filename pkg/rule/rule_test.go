@@ -60,6 +60,9 @@ func TestRule_CanIgnoreLine(t *testing.T) {
 	}{
 		{"violation without comment", "rule1", assert.False},
 		{"violation with correct comment", "rule1 #wokeignore:rule=rule1", assert.True},
+		{"violation with space as rule", "rule1 #wokeignore:rule= ", assert.False},
+		{"violation with invalid comment", "rule1 #wokeignore:rule", assert.False},
+		{"violation with tab as rule", "rule1 #wokeignore:rule=\t", assert.False},
 		{"violation with multiple rules", "rule1 #wokeignore:rule=rule1,rule2", assert.True},
 		{"violation with incorrect comment", "rule1 #wokeignore:rule=rule2", assert.False},
 		{"no violation with correct comment", "rule2 #wokeignore:rule=rule1", assert.True},
