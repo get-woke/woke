@@ -8,6 +8,7 @@ _I stay woke - Erykah Badu_
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
 [![Coverage Status](https://coveralls.io/repos/github/get-woke/woke/badge.svg?branch=main)](https://coveralls.io/github/get-woke/woke?branch=main)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 

@@ -2,7 +2,7 @@
 # Then, run `pre-commit install`
 repos:
   - repo: git://github.com/caitlinelfring/pre-commit-golang
-    rev: master
+    rev: main
     hooks:
       - id: go-fmt
       - id: go-vet
@@ -11,3 +11,8 @@ repos:
         args: [-over=15]
       - id: golangci-lint
       - id: go-mod-tidy
+  # Might not be the best idea since a development version of woke might prevent commits
+  # - repo: git://github.com/get-woke/woke
+  #   rev: main
+  #   hooks:
+  #     - id: woke
