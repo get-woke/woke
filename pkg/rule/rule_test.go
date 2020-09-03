@@ -49,3 +49,28 @@ func testRule() Rule {
 		Severity:     SevWarn,
 	}
 }
+
+func TestRule_CanIgnoreLine(t *testing.T) {
+	r := testRule()
+
+	tests := []struct {
+		name      string
+		line      string
+		assertion assert.BoolAssertionFunc
+	}{
+		{"violation without comment", "rule1", assert.False},
+		{"violation with correct comment", "rule1 #wokeignore:rule=rule1", assert.True},
+		{"violation with multiple rules", "rule1 #wokeignore:rule=rule1,rule2", assert.True},
+		{"violation with incorrect comment", "rule1 #wokeignore:rule=rule2", assert.False},
+		{"no violation with correct comment", "rule2 #wokeignore:rule=rule1", assert.True},
+		{"violation with text after ignore", "rule1 #wokeignore:rule=rule1 something else", assert.True},
+		{"violation with multiple ignores", "rule1 #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.True},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.assertion(t, r.CanIgnoreLine(tt.line))
+		})
+	}
+
+}

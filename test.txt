@@ -1,5 +1,0 @@
-These are words to avoid:
-* Blacklist
-* White-list
-* whitelist
-* blacklist
