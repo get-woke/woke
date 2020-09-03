@@ -41,7 +41,7 @@ rules:
     alternatives:
       - legacy status
 
-  - name: man hours
+  - name: man-hours
     terms:
       - man hours
       - man-hours
@@ -49,7 +49,7 @@ rules:
       - person hours
       - engineer hours
 
-  - name: sanity check
+  - name: sanity-check
     terms:
       - sanity check
       - sanity-check
@@ -76,6 +76,7 @@ rules:
       - they
       - them
       - their
+
   - name: guys
     terms:
       - guys

@@ -19,7 +19,7 @@ func TestNewConfig(t *testing.T) {
 		_, err := NewConfig("testdata/good.yaml")
 		assert.NoError(t, err)
 
-		assert.Equal(t, `{"level":"debug","rules":["rule1","rule2","whitelist","blacklist","master-slave","slave","grandfathered","man hours","sanity check","dummy","he","guys"],"message":"rules enabled"}`+"\n", out.String())
+		assert.Equal(t, `{"level":"debug","rules":["rule1","rule2","whitelist","blacklist","master-slave","slave","grandfathered","man-hours","sanity-check","dummy","he","guys"],"message":"rules enabled"}`+"\n", out.String())
 	})
 
 	t.Run("config-good", func(t *testing.T) {

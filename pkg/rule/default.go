@@ -40,16 +40,16 @@ var GrandfatheredRule = Rule{
 	Alternatives: []string{"legacy status"},
 }
 
-// ManHoursRule is the default rule for "man hours"
+// ManHoursRule is the default rule for "man-hours"
 var ManHoursRule = Rule{
-	Name:         "man hours",
+	Name:         "man-hours",
 	Terms:        []string{"man hours", "man-hours"},
 	Alternatives: []string{"person hours", "engineer hours"},
 }
 
-// SanityCheckRule is the default rule for "sanity check"
+// SanityCheckRule is the default rule for "sanity-check"
 var SanityCheckRule = Rule{
-	Name:         "sanity check",
+	Name:         "sanity-check",
 	Terms:        []string{"sanity check", "sanity-check", "sanity"},
 	Alternatives: []string{"quick check", "confidence check", "coherence check"},
 }
