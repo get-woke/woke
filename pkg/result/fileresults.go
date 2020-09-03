@@ -15,3 +15,21 @@ func (fr *FileResults) String() string {
 	}
 	return strings.Join(lines, "\n")
 }
+
+// Len is part of sort.Interface
+func (fr FileResults) Len() int {
+	return len(fr.Results)
+}
+
+// Swap is part of sort.Interface
+func (fr FileResults) Swap(i, j int) {
+	fr.Results[i], fr.Results[j] = fr.Results[j], fr.Results[i]
+}
+
+// Less is part of sort.Interface
+func (fr FileResults) Less(i, j int) bool {
+	if fr.Results[i].StartPosition.Line < fr.Results[j].StartPosition.Line {
+		return true
+	}
+	return fr.Results[i].StartPosition.Column < fr.Results[j].StartPosition.Column
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
@@ -80,6 +81,7 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err
 	}()
 
 	for r := range rchan {
+		sort.Sort(r)
 		fr = append(fr, *r)
 	}
 	return
