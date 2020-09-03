@@ -135,7 +135,7 @@ func (p *Parser) walkDir(dirname string, done <-chan struct{}) (<-chan string, <
 			if !info.Mode().IsRegular() {
 				return nil
 			}
-			if p.Ignorer.Match(path) {
+			if p.Ignorer != nil && p.Ignorer.Match(path) {
 				return nil
 			}
 			if util.IsTextFileFromFilename(path) != nil {

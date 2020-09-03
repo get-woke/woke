@@ -45,6 +45,7 @@ var (
 	debug            bool
 	stdin            bool
 	output           string
+	noIgnore         bool
 
 	// Version is populated by goreleaser during build
 	// Version...
@@ -83,9 +84,12 @@ Provide a list file globs for files you'd like to check.`,
 			return err
 		}
 
-		ignorer, err := ignore.NewIgnore(cfg.IgnoreFiles...)
-		if err != nil {
-			return err
+		var ignorer *ignore.Ignore
+		if !noIgnore {
+			ignorer, err = ignore.NewIgnore(cfg.IgnoreFiles...)
+			if err != nil {
+				return err
+			}
 		}
 
 		p := parser.NewParser(cfg.Rules, ignorer)
@@ -135,6 +139,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
+	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Files matching entries in .gitignore/.wokeignore are parsed")
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
