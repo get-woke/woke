@@ -91,8 +91,9 @@ func loadConfig(filename string) (*Config, error) {
 
 func loadDefaultConfigFiles() (cfg *Config) {
 	for _, file := range defaultConfigFilenames {
-		log.Debug().Str("cfg", file).Msg("trying default config file")
+
 		if _, err := os.Stat(file); os.IsNotExist(err) {
+			log.Debug().Str("cfg", file).Err(err).Msg("tried default config file")
 			continue
 		}
 		var err error

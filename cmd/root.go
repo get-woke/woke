@@ -79,6 +79,10 @@ Provide a list file globs for files you'd like to check.`,
 				Msg("woke completed")
 		}()
 
+		if len(args) == 0 {
+			args = parser.DefaultPath
+		}
+
 		cfg, err := config.NewConfig(ruleConfig)
 		if err != nil {
 			return err
@@ -86,10 +90,7 @@ Provide a list file globs for files you'd like to check.`,
 
 		var ignorer *ignore.Ignore
 		if !noIgnore {
-			ignorer, err = ignore.NewIgnore(cfg.IgnoreFiles...)
-			if err != nil {
-				return err
-			}
+			ignorer = ignore.NewIgnore(cfg.IgnoreFiles, args)
 		}
 
 		p := parser.NewParser(cfg.Rules, ignorer)

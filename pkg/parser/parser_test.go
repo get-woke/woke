@@ -14,9 +14,7 @@ import (
 )
 
 func TestParser_ParsePaths(t *testing.T) {
-	i, err := ignore.NewIgnore()
-	assert.NoError(t, err)
-	p := NewParser(rule.DefaultRules, i)
+	p := NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
 
 	f1, err := newFile("i have a whitelist\n")
 	assert.NoError(t, err)
@@ -74,9 +72,8 @@ func TestParser_ParsePaths(t *testing.T) {
 	f4, err := newFile("i have a whitelist violation, but am ignored\n")
 	assert.NoError(t, err)
 	defer os.Remove(f4.Name())
-	i2, err := ignore.NewIgnore(f4.Name())
-	assert.NoError(t, err)
-	p.Ignorer = i2
+
+	p.Ignorer = ignore.NewIgnore([]string{f4.Name()}, []string{})
 	fr4, err := p.ParsePaths(f4.Name())
 	assert.NoError(t, err)
 	assert.Len(t, fr4, 0)
@@ -183,9 +180,8 @@ func BenchmarkParsePaths(b *testing.B) {
 	tmpFile.Close()
 
 	for i := 0; i < b.N; i++ {
-		i, err := ignore.NewIgnore()
-		assert.NoError(b, err)
-		p := NewParser(rule.DefaultRules, i)
+		ignorer := ignore.NewIgnore([]string{}, []string{})
+		p := NewParser(rule.DefaultRules, ignorer)
 		_, err = p.ParsePaths(tmpFile.Name())
 		assert.NoError(b, err)
 	}
@@ -195,10 +191,9 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 
 	for i := 0; i < b.N; i++ {
-		i, err := ignore.NewIgnore()
-		assert.NoError(b, err)
-		p := NewParser(rule.DefaultRules, i)
-		_, err = p.ParsePaths("../..")
+		Ignorer := ignore.NewIgnore([]string{}, []string{})
+		p := NewParser(rule.DefaultRules, Ignorer)
+		_, err := p.ParsePaths("../..")
 		assert.NoError(b, err)
 	}
 }

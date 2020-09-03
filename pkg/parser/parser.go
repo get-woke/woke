@@ -14,6 +14,8 @@ import (
 	"github.com/get-woke/woke/pkg/util"
 )
 
+var DefaultPath = []string{"."}
+
 // Parser parses files and finds lines that break rules
 type Parser struct {
 	Rules   []*rule.Rule
@@ -36,7 +38,7 @@ func (p *Parser) ParsePaths(paths ...string) (results []result.FileResults, err 
 	}
 
 	if len(paths) == 0 {
-		paths = []string{"."}
+		paths = DefaultPath
 	}
 
 	return p.processViolations(paths)
