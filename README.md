@@ -27,8 +27,10 @@ _I stay woke - Erykah Badu_
     - [File globs](#file-globs)
     - [stdin](#stdin)
     - [Rules](#rules)
-    - [Ignoring files](#ignoring-files)
+    - [Ignoring](#ignoring)
+      - [Files](#files)
       - [`.wokeignore`](#wokeignore)
+      - [In-line ignoring](#in-line-ignoring)
     - [Exit Code](#exit-code)
   - [Tools](#tools)
   - [Resources](#resources)
@@ -170,7 +172,9 @@ rules:
       - allowlist
 ```
 
-### Ignoring files
+### Ignoring
+
+#### Files
 
 In your config file, you can ignore files by adding:
 
@@ -190,6 +194,36 @@ This follows the common `.gitignore` convention. See link for more details on ma
 
 You may also specify a `.wokeignore` file at the root of the directory to add additional ignore files.
 This also follows the `.gitignore` convention.
+
+#### In-line ignoring
+
+There may be times where you don't want to ignore an entire file.
+You may ignore a specific line for one or more rules by creating an in-line comment.
+
+This functionality is very rudimentary, it does a simple search for the phrase. Since
+`woke` is just a text file analyzer, it has no concept of the comment syntax for every file
+type it might encounter.
+
+Simply add the following to the line you wish to ignore, using comment syntax that is supported for your file type.
+(`woke` is not responsible for broken code due to in-line ignoring. Make sure you comment correctly!)
+
+```bash
+# wokeignore:rule=RULE_NAME
+
+# for example, to ignore the following line for the whitelist rule
+whitelist # wokeignore:rule=whitelist
+
+# or for multiple rules
+whitelist and blacklist # wokeignore:rule=whitelist,blacklist
+```
+
+Here's an example in go:
+
+```go
+func main() {
+  fmt.Println("here is the whitelist") // wokeignore:rule=whitelist
+}
+```
 
 ### Exit Code
 

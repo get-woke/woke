@@ -8,6 +8,8 @@ import (
 	"github.com/get-woke/woke/pkg/util"
 )
 
+var ignoreRuleRegex = regexp.MustCompile(`wokeignore:rule=(\S+)`)
+
 // Rule is a linter rule
 type Rule struct {
 	Name         string   `yaml:"name"`
@@ -53,4 +55,29 @@ func (r *Rule) ReasonWithNote(violation string) string {
 		return r.Reason(violation)
 	}
 	return fmt.Sprintf("%s (%s)", r.Reason(violation), r.Note)
+}
+
+// CanIgnoreLine returns a boolean value if the line contains the ignore directive.
+// For example, if a line has anywhere, `woke:disable=whitelist`
+// (should be commented out via whatever the language comment syntax is)
+// it will not report that line in violation with the Rule with the name `whitelist`
+func (r *Rule) CanIgnoreLine(line string) bool {
+	matches := ignoreRuleRegex.FindAllStringSubmatch(line, -1)
+	if matches == nil {
+		return false
+	}
+
+	for _, match := range matches {
+		if len(match) < 1 {
+			continue
+		}
+
+		for _, m := range strings.Split(match[1], ",") {
+			if m == r.Name {
+				return true
+			}
+		}
+	}
+
+	return false
 }

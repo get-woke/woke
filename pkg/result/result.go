@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/get-woke/woke/pkg/rule"
+	"github.com/rs/zerolog/log"
 )
 
 // Result contains data about the result of a broken rule
@@ -21,6 +22,16 @@ type Result struct {
 // filename and line are only used for the Position
 func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 	text = strings.TrimSpace(text)
+
+	if r.CanIgnoreLine(text) {
+		log.Debug().
+			Str("rule", r.Name).
+			Str("file", filename).
+			Int("line", line).
+			Msg("ignoring via in-line")
+		return
+	}
+
 	idxs := r.FindAllStringIndex(text)
 
 	for _, idx := range idxs {
