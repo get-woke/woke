@@ -30,7 +30,6 @@ _I stay woke - Erykah Badu_
       - [`.wokeignore`](#wokeignore)
     - [Exit Code](#exit-code)
   - [Tools](#tools)
-  - [TODO](#todo)
   - [Resources](#resources)
   - [License](#license)
 
@@ -187,12 +186,6 @@ exit code, but running `woke --exit-1-on-failure`.
 
 - [GitHub Action](https://github.com/marketplace/actions/run-woke)
 - [GitHub Action (reviewdog)](https://github.com/marketplace/actions/run-woke-with-reviewdog)
-
-## TODO
-
-* Benchmarking
-  * What happens when run on a large repo?
-* More rules
 
 ## Resources
 

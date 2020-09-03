@@ -9,6 +9,7 @@ import (
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -166,4 +167,38 @@ func writeToStdin(text string, f func()) error {
 	os.Stdin = tmpfile
 	f()
 	return tmpfile.Close()
+}
+
+func BenchmarkParsePaths(b *testing.B) {
+	zerolog.SetGlobalLevel(zerolog.NoLevel)
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "")
+	assert.NoError(b, err)
+
+	// Remember to clean up the file afterwards
+	defer os.Remove(tmpFile.Name())
+
+	for i := 0; i < 100; i++ {
+		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n")
+	}
+	tmpFile.Close()
+
+	for i := 0; i < b.N; i++ {
+		i, err := ignore.NewIgnore()
+		assert.NoError(b, err)
+		p := NewParser(rule.DefaultRules, i)
+		_, err = p.ParsePaths(tmpFile.Name())
+		assert.NoError(b, err)
+	}
+}
+
+func BenchmarkParsePathsRoot(b *testing.B) {
+	zerolog.SetGlobalLevel(zerolog.NoLevel)
+
+	for i := 0; i < b.N; i++ {
+		i, err := ignore.NewIgnore()
+		assert.NoError(b, err)
+		p := NewParser(rule.DefaultRules, i)
+		_, err = p.ParsePaths("../..")
+		assert.NoError(b, err)
+	}
 }
