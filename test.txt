@@ -3,3 +3,7 @@ These are words to avoid:
 * White-list
 * whitelist
 * blacklist
+
+sanity test
+
+master/slave
