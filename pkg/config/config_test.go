@@ -65,6 +65,11 @@ func TestNewConfig(t *testing.T) {
 			IgnoreFiles: []string(nil),
 		}
 		assert.Equal(t, expectedEmpty, c)
+
+		defaultConfigFilenames = []string{"testdata/default.yaml"}
+		c, err = NewConfig("")
+		assert.NoError(t, err)
+		assert.EqualValues(t, defaultConfigFilenames, c.IgnoreFiles)
 	})
 
 	t.Run("config-missing", func(t *testing.T) {

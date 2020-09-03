@@ -2,6 +2,7 @@ package config
 
 import (
 	"io/ioutil"
+	"os"
 
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/rs/zerolog"
@@ -9,6 +10,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 )
+
+var defaultConfigFilenames = []string{".woke.yaml", ".woke.yml"}
 
 // Config contains a list of rules
 type Config struct {
@@ -26,6 +29,12 @@ func NewConfig(filename string) (*Config, error) {
 		}
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, filename)
+	} else {
+		if defaultCfg := loadDefaultConfigFiles(); defaultCfg != nil {
+			c = *defaultCfg
+
+			c.IgnoreFiles = append(c.IgnoreFiles, defaultConfigFilenames...)
+		}
 	}
 
 	c.AddDefaultRules()
@@ -61,9 +70,37 @@ func (c *Config) AddDefaultRules() {
 }
 
 func (c *Config) load(filename string) error {
-	yamlFile, err := ioutil.ReadFile(filename)
+	cfg, err := loadConfig(filename)
 	if err != nil {
 		return err
 	}
-	return yaml.Unmarshal(yamlFile, c)
+	*c = *cfg
+	return nil
+}
+
+func loadConfig(filename string) (*Config, error) {
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	var c Config
+	err = yaml.Unmarshal(yamlFile, &c)
+
+	return &c, err
+}
+
+func loadDefaultConfigFiles() (cfg *Config) {
+	for _, file := range defaultConfigFilenames {
+		log.Debug().Str("cfg", file).Msg("trying default config file")
+		if _, err := os.Stat(file); os.IsNotExist(err) {
+			continue
+		}
+		var err error
+		cfg, err = loadConfig(file)
+		if err == nil && cfg != nil {
+			log.Debug().Str("cfg", file).Msg("found default config file!")
+			return
+		}
+	}
+	return
 }

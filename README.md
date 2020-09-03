@@ -157,8 +157,11 @@ This has whitelist from stdin
 
 A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.go).
 
+Configure your custom rules config in `.woke.yaml` or `.woke.yml`, `woke` will pick up one of these files in the cwd of where you run `woke` from.
+This file will be picked up automatically up your customizations automatically!
+
 See [example.yaml](https://github.com/get-woke/woke/blob/example.yaml) for an example of adding custom rules.
-You can supply your own rules with `-c path/to/rules.yaml`
+You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
 
 The syntax for rules is very basic. You just need a name, a list of terms to match that violate the rule,
 and a list of alternative suggestions.
