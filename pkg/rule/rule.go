@@ -22,14 +22,18 @@ type Rule struct {
 }
 
 func (r *Rule) FindAllStringIndex(text string) [][]int {
+	// If no terms are provided, this essentially disables the rule
+	// which is helpful for disabling default rules. Eventually, there should be
+	// a way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
+	if len(r.Terms) == 0 {
+		return [][]int{}
+	}
+
 	if r.re == nil {
 		r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, strings.Join(r.Terms, "|")))
 	}
-	return r.re.FindAllStringIndex(text, -1)
-}
 
-func (r *Rule) String() string {
-	return r.Name
+	return r.re.FindAllStringIndex(text, -1)
 }
 
 // Reason returns a human-readable reason for the rule violation

@@ -22,6 +22,9 @@ func TestRule_FindAllStringIndex(t *testing.T) {
 		got := r.FindAllStringIndex(test.text)
 		assert.Equal(t, test.expected, got)
 	}
+
+	e := Rule{Name: "rule1"}
+	assert.Equal(t, [][]int{}, e.FindAllStringIndex("rule1"))
 }
 
 func TestRule_Reason(t *testing.T) {
