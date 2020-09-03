@@ -31,6 +31,7 @@ func TestParser_ParsePaths(t *testing.T) {
 			{
 				Rule:      &rule.WhitelistRule,
 				Violation: "whitelist",
+				Line:      "i have a whitelist",
 				StartPosition: &token.Position{
 					Filename: f1.Name(),
 					Offset:   0,
@@ -95,6 +96,7 @@ func TestParser_ParsePaths(t *testing.T) {
 				{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
+					Line:      "i have a whitelist here",
 					StartPosition: &token.Position{
 						Filename: os.Stdin.Name(),
 						Offset:   0,
