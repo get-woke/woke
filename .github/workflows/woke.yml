@@ -14,3 +14,19 @@ jobs:
         with:
           # Cause the check to fail on any broke rules
           fail-on-error: true
+  woke-changed:
+    name: 'woke changed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - uses: jitterbit/get-changed-files@v1
+        id: files
+
+      - name: 'woke'
+        uses: get-woke/woke-action@v0
+        with:
+          # Cause the check to fail on any broke rules
+          fail-on-error: true
+          woke-args: ${{ steps.files.outputs.all }}
