@@ -1,6 +1,7 @@
 package result
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
@@ -15,5 +16,28 @@ func TestFileResult_String(t *testing.T) {
 	rs = FindResults(&rule.WhitelistRule, "my/file", "this has no rule violations", 1)
 	fr = FileResults{Filename: "my/file", Results: rs}
 	assert.Equal(t, "my/file", fr.String())
+}
 
+func TestFileResult_Sort(t *testing.T) {
+	rs1 := FindResults(&rule.WhitelistRule, "my/file", "this has a few whitelist white-list whitelist", 1)
+	rs2 := FindResults(&rule.WhitelistRule, "my/file", "this has a few whitelist white-list whitelist", 2)
+
+	rs := append(rs2, rs1...)
+
+	fr := FileResults{Filename: "my/file", Results: rs}
+	sort.Sort(fr)
+
+	assert.True(t, fr.Results[0].StartPosition.Line == 1)
+	assert.True(t, fr.Results[0].StartPosition.Column == 15)
+	assert.True(t, fr.Results[1].StartPosition.Line == 1)
+	assert.True(t, fr.Results[1].StartPosition.Column == 25)
+	assert.True(t, fr.Results[2].StartPosition.Line == 1)
+	assert.True(t, fr.Results[2].StartPosition.Column == 36)
+
+	assert.True(t, fr.Results[3].StartPosition.Line == 2)
+	assert.True(t, fr.Results[3].StartPosition.Column == 15)
+	assert.True(t, fr.Results[4].StartPosition.Line == 2)
+	assert.True(t, fr.Results[4].StartPosition.Column == 25)
+	assert.True(t, fr.Results[5].StartPosition.Line == 2)
+	assert.True(t, fr.Results[5].StartPosition.Column == 36)
 }
