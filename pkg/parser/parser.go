@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"sync"
 	"time"
 
@@ -86,34 +87,49 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 	return
 }
 
+func (p *Parser) processFiles(files <-chan string, rchan chan _result, done chan bool, wg *sync.WaitGroup) {
+	for f := range files {
+		wg.Add(1)
+		go func(f string) {
+			defer wg.Done()
+
+			v, err := generateFileViolationsFromFilename(f, p.Rules)
+			if len(v.Results) == 0 {
+				return
+			}
+			select {
+			case rchan <- _result{*v, err}:
+			case <-done:
+				return
+			}
+		}(f)
+	}
+}
+
 func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan _result) {
 	var wg sync.WaitGroup
 
 	files, errc := p.walkDir(path, done)
 
-	wg.Add(numWorkers)
-	for i := 0; i < numWorkers; i++ {
-		go func() {
-			for f := range files {
-				wg.Add(1)
-				go func(f string) {
-					defer wg.Done()
+	// run parallel, but bounded
+	numWorkerStr := util.GetEnvDefault("WORKER_POOL_COUNT", "0")
+	if numWorker, err := strconv.Atoi(numWorkerStr); err == nil && numWorker > 0 {
+		log.Debug().Str("path", path).Str("type", "bounded").Int("workers", numWorker).Msg("process files")
 
-					v, err := generateFileViolationsFromFilename(f, p.Rules)
-					if len(v.Results) == 0 {
-						return
-					}
-					select {
-					case rchan <- _result{*v, err}:
-					case <-done:
-						return
-					}
-				}(f)
-			}
-			wg.Done()
-		}()
+		wg.Add(numWorkers)
+		for i := 0; i < numWorkers; i++ {
+			go func() {
+				p.processFiles(files, rchan, done, &wg)
+				wg.Done()
+			}()
+		}
+
+	} else {
+		// run parallel unbounded. Potential high memory consumption
+		log.Debug().Str("path", path).Str("type", "parallel").Msg("process files")
+
+		p.processFiles(files, rchan, done, &wg)
 	}
-
 	wg.Wait()
 
 	if err := <-errc; err != nil {

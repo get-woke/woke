@@ -33,6 +33,7 @@ _I stay woke - Erykah Badu_
       - [`.wokeignore`](#wokeignore)
       - [In-line ignoring](#in-line-ignoring)
     - [Exit Code](#exit-code)
+    - [Parallelism](#parallelism)
   - [Tools](#tools)
   - [Resources](#resources)
   - [License](#license)
@@ -242,6 +243,17 @@ want to inform the author that they can make better word choices.
 
 If you're using `woke` on PRs, you can choose to enforce these rules with a non-zero
 exit code, but running `woke --exit-1-on-failure`.
+
+### Parallelism
+
+By default, `woke` will parse files in parallel and will consume as many resources as it can, unbounded.
+This means `woke` will be fast, but might run out of memory, depending on how large the files/lines are.
+
+We can limit these allocations by bounding the number of files read in parallel. To accomplish this,
+set the environment variable `WORKER_POOL_COUNT` to an integer value of te fixed number of goroutines
+you would like to spawn for reading files.
+
+Read more about go's concurrency patterns [here](https://blog.golang.org/pipelines).
 
 ## Tools
 
