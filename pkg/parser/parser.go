@@ -1,17 +1,18 @@
 package parser
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 	"sync"
+	"time"
 
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
+	"github.com/rs/zerolog/log"
 )
 
 var DefaultPath = []string{"."}
@@ -41,9 +42,10 @@ func (p *Parser) ParsePaths(paths ...string) (results []result.FileResults, err 
 		paths = DefaultPath
 	}
 
-	return p.processViolations(paths)
+	return p.processViolations(paths), nil
 }
 
+// pathsIncludeStdin returns true if any element of the slice is stdin
 func pathsIncludeStdin(paths []string) bool {
 	if len(paths) == 0 {
 		return false
@@ -56,23 +58,19 @@ func pathsIncludeStdin(paths []string) bool {
 	return false
 }
 
-func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err error) {
+// parseViolations returns all the violations (FileResults) for every valid file in each path
+func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 	var wg sync.WaitGroup
 
-	done := make(chan struct{})
-	defer close(done)
 	rchan := make(chan *result.FileResults)
 
 	for i := range paths {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
-			innerrchan := p.processViolationInPath(path, done)
-			for r := range innerrchan {
-				select {
-				case rchan <- r:
-				case <-done:
-				}
+			ch := p.processViolationInPath(path)
+			for r := range ch {
+				rchan <- r
 			}
 		}(paths[i])
 	}
@@ -89,12 +87,12 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults, err
 	return
 }
 
-func (p *Parser) processViolationInPath(path string, done <-chan struct{}) chan *result.FileResults {
-	// TODO: Handler errors
-	files, _ := p.walkDir(path, done)
-	rchan := make(chan *result.FileResults)
+func (p *Parser) processViolationInPath(path string) chan *result.FileResults {
+	files := p.walkDir(path)
 
+	rchan := make(chan *result.FileResults)
 	var wg sync.WaitGroup
+
 	for f := range files {
 		wg.Add(1)
 		go func(f string) {
@@ -102,7 +100,7 @@ func (p *Parser) processViolationInPath(path string, done <-chan struct{}) chan 
 
 			v, err := generateFileViolationsFromFilename(f, p.Rules)
 			if err != nil {
-				fmt.Println(err)
+				log.Error().Err(err).Str("file", f).Msg("generateFileViolationsFromFilename error")
 				return
 			}
 
@@ -110,10 +108,7 @@ func (p *Parser) processViolationInPath(path string, done <-chan struct{}) chan 
 				return
 			}
 
-			select {
-			case rchan <- v:
-			case <-done:
-			}
+			rchan <- v
 		}(f)
 	}
 	go func() {
@@ -123,14 +118,11 @@ func (p *Parser) processViolationInPath(path string, done <-chan struct{}) chan 
 	return rchan
 }
 
-func (p *Parser) walkDir(dirname string, done <-chan struct{}) (<-chan string, <-chan error) {
+func (p *Parser) walkDir(dirname string) <-chan string {
 	paths := make(chan string)
-	errc := make(chan error, 1)
-	go func() {
-		// Close the paths channel after Walk returns.
-		defer close(paths)
 
-		errc <- filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
+	go func() {
+		err := filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -143,13 +135,19 @@ func (p *Parser) walkDir(dirname string, done <-chan struct{}) (<-chan string, <
 			if util.IsTextFileFromFilename(path) != nil {
 				return nil
 			}
+
 			select {
 			case paths <- path:
-			case <-done:
-				return errors.New("walk canceled")
+				return nil
+			case <-time.After(time.Second * 30):
+				return fmt.Errorf("walk timeout: %s", dirname)
 			}
-			return nil
 		})
+		if err != nil {
+			log.Error().Err(err).Str("dir", dirname).Msg("filepath.Walk error")
+		}
+		close(paths)
 	}()
-	return paths, errc
+
+	return paths
 }
