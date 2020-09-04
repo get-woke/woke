@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -45,33 +46,24 @@ func (p *Parser) ParsePaths(paths ...string) (results []result.FileResults, err 
 	return p.processViolations(paths), nil
 }
 
-// pathsIncludeStdin returns true if any element of the slice is stdin
-func pathsIncludeStdin(paths []string) bool {
-	if len(paths) == 0 {
-		return false
-	}
-	for _, p := range paths {
-		if p == os.Stdin.Name() {
-			return true
-		}
-	}
-	return false
+type _result struct {
+	res result.FileResults
+	err error
 }
 
 // parseViolations returns all the violations (FileResults) for every valid file in each path
 func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 	var wg sync.WaitGroup
 
-	rchan := make(chan *result.FileResults)
+	rchan := make(chan _result)
+	done := make(chan bool)
+	defer close(done)
 
 	for i := range paths {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
-			ch := p.processViolationInPath(path)
-			for r := range ch {
-				rchan <- r
-			}
+			p.processViolationInPath(path, done, rchan)
 		}(paths[i])
 	}
 
@@ -81,48 +73,52 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 	}()
 
 	for r := range rchan {
-		sort.Sort(r)
-		fr = append(fr, *r)
+		if r.err != nil {
+			log.Error().Err(r.err).Msg("filepath.Walk error")
+		}
+
+		sort.Sort(r.res)
+		fr = append(fr, r.res)
 	}
 	return
 }
 
-func (p *Parser) processViolationInPath(path string) chan *result.FileResults {
-	files := p.walkDir(path)
-
-	rchan := make(chan *result.FileResults)
+func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan _result) {
 	var wg sync.WaitGroup
 
+	files, errc := p.walkDir(path, done)
 	for f := range files {
 		wg.Add(1)
 		go func(f string) {
 			defer wg.Done()
 
 			v, err := generateFileViolationsFromFilename(f, p.Rules)
-			if err != nil {
-				log.Error().Err(err).Str("file", f).Msg("generateFileViolationsFromFilename error")
-				return
-			}
-
 			if len(v.Results) == 0 {
 				return
 			}
-
-			rchan <- v
+			select {
+			case rchan <- _result{*v, err}:
+			case <-done:
+				return
+			}
 		}(f)
 	}
-	go func() {
-		wg.Wait()
-		close(rchan)
-	}()
-	return rchan
+
+	wg.Wait()
+
+	if err := <-errc; err != nil {
+		rchan <- _result{result.FileResults{}, err}
+	}
 }
 
-func (p *Parser) walkDir(dirname string) <-chan string {
+func (p *Parser) walkDir(dirname string, done chan bool) (<-chan string, <-chan error) {
 	paths := make(chan string)
+	errc := make(chan error, 1)
 
 	go func() {
-		err := filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
+		defer close(paths)
+
+		errc <- filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -139,15 +135,26 @@ func (p *Parser) walkDir(dirname string) <-chan string {
 			select {
 			case paths <- path:
 				return nil
+			case <-done:
+				return errors.New("walk canceled")
 			case <-time.After(time.Second * 30):
 				return fmt.Errorf("walk timeout: %s", dirname)
 			}
 		})
-		if err != nil {
-			log.Error().Err(err).Str("dir", dirname).Msg("filepath.Walk error")
-		}
-		close(paths)
 	}()
 
-	return paths
+	return paths, errc
+}
+
+// pathsIncludeStdin returns true if any element of the slice is stdin
+func pathsIncludeStdin(paths []string) bool {
+	if len(paths) == 0 {
+		return false
+	}
+	for _, p := range paths {
+		if p == os.Stdin.Name() {
+			return true
+		}
+	}
+	return false
 }
