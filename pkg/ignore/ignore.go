@@ -28,7 +28,7 @@ func NewIgnore(lines []string, pathsForGitIgnores []string) *Ignore {
 	start := time.Now()
 	defer func() {
 		log.Debug().
-			Dur("durationMS", time.Since(start)).
+			TimeDiff("durationMS", time.Now(), start).
 			Msg("finished compiling ignores")
 	}()
 

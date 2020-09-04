@@ -26,8 +26,8 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 	start := time.Now()
 	defer func() {
 		log.Debug().
+			TimeDiff("durationMS", time.Now(), start).
 			Str("file", file.Name()).
-			Dur("durationMS", time.Since(start)).
 			Msg("finished generateFileViolations")
 	}()
 

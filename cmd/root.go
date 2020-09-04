@@ -75,7 +75,7 @@ Provide a list file globs for files you'd like to check.`,
 		start := time.Now()
 		defer func() {
 			log.Debug().
-				Dur("durationMS", time.Since(start)).
+				TimeDiff("durationMS", time.Now(), start).
 				Msg("woke completed")
 		}()
 
