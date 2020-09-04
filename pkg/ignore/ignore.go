@@ -9,13 +9,10 @@ import (
 	"time"
 
 	gitignore "github.com/get-woke/go-gitignore"
+	"github.com/get-woke/woke/pkg/util"
+	"github.com/get-woke/woke/pkg/walker"
 	"github.com/rs/zerolog/log"
 )
-
-// DefaultIgnores is the default list of file globs that will be ignored
-var DefaultIgnores = []string{
-	".git",
-}
 
 // Ignore is a gitignore-style object to ignore files/directories
 type Ignore struct {
@@ -32,7 +29,6 @@ func NewIgnore(lines []string, pathsForGitIgnores []string) *Ignore {
 			Msg("finished compiling ignores")
 	}()
 
-	lines = append(lines, DefaultIgnores...)
 	lines = append(lines, readIgnoreFile(".gitignore")...)
 	lines = append(lines, readIgnoreFile(".wokeignore")...)
 
@@ -41,8 +37,7 @@ func NewIgnore(lines []string, pathsForGitIgnores []string) *Ignore {
 	}
 
 	// FIXME: This is very costly with large directories with a lot of files, disabled for now
-	// ignorer.AddIgnoreFiles(".gitignore", pathsForGitIgnores)
-	// ignorer.AddIgnoreFiles(".wokeignore", pathsForGitIgnores)
+	// ignorer.AddIgnoreFiles(pathsForGitIgnores, ".gitignore", ".wokeignore")
 
 	return &ignorer
 }
@@ -55,22 +50,25 @@ func (i *Ignore) Match(f string) bool {
 // AddIgnoreFiles walks each path provided in search of any files that match ignoreName
 // and add the contents of those files to the gitignore matcher
 // NOTE: this is very costly in large directories and should be used with caution
-func (i *Ignore) AddIgnoreFiles(ignoreName string, paths []string) {
-	lines := addRecursiveGitIgnores(ignoreName, paths)
+func (i *Ignore) AddIgnoreFiles(paths []string, ignoreNames ...string) {
+	lines := addRecursiveGitIgnores(ignoreNames, paths)
 	i.matcher.AddPatternsFromLines(lines...)
 }
 
 // addRecursiveGitIgnores uses filepath.Walk to walk each path, search for a file that matches
 // ignoreName and reads each file's lines
 // NOTE: this is very costly in large directories and should be used with caution
-func addRecursiveGitIgnores(ignoreName string, paths []string) (lines []string) {
+func addRecursiveGitIgnores(ignoreNames []string, paths []string) (lines []string) {
+	start := time.Now()
+	defer func() {
+		log.Debug().
+			Strs("files", ignoreNames).
+			TimeDiff("durationMS", time.Now(), start).
+			Msg("finished walk for ignore files")
+	}()
 	for _, path := range paths {
-		_ = filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if info.Mode().IsRegular() && info.Name() == ignoreName {
+		_ = walker.Walk(path, func(p string, info os.FileMode) error {
+			if info.Perm().IsRegular() && util.InSlice(filepath.Base(p), ignoreNames) {
 				newLines := append(readIgnoreFile(p), p)
 				lines = append(lines, newLines...)
 			}

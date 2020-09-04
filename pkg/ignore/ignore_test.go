@@ -28,7 +28,7 @@ func TestIgnoreMatch(t *testing.T) {
 
 func TestIgnore_AddIgnoreFiles(t *testing.T) {
 	i := NewIgnore([]string{"my/files/*"}, []string{"."})
-	i.AddIgnoreFiles(".gitignore", []string{"testdata"})
+	i.AddIgnoreFiles([]string{"testdata"}, ".gitignore")
 
 	assert.True(t, i.Match("testdata/.gitignore"))
 	assert.True(t, i.Match("testdata/.DS_Store"))
@@ -59,7 +59,7 @@ func TestAddRecursiveGitIgnores(t *testing.T) {
 		expected = append(expected, ignoreFilename)
 	}
 	defer os.RemoveAll(dir)
-	lines := addRecursiveGitIgnores(".gitignore", []string{dir})
+	lines := addRecursiveGitIgnores([]string{".gitignore"}, []string{dir})
 
 	assert.EqualValues(t, expected, lines)
 }
@@ -87,7 +87,7 @@ func BenchmarkIgnoreAddIgnoreFiles(b *testing.B) {
 	}
 
 	defer os.RemoveAll(dir)
-	lines := addRecursiveGitIgnores(".gitignore", []string{dir})
+	lines := addRecursiveGitIgnores([]string{".gitignore"}, []string{dir})
 	sort.Strings(lines)
 	sort.Strings(expected)
 
