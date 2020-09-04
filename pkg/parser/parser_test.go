@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"go/token"
 	"io/ioutil"
 	"os"
@@ -13,18 +14,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type testPrinter struct {
+	results []*result.FileResults
+}
+
+func (p *testPrinter) Print(r *result.FileResults) error {
+	p.results = append(p.results, r)
+	return nil
+}
+
+func testParser() *Parser {
+	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
+}
 func parsePathTests(t *testing.T) {
-	p := NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
 
 	f1, err := newFile("i have a whitelist\n")
 	assert.NoError(t, err)
 	defer os.Remove(f1.Name())
+	pr := new(testPrinter)
+	p := testParser()
+	violations := p.ParsePaths(pr, f1.Name())
 
-	fr1, err := p.ParsePaths(f1.Name())
-	assert.NoError(t, err)
-
-	assert.Len(t, fr1, 1)
-	assert.EqualValues(t, result.FileResults{
+	// assert.Len(t, pr.results, 1)
+	assert.Equal(t, violations, 1)
+	expected := result.FileResults{
 		Filename: f1.Name(),
 		Results: []result.Result{
 			{
@@ -45,50 +58,73 @@ func parsePathTests(t *testing.T) {
 				},
 			},
 		},
-	}, fr1[0])
+	}
+	assert.EqualValues(t, &expected, pr.results[0])
 
 	f2, err := newFile("i have a no violations\n")
 	assert.NoError(t, err)
 	defer os.Remove(f2.Name())
-	fr2, err := p.ParsePaths(f2.Name())
+	p = testParser()
+	pr = new(testPrinter)
+	violations = p.ParsePaths(pr, f2.Name())
 	assert.NoError(t, err)
-	assert.Len(t, fr2, 0)
+	assert.Len(t, pr.results, 0)
+	assert.Equal(t, violations, 0)
 
 	// Test for IsTextFileFromFilename failure
 	f3, err := newFile("")
 	assert.NoError(t, err)
 	defer os.Remove(f3.Name())
-	fr3, err := p.ParsePaths(f3.Name())
+
+	p = testParser()
+	pr = new(testPrinter)
+	violations = p.ParsePaths(pr, f3.Name())
 	assert.NoError(t, err)
-	assert.Len(t, fr3, 0)
+	assert.Equal(t, violations, 0)
+	assert.Len(t, pr.results, 0)
 
 	// Test with multiple paths supplied
 	// Disabled since this functionality is currently broken
-	frAll, err := p.ParsePaths(f1.Name(), f2.Name(), f3.Name())
+	p = testParser()
+	pr = new(testPrinter)
+	violations = p.ParsePaths(pr, f1.Name(), f2.Name())
 	assert.NoError(t, err)
-	assert.Len(t, frAll, 1)
+	fmt.Println(pr.results)
+	assert.Equal(t, violations, 1)
+	assert.Len(t, pr.results, 1)
 
 	// Test ignored file
 	f4, err := newFile("i have a whitelist violation, but am ignored\n")
 	assert.NoError(t, err)
 	defer os.Remove(f4.Name())
 
+	p = testParser()
 	p.Ignorer = ignore.NewIgnore([]string{f4.Name()}, []string{})
-	fr4, err := p.ParsePaths(f4.Name())
+	pr = new(testPrinter)
+
+	violations = p.ParsePaths(pr, f4.Name())
 	assert.NoError(t, err)
-	assert.Len(t, fr4, 0)
+	assert.Len(t, pr.results, 0)
+	assert.Equal(t, violations, len(pr.results))
 
 	// Test default path (which would run tests against the parser package)
-	fr5, err := p.ParsePaths()
+	p = testParser()
+	pr = new(testPrinter)
+	violations = p.ParsePaths(pr)
 	assert.NoError(t, err)
-	assert.Greater(t, len(fr5), 0)
+	fmt.Println(pr.results)
+	assert.Equal(t, violations, len(pr.results))
+	assert.Greater(t, len(pr.results), 0)
 
 	// Stdin
 	err = writeToStdin("i have a whitelist here\n", func() {
-		fr, err := p.ParsePaths(os.Stdin.Name())
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, os.Stdin.Name())
 		assert.NoError(t, err)
-		assert.Len(t, fr, 1)
-		assert.EqualValues(t, result.FileResults{
+		assert.Len(t, pr.results, 1)
+		assert.Equal(t, violations, 1)
+		expected := result.FileResults{
 			Filename: os.Stdin.Name(),
 			Results: []result.Result{
 				{
@@ -109,7 +145,8 @@ func parsePathTests(t *testing.T) {
 					},
 				},
 			},
-		}, fr[0])
+		}
+		assert.EqualValues(t, &expected, pr.results[0])
 	})
 	assert.NoError(t, err)
 }
@@ -121,33 +158,6 @@ func TestParser_ParsePaths(t *testing.T) {
 	os.Setenv("WORKER_POOL_COUNT", "10")
 	defer os.Unsetenv("WORKER_POOL_COUNT")
 	parsePathTests(t)
-}
-
-func TestPathsIncludeStdin(t *testing.T) {
-	testCases := []struct {
-		paths    []string
-		expected bool
-	}{
-		{
-			paths:    []string{"file1", "file2"},
-			expected: false,
-		},
-		{
-			paths:    []string{},
-			expected: false,
-		},
-		{
-			paths:    []string{"/dev/stdin", "file2"},
-			expected: true,
-		},
-		{
-			paths:    []string{"/dev/stdin"},
-			expected: true,
-		},
-	}
-	for _, tC := range testCases {
-		assert.Equal(t, tC.expected, pathsIncludeStdin(tC.paths), tC.paths)
-	}
 }
 
 func writeToStdin(text string, f func()) error {
@@ -189,10 +199,10 @@ func BenchmarkParsePaths(b *testing.B) {
 	tmpFile.Close()
 
 	for i := 0; i < b.N; i++ {
-		ignorer := ignore.NewIgnore([]string{}, []string{})
-		p := NewParser(rule.DefaultRules, ignorer)
-		_, err = p.ParsePaths(tmpFile.Name())
-		assert.NoError(b, err)
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, tmpFile.Name())
+		assert.Equal(b, violations, 6)
 	}
 }
 
@@ -200,9 +210,9 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 
 	for i := 0; i < b.N; i++ {
-		Ignorer := ignore.NewIgnore([]string{}, []string{})
-		p := NewParser(rule.DefaultRules, Ignorer)
-		_, err := p.ParsePaths("../..")
-		assert.NoError(b, err)
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, "../..")
+		assert.Equal(b, violations, 6)
 	}
 }

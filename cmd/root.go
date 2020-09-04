@@ -98,26 +98,18 @@ Provide a list file globs for files you'd like to check.`,
 		if stdin {
 			args = []string{os.Stdin.Name()}
 		}
-		results, err := p.ParsePaths(args...)
-		if err != nil {
-			return err
-		}
 
 		print, err := printer.NewPrinter(output)
 		if err != nil {
 			return err
 		}
 
-		if len(results) > 0 {
-			for _, res := range results {
-				print.Print(&res)
-			}
+		violations := p.ParsePaths(print, args...)
 
-			if exitOneOnFailure {
-				// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
-				cmd.SilenceUsage = true
-				err = fmt.Errorf("files with violations: %d", len(results))
-			}
+		if exitOneOnFailure && violations > 0 {
+			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
+			cmd.SilenceUsage = true
+			err = fmt.Errorf("files with violations: %d", violations)
 		}
 
 		return err

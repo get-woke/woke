@@ -10,6 +10,9 @@ func MarkdownCodify(s string) string {
 
 // InSlice returns true if a string is found in the slice
 func InSlice(s string, slice []string) bool {
+	if len(slice) == 0 {
+		return false
+	}
 	for _, el := range slice {
 		if el == s {
 			return true

@@ -36,6 +36,5 @@ func main() {
 	err := cmd.Execute()
 	if err != nil {
 		log.Fatal().Err(err).Send()
-		os.Exit(1)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/printer"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
@@ -23,87 +24,75 @@ const numWorkers = 20
 type Parser struct {
 	Rules   []*rule.Rule
 	Ignorer *ignore.Ignore
+
+	rchan chan result.FileResults
 }
 
 func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	return &Parser{
 		Rules:   rules,
 		Ignorer: ignorer,
+		rchan:   make(chan result.FileResults),
 	}
 }
 
-// ParsePaths parses all files provided and returns the results
-func (p *Parser) ParsePaths(paths ...string) (results []result.FileResults, err error) {
+// ParsePaths parses all files provided and returns the number of violations
+func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	// data provided through stdin
-	if pathsIncludeStdin(paths) {
-		r, err := generateFileViolations(os.Stdin, p.Rules)
-		return []result.FileResults{*r}, err
+	if util.InSlice(os.Stdin.Name(), paths) {
+		r, _ := generateFileViolations(os.Stdin, p.Rules)
+		if r.Len() > 0 {
+			print.Print(r)
+		}
+		return r.Len()
 	}
 
 	if len(paths) == 0 {
 		paths = DefaultPath
 	}
-
-	return p.processViolations(paths), nil
-}
-
-type _result struct {
-	res result.FileResults
-	err error
-}
-
-// parseViolations returns all the violations (FileResults) for every valid file in each path
-func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 	var wg sync.WaitGroup
 
-	rchan := make(chan _result)
 	done := make(chan bool)
 	defer close(done)
 
-	for i := range paths {
+	for _, path := range paths {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
-			p.processViolationInPath(path, done, rchan)
-		}(paths[i])
+			p.processViolationInPath(path, done)
+		}(path)
 	}
 
 	go func() {
 		wg.Wait()
-		close(rchan)
+		close(p.rchan)
 	}()
 
-	for r := range rchan {
-		if r.err != nil {
-			log.Error().Err(r.err).Msg("violations error")
-		}
-
-		sort.Sort(r.res)
-		fr = append(fr, r.res)
+	violations := 0
+	for r := range p.rchan {
+		sort.Sort(r)
+		print.Print(&r)
+		violations++
 	}
-	return
+	return violations
 }
 
-func (p *Parser) processFiles(files <-chan string, rchan chan _result, done chan bool, wg *sync.WaitGroup) {
+func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.WaitGroup) {
 	for f := range files {
 		wg.Add(1)
 		go func(f string) {
 			defer wg.Done()
 
-			v, err := generateFileViolationsFromFilename(f, p.Rules)
-			if len(v.Results) == 0 {
+			v, _ := generateFileViolationsFromFilename(f, p.Rules)
+			if v == nil || len(v.Results) == 0 {
 				return
 			}
-			select {
-			case rchan <- _result{*v, err}:
-			case <-done:
-				return
-			}
+			p.rchan <- *v
 		}(f)
 	}
 }
 
-func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan _result) {
+func (p *Parser) processViolationInPath(path string, done chan bool) {
 	var wg sync.WaitGroup
 
 	files := p.walkDir(path, done)
@@ -116,7 +105,7 @@ func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan 
 		wg.Add(numWorkers)
 		for i := 0; i < numWorkers; i++ {
 			go func() {
-				p.processFiles(files, rchan, done, &wg)
+				p.processFiles(files, done, &wg)
 				wg.Done()
 			}()
 		}
@@ -125,8 +114,9 @@ func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan 
 		// run parallel unbounded. Potential high memory consumption
 		log.Debug().Str("path", path).Str("type", "parallel").Msg("process files")
 
-		p.processFiles(files, rchan, done, &wg)
+		p.processFiles(files, done, &wg)
 	}
+
 	wg.Wait()
 }
 
@@ -150,17 +140,4 @@ func (p *Parser) walkDir(dirname string, done chan bool) <-chan string {
 	}()
 
 	return paths
-}
-
-// pathsIncludeStdin returns true if any element of the slice is stdin
-func pathsIncludeStdin(paths []string) bool {
-	if len(paths) == 0 {
-		return false
-	}
-	for _, p := range paths {
-		if p == os.Stdin.Name() {
-			return true
-		}
-	}
-	return false
 }
