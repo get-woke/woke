@@ -148,12 +148,11 @@ func (p *Parser) walkDir(dirname string, done chan bool) (<-chan string, <-chan 
 			if err != nil {
 				return err
 			}
-			if !info.Mode().IsRegular() {
-				return nil
-			}
+
 			if p.Ignorer != nil && p.Ignorer.Match(path) {
 				return nil
 			}
+
 			if util.IsTextFileFromFilename(path) != nil {
 				return nil
 			}
