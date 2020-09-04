@@ -126,11 +126,14 @@ Provide a list file globs for files you'd like to check.`,
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		log.Fatal().Err(err)
-		os.Exit(1)
-	}
+func Execute() error {
+	return rootCmd.Execute()
+}
+
+// TestExecute is only used for testing, so it will run against the root of the repo, instead of the package root
+func TestExecute() error {
+	rootCmd.SetArgs([]string{".."})
+	return rootCmd.Execute()
 }
 
 func init() {

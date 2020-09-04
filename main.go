@@ -32,5 +32,10 @@ import (
 
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339})
-	cmd.Execute()
+
+	err := cmd.Execute()
+	if err != nil {
+		log.Fatal().Err(err).Send()
+		os.Exit(1)
+	}
 }
