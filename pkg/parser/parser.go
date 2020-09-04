@@ -1,19 +1,16 @@
 package parser
 
 import (
-	"errors"
-	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
 	"strconv"
 	"sync"
-	"time"
 
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
+	"github.com/get-woke/woke/pkg/walker"
 	"github.com/rs/zerolog/log"
 )
 
@@ -78,7 +75,7 @@ func (p *Parser) processViolations(paths []string) (fr []result.FileResults) {
 
 	for r := range rchan {
 		if r.err != nil {
-			log.Error().Err(r.err).Msg("filepath.Walk error")
+			log.Error().Err(r.err).Msg("violations error")
 		}
 
 		sort.Sort(r.res)
@@ -109,7 +106,7 @@ func (p *Parser) processFiles(files <-chan string, rchan chan _result, done chan
 func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan _result) {
 	var wg sync.WaitGroup
 
-	files, errc := p.walkDir(path, done)
+	files := p.walkDir(path, done)
 
 	// run parallel, but bounded
 	numWorkerStr := util.GetEnvDefault("WORKER_POOL_COUNT", "0")
@@ -131,24 +128,14 @@ func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan 
 		p.processFiles(files, rchan, done, &wg)
 	}
 	wg.Wait()
-
-	if err := <-errc; err != nil {
-		rchan <- _result{result.FileResults{}, err}
-	}
 }
 
-func (p *Parser) walkDir(dirname string, done chan bool) (<-chan string, <-chan error) {
+func (p *Parser) walkDir(dirname string, done chan bool) <-chan string {
 	paths := make(chan string)
-	errc := make(chan error, 1)
 
 	go func() {
 		defer close(paths)
-
-		errc <- filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
+		_ = walker.Walk(dirname, func(path string, _ os.FileMode) error {
 			if p.Ignorer != nil && p.Ignorer.Match(path) {
 				return nil
 			}
@@ -157,18 +144,12 @@ func (p *Parser) walkDir(dirname string, done chan bool) (<-chan string, <-chan 
 				return nil
 			}
 
-			select {
-			case paths <- path:
-				return nil
-			case <-done:
-				return errors.New("walk canceled")
-			case <-time.After(time.Second * 30):
-				return fmt.Errorf("walk timeout: %s", dirname)
-			}
+			paths <- path
+			return nil
 		})
 	}()
 
-	return paths, errc
+	return paths
 }
 
 // pathsIncludeStdin returns true if any element of the slice is stdin
