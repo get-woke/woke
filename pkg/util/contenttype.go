@@ -14,8 +14,6 @@ func detectContentType(file *os.File) string {
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 	n, _ := file.Read(buffer)
-	// Reset the file so a scanner can scan
-	_, _ = file.Seek(0, 0)
 
 	return http.DetectContentType(buffer[:n])
 }
