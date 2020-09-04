@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParser_ParsePaths(t *testing.T) {
+func parsePathTests(t *testing.T) {
 	p := NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
 
 	f1, err := newFile("i have a whitelist\n")
@@ -112,6 +112,15 @@ func TestParser_ParsePaths(t *testing.T) {
 		}, fr[0])
 	})
 	assert.NoError(t, err)
+}
+
+func TestParser_ParsePaths(t *testing.T) {
+	os.Unsetenv("WORKER_POOL_COUNT")
+	parsePathTests(t)
+
+	os.Setenv("WORKER_POOL_COUNT", "10")
+	defer os.Unsetenv("WORKER_POOL_COUNT")
+	parsePathTests(t)
 }
 
 func TestPathsIncludeStdin(t *testing.T) {
