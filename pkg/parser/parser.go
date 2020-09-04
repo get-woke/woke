@@ -18,6 +18,9 @@ import (
 
 var DefaultPath = []string{"."}
 
+// TODO: can this be dynamically determined?
+const numWorkers = 20
+
 // Parser parses files and finds lines that break rules
 type Parser struct {
 	Rules   []*rule.Rule
@@ -87,21 +90,28 @@ func (p *Parser) processViolationInPath(path string, done chan bool, rchan chan 
 	var wg sync.WaitGroup
 
 	files, errc := p.walkDir(path, done)
-	for f := range files {
-		wg.Add(1)
-		go func(f string) {
-			defer wg.Done()
 
-			v, err := generateFileViolationsFromFilename(f, p.Rules)
-			if len(v.Results) == 0 {
-				return
+	wg.Add(numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			for f := range files {
+				wg.Add(1)
+				go func(f string) {
+					defer wg.Done()
+
+					v, err := generateFileViolationsFromFilename(f, p.Rules)
+					if len(v.Results) == 0 {
+						return
+					}
+					select {
+					case rchan <- _result{*v, err}:
+					case <-done:
+						return
+					}
+				}(f)
 			}
-			select {
-			case rchan <- _result{*v, err}:
-			case <-done:
-				return
-			}
-		}(f)
+			wg.Done()
+		}()
 	}
 
 	wg.Wait()
