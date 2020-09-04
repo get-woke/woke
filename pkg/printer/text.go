@@ -7,11 +7,6 @@ import (
 	"github.com/get-woke/woke/pkg/result"
 )
 
-// MaxLineLengthForShowingViolationSource is the max line length that this printer
-// will show the source of the violation and the location within the line of the violation.
-// Helps avoid consuming the console when minified files contine violations.
-const MaxLineLengthForShowingViolationSource = 200
-
 // Text is a text printer meant for humans to read
 type Text struct {
 	disableColor bool
@@ -42,13 +37,12 @@ func (t *Text) Print(fs *result.FileResults) error {
 			color.New(color.FgHiMagenta).Sprint(r.Reason()),
 			sev)
 
-		// If the line is too long, skip showing the source code
-		if len(r.Line) > MaxLineLengthForShowingViolationSource {
-			continue
+		// If the line empty, skip showing the source code
+		// This could happen if the line is too long to be worth showing
+		if len(r.Line) > 0 {
+			fmt.Println(r.Line)
+			fmt.Printf("%s\n", t.arrowUnderLine(&r))
 		}
-
-		fmt.Println(r.Line)
-		fmt.Printf("%s\n", t.arrowUnderLine(&r))
 	}
 
 	return nil

@@ -9,10 +9,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// MaxLineLength is the max line length that this printer
+// will show the source of the violation and the location within the line of the violation.
+// Helps avoid consuming the console when minified files contine violations.
+const MaxLineLength = 200
+
 // Result contains data about the result of a broken rule
 type Result struct {
-	Rule          *rule.Rule
-	Violation     string
+	Rule      *rule.Rule
+	Violation string
+	// Line is the full string of the line, unless it's over MaxLintLength,
+	// where Line will be an emtpy string
 	Line          string
 	StartPosition *token.Position
 	EndPosition   *token.Position
@@ -39,7 +46,6 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 		end := idx[1]
 		newResult := Result{
 			Rule:      r,
-			Line:      text,
 			Violation: text[start:end],
 			StartPosition: &token.Position{
 				Filename: filename,
@@ -51,6 +57,10 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 				Line:     line,
 				Column:   end,
 			},
+		}
+
+		if len(text) < MaxLineLength {
+			newResult.Line = text
 		}
 
 		rs = append(rs, newResult)
