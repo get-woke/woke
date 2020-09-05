@@ -60,6 +60,8 @@ func TestAddRecursiveGitIgnores(t *testing.T) {
 	}
 	defer os.RemoveAll(dir)
 	lines := addRecursiveGitIgnores([]string{".gitignore"}, []string{dir})
+	sort.Strings(lines)
+	sort.Strings(expected)
 
 	assert.EqualValues(t, expected, lines)
 }
