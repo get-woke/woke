@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	gitignore "github.com/get-woke/go-gitignore"
@@ -55,7 +56,7 @@ func (i *Ignore) AddIgnoreFiles(paths []string, ignoreNames ...string) {
 	i.matcher.AddPatternsFromLines(lines...)
 }
 
-// addRecursiveGitIgnores uses filepath.Walk to walk each path, search for a file that matches
+// addRecursiveGitIgnores walks each path, search for a file that matches
 // ignoreName and reads each file's lines
 // NOTE: this is very costly in large directories and should be used with caution
 func addRecursiveGitIgnores(ignoreNames []string, paths []string) (lines []string) {
@@ -66,15 +67,34 @@ func addRecursiveGitIgnores(ignoreNames []string, paths []string) (lines []strin
 			TimeDiff("durationMS", time.Now(), start).
 			Msg("finished walk for ignore files")
 	}()
-	for _, path := range paths {
-		_ = walker.Walk(path, func(p string, info os.FileMode) error {
-			if info.Perm().IsRegular() && util.InSlice(filepath.Base(p), ignoreNames) {
-				newLines := append(readIgnoreFile(p), p)
-				lines = append(lines, newLines...)
-			}
 
-			return nil
-		})
+	var wg sync.WaitGroup
+	wg.Add(len(paths))
+
+	ch := make(chan []string)
+
+	for _, path := range paths {
+		go func(path string, ignoreNames []string) {
+			defer wg.Done()
+
+			_ = walker.Walk(path, func(p string, info os.FileMode) error {
+				if info.Perm().IsRegular() && util.InSlice(filepath.Base(p), ignoreNames) {
+					newLines := append(readIgnoreFile(p), p)
+					ch <- newLines
+				}
+
+				return nil
+			})
+		}(path, ignoreNames)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	for c := range ch {
+		lines = append(lines, c...)
 	}
 
 	return
