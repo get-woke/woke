@@ -3,55 +3,12 @@
 
 package rule
 
-// WhitelistRule is the default rule for "whitelist"
-var WhitelistRule = Rule{
-	Name:         "whitelist",
-	Terms:        []string{"whitelist", "white-list"},
-	Alternatives: []string{"allowlist"},
-	Severity:     1,
-}
-
 // BlacklistRule is the default rule for "blacklist"
 var BlacklistRule = Rule{
 	Name:         "blacklist",
 	Terms:        []string{"blacklist", "black-list"},
 	Alternatives: []string{"denylist", "blocklist"},
 	Severity:     1,
-}
-
-// MasterSlaveRule is the default rule for "master-slave"
-var MasterSlaveRule = Rule{
-	Name:         "master-slave",
-	Terms:        []string{"master-slave", "master/slave"},
-	Alternatives: []string{"leader/follower", "primary/replica", "primary/standby"},
-}
-
-// SlaveRule is the default rule for "slave"
-var SlaveRule = Rule{
-	Name:         "slave",
-	Terms:        []string{"slave"},
-	Alternatives: []string{"follower", "replica", "standby"},
-}
-
-// GrandfatheredRule is the default rule for "grandfathered"
-var GrandfatheredRule = Rule{
-	Name:         "grandfathered",
-	Terms:        []string{"grandfathered"},
-	Alternatives: []string{"legacy status"},
-}
-
-// ManHoursRule is the default rule for "man-hours"
-var ManHoursRule = Rule{
-	Name:         "man-hours",
-	Terms:        []string{"man hours", "man-hours"},
-	Alternatives: []string{"person hours", "engineer hours"},
-}
-
-// SanityCheckRule is the default rule for "sanity-check"
-var SanityCheckRule = Rule{
-	Name:         "sanity-check",
-	Terms:        []string{"sanity check", "sanity-check", "sanity"},
-	Alternatives: []string{"quick check", "confidence check", "coherence check"},
 }
 
 // DummyRule is the default rule for "dummy"
@@ -61,11 +18,11 @@ var DummyRule = Rule{
 	Alternatives: []string{"placeholder value", "sample value"},
 }
 
-// HeRule is the default rule for "he"
-var HeRule = Rule{
-	Name:         "he",
-	Terms:        []string{"he", "his", "him"},
-	Alternatives: []string{"they", "them", "their"},
+// GrandfatheredRule is the default rule for "grandfathered"
+var GrandfatheredRule = Rule{
+	Name:         "grandfathered",
+	Terms:        []string{"grandfathered"},
+	Alternatives: []string{"legacy status"},
 }
 
 // GuysRule is the default rule for "guys"
@@ -75,16 +32,59 @@ var GuysRule = Rule{
 	Alternatives: []string{"folks", "people", "you all", "y'all"},
 }
 
+// HeRule is the default rule for "he"
+var HeRule = Rule{
+	Name:         "he",
+	Terms:        []string{"he", "his", "him"},
+	Alternatives: []string{"they", "them", "their"},
+}
+
+// ManHoursRule is the default rule for "man-hours"
+var ManHoursRule = Rule{
+	Name:         "man-hours",
+	Terms:        []string{"man hours", "man-hours"},
+	Alternatives: []string{"person hours", "engineer hours"},
+}
+
+// MasterSlaveRule is the default rule for "master-slave"
+var MasterSlaveRule = Rule{
+	Name:         "master-slave",
+	Terms:        []string{"master-slave", "master/slave"},
+	Alternatives: []string{"leader/follower", "primary/replica", "primary/standby"},
+}
+
+// SanityCheckRule is the default rule for "sanity-check"
+var SanityCheckRule = Rule{
+	Name:         "sanity-check",
+	Terms:        []string{"sanity check", "sanity-check", "sanity"},
+	Alternatives: []string{"quick check", "confidence check", "coherence check"},
+}
+
+// SlaveRule is the default rule for "slave"
+var SlaveRule = Rule{
+	Name:         "slave",
+	Terms:        []string{"slave"},
+	Alternatives: []string{"follower", "replica", "standby"},
+}
+
+// WhitelistRule is the default rule for "whitelist"
+var WhitelistRule = Rule{
+	Name:         "whitelist",
+	Terms:        []string{"whitelist", "white-list"},
+	Alternatives: []string{"allowlist"},
+	Severity:     1,
+}
+
 // DefaultRules are the default rules always used
 var DefaultRules = []*Rule{
-	&WhitelistRule,
 	&BlacklistRule,
-	&MasterSlaveRule,
-	&SlaveRule,
-	&GrandfatheredRule,
-	&ManHoursRule,
-	&SanityCheckRule,
 	&DummyRule,
-	&HeRule,
+	&GrandfatheredRule,
 	&GuysRule,
+	&HeRule,
+	&ManHoursRule,
+	&MasterSlaveRule,
+	&SanityCheckRule,
+	&SlaveRule,
+	&WhitelistRule,
 }

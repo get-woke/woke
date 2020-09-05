@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -29,6 +30,10 @@ func main() {
 		Rules []rule.Rule `yaml:"rules"`
 	}
 	_panic(yaml.Unmarshal(yamlFile, &cfg))
+
+	sort.Slice(cfg.Rules, func(i, j int) bool {
+		return cfg.Rules[i].Name < cfg.Rules[j].Name
+	})
 
 	f, err := os.Create(outFile)
 	_panic(err)
