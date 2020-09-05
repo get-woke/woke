@@ -49,23 +49,20 @@ rules:
       - person hours
       - engineer hours
 
-  - name: sanity-check
+  - name: sanity
     terms:
-      - sanity check
-      - sanity-check
       - sanity
     alternatives:
+      - confidence
       - quick check
-      - confidence check
       - coherence check
 
   - name: dummy
     terms:
-      - dummy value
       - dummy
     alternatives:
-      - placeholder value
-      - sample value
+      - placeholder
+      - sample
 
   - name: he
     terms:

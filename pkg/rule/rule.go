@@ -30,7 +30,8 @@ func (r *Rule) FindAllStringIndex(text string) [][]int {
 	}
 
 	if r.re == nil {
-		r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, strings.Join(r.Terms, "|")))
+		re := strings.Join(escape(r.Terms), "|")
+		r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, re))
 	}
 
 	return r.re.FindAllStringIndex(text, -1)
@@ -84,4 +85,11 @@ func (r *Rule) CanIgnoreLine(line string) bool {
 	}
 
 	return false
+}
+
+func escape(ss []string) []string {
+	for i, s := range ss {
+		ss[i] = regexp.QuoteMeta(s)
+	}
+	return ss
 }

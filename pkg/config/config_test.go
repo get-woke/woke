@@ -2,6 +2,8 @@ package config
 
 import (
 	"bytes"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
@@ -16,10 +18,16 @@ func TestNewConfig(t *testing.T) {
 		log.Logger = zerolog.New(out)
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
-		_, err := NewConfig("testdata/good.yaml")
+		c, err := NewConfig("testdata/good.yaml")
 		assert.NoError(t, err)
+		enabledRules := make([]string, len(c.Rules))
+		for i := range c.Rules {
+			enabledRules[i] = fmt.Sprintf("%q", c.Rules[i].Name)
+		}
 
-		assert.Equal(t, `{"level":"debug","rules":["rule1","rule2","whitelist","blacklist","master-slave","slave","grandfathered","man-hours","sanity-check","dummy","he","guys"],"message":"rules enabled"}`+"\n", out.String())
+		assert.Equal(t,
+			fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
+			out.String())
 	})
 
 	t.Run("config-good", func(t *testing.T) {

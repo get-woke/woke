@@ -14,8 +14,8 @@ var BlacklistRule = Rule{
 // DummyRule is the default rule for "dummy"
 var DummyRule = Rule{
 	Name:         "dummy",
-	Terms:        []string{"dummy value", "dummy"},
-	Alternatives: []string{"placeholder value", "sample value"},
+	Terms:        []string{"dummy"},
+	Alternatives: []string{"placeholder", "sample"},
 }
 
 // GrandfatheredRule is the default rule for "grandfathered"
@@ -53,11 +53,11 @@ var MasterSlaveRule = Rule{
 	Alternatives: []string{"leader/follower", "primary/replica", "primary/standby"},
 }
 
-// SanityCheckRule is the default rule for "sanity-check"
-var SanityCheckRule = Rule{
-	Name:         "sanity-check",
-	Terms:        []string{"sanity check", "sanity-check", "sanity"},
-	Alternatives: []string{"quick check", "confidence check", "coherence check"},
+// SanityRule is the default rule for "sanity"
+var SanityRule = Rule{
+	Name:         "sanity",
+	Terms:        []string{"sanity"},
+	Alternatives: []string{"confidence", "quick check", "coherence check"},
 }
 
 // SlaveRule is the default rule for "slave"
@@ -84,7 +84,7 @@ var DefaultRules = []*Rule{
 	&HeRule,
 	&ManHoursRule,
 	&MasterSlaveRule,
-	&SanityCheckRule,
+	&SanityRule,
 	&SlaveRule,
 	&WhitelistRule,
 }
