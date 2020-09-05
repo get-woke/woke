@@ -28,8 +28,9 @@ func (fr FileResults) Swap(i, j int) {
 
 // Less is part of sort.Interface
 func (fr FileResults) Less(i, j int) bool {
-	if fr.Results[i].StartPosition.Line < fr.Results[j].StartPosition.Line {
-		return true
+	if fr.Results[i].StartPosition.Line == fr.Results[j].StartPosition.Line {
+		return fr.Results[i].StartPosition.Column < fr.Results[j].StartPosition.Column
 	}
-	return fr.Results[i].StartPosition.Column < fr.Results[j].StartPosition.Column
+
+	return fr.Results[i].StartPosition.Line < fr.Results[j].StartPosition.Line
 }
