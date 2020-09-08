@@ -187,13 +187,17 @@ func writeToStdin(t *testing.T, text string, f func()) error {
 
 func BenchmarkParsePaths(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
+	// TODO: Use b.TempDir() instead of os.TempDir()
+	// Fix in go 1.16: https://github.com/golang/go/issues/41062
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "")
 	assert.NoError(b, err)
 
 	// Remember to clean up the file afterwards
+	// TODO: Can be removed once b.TempDir() is used above, since the testing package
+	// cleans up directories for us
 	defer os.Remove(tmpFile.Name())
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < b.N; i++ {
 		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n")
 	}
 	tmpFile.Close()
@@ -202,7 +206,7 @@ func BenchmarkParsePaths(b *testing.B) {
 		p := testParser()
 		pr := new(testPrinter)
 		violations := p.ParsePaths(pr, tmpFile.Name())
-		assert.Equal(b, violations, 6)
+		assert.Equal(b, 1, violations)
 	}
 }
 
@@ -210,9 +214,12 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 
 	for i := 0; i < b.N; i++ {
-		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, "../..")
-		assert.Equal(b, violations, 6)
+		assert.NotPanics(b, func() {
+			p := testParser()
+			pr := new(testPrinter)
+			// Unknown how many violations this will return since it's parsing the whole repo
+			// there's no way to know for sure at any given time, so just check that it doesn't panic
+			_ = p.ParsePaths(pr, "../..")
+		})
 	}
 }
