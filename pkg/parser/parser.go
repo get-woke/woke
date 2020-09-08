@@ -36,7 +36,7 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	}
 }
 
-// ParsePaths parses all files provided and returns the number of violations
+// ParsePaths parses all files provided and returns the number of files with violations
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	// data provided through stdin
 	if util.InSlice(os.Stdin.Name(), paths) {

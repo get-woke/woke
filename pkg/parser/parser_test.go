@@ -26,9 +26,9 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 func testParser() *Parser {
 	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
 }
-func parsePathTests(t *testing.T) {
 
-	f1, err := newFile("i have a whitelist\n")
+func parsePathTests(t *testing.T) {
+	f1, err := newFile(t, "i have a whitelist\n")
 	assert.NoError(t, err)
 	defer os.Remove(f1.Name())
 	pr := new(testPrinter)
@@ -61,7 +61,7 @@ func parsePathTests(t *testing.T) {
 	}
 	assert.EqualValues(t, &expected, pr.results[0])
 
-	f2, err := newFile("i have a no violations\n")
+	f2, err := newFile(t, "i have a no violations\n")
 	assert.NoError(t, err)
 	defer os.Remove(f2.Name())
 	p = testParser()
@@ -72,7 +72,7 @@ func parsePathTests(t *testing.T) {
 	assert.Equal(t, violations, 0)
 
 	// Test for IsTextFileFromFilename failure
-	f3, err := newFile("")
+	f3, err := newFile(t, "")
 	assert.NoError(t, err)
 	defer os.Remove(f3.Name())
 
@@ -94,7 +94,7 @@ func parsePathTests(t *testing.T) {
 	assert.Len(t, pr.results, 1)
 
 	// Test ignored file
-	f4, err := newFile("i have a whitelist violation, but am ignored\n")
+	f4, err := newFile(t, "i have a whitelist violation, but am ignored\n")
 	assert.NoError(t, err)
 	defer os.Remove(f4.Name())
 
@@ -117,7 +117,7 @@ func parsePathTests(t *testing.T) {
 	assert.Greater(t, len(pr.results), 0)
 
 	// Stdin
-	err = writeToStdin("i have a whitelist here\n", func() {
+	err = writeToStdin(t, "i have a whitelist here\n", func() {
 		p := testParser()
 		pr := new(testPrinter)
 		violations := p.ParsePaths(pr, os.Stdin.Name())
@@ -160,8 +160,8 @@ func TestParser_ParsePaths(t *testing.T) {
 	parsePathTests(t)
 }
 
-func writeToStdin(text string, f func()) error {
-	tmpfile, err := ioutil.TempFile("", "")
+func writeToStdin(t *testing.T, text string, f func()) error {
+	tmpfile, err := ioutil.TempFile(t.TempDir(), "")
 	if err != nil {
 		return err
 	}
