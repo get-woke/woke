@@ -48,6 +48,8 @@ func TestGenerateFileViolations(t *testing.T) {
 	assert.Error(t, err)
 }
 
+// newFile creates a new file for testing. The file, and the directory that the file
+// was created in will be removed at the completion of the test
 func newFile(t *testing.T, text string) (*os.File, error) {
 	tmpFile, err := ioutil.TempFile(t.TempDir(), "woke-")
 	if err != nil {
@@ -58,5 +60,4 @@ func newFile(t *testing.T, text string) (*os.File, error) {
 	_, err = tmpFile.Write(b)
 
 	return tmpFile, err
-
 }

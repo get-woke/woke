@@ -28,117 +28,31 @@ func testParser() *Parser {
 }
 
 func parsePathTests(t *testing.T) {
-	f1, err := newFile(t, "i have a whitelist\n")
-	assert.NoError(t, err)
-	defer os.Remove(f1.Name())
-	pr := new(testPrinter)
-	p := testParser()
-	violations := p.ParsePaths(pr, f1.Name())
-
-	// assert.Len(t, pr.results, 1)
-	assert.Equal(t, violations, 1)
-	expected := result.FileResults{
-		Filename: f1.Name(),
-		Results: []result.Result{
-			{
-				Rule:      &rule.WhitelistRule,
-				Violation: "whitelist",
-				Line:      "i have a whitelist",
-				StartPosition: &token.Position{
-					Filename: f1.Name(),
-					Offset:   0,
-					Line:     1,
-					Column:   9,
-				},
-				EndPosition: &token.Position{
-					Filename: f1.Name(),
-					Offset:   0,
-					Line:     1,
-					Column:   18,
-				},
-			},
-		},
-	}
-	assert.EqualValues(t, &expected, pr.results[0])
-
-	f2, err := newFile(t, "i have a no violations\n")
-	assert.NoError(t, err)
-	defer os.Remove(f2.Name())
-	p = testParser()
-	pr = new(testPrinter)
-	violations = p.ParsePaths(pr, f2.Name())
-	assert.NoError(t, err)
-	assert.Len(t, pr.results, 0)
-	assert.Equal(t, violations, 0)
-
-	// Test for IsTextFileFromFilename failure
-	f3, err := newFile(t, "")
-	assert.NoError(t, err)
-	defer os.Remove(f3.Name())
-
-	p = testParser()
-	pr = new(testPrinter)
-	violations = p.ParsePaths(pr, f3.Name())
-	assert.NoError(t, err)
-	assert.Equal(t, violations, 0)
-	assert.Len(t, pr.results, 0)
-
-	// Test with multiple paths supplied
-	// Disabled since this functionality is currently broken
-	p = testParser()
-	pr = new(testPrinter)
-	violations = p.ParsePaths(pr, f1.Name(), f2.Name())
-	assert.NoError(t, err)
-	fmt.Println(pr.results)
-	assert.Equal(t, violations, 1)
-	assert.Len(t, pr.results, 1)
-
-	// Test ignored file
-	f4, err := newFile(t, "i have a whitelist violation, but am ignored\n")
-	assert.NoError(t, err)
-	defer os.Remove(f4.Name())
-
-	p = testParser()
-	p.Ignorer = ignore.NewIgnore([]string{f4.Name()}, []string{})
-	pr = new(testPrinter)
-
-	violations = p.ParsePaths(pr, f4.Name())
-	assert.NoError(t, err)
-	assert.Len(t, pr.results, 0)
-	assert.Equal(t, violations, len(pr.results))
-
-	// Test default path (which would run tests against the parser package)
-	p = testParser()
-	pr = new(testPrinter)
-	violations = p.ParsePaths(pr)
-	assert.NoError(t, err)
-	fmt.Println(pr.results)
-	assert.Equal(t, violations, len(pr.results))
-	assert.Greater(t, len(pr.results), 0)
-
-	// Stdin
-	err = writeToStdin(t, "i have a whitelist here\n", func() {
-		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, os.Stdin.Name())
+	t.Run("violation", func(t *testing.T) {
+		f1, err := newFile(t, "i have a whitelist\n")
 		assert.NoError(t, err)
+		defer os.Remove(f1.Name())
+		pr := new(testPrinter)
+		p := testParser()
+		violations := p.ParsePaths(pr, f1.Name())
+
 		assert.Len(t, pr.results, 1)
-		assert.Equal(t, violations, 1)
+		assert.Equal(t, len(pr.results), violations)
 		expected := result.FileResults{
-			Filename: os.Stdin.Name(),
+			Filename: f1.Name(),
 			Results: []result.Result{
 				{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
-					Line:      "i have a whitelist here",
+					Line:      "i have a whitelist",
 					StartPosition: &token.Position{
-						Filename: os.Stdin.Name(),
+						Filename: f1.Name(),
 						Offset:   0,
 						Line:     1,
 						Column:   9,
 					},
 					EndPosition: &token.Position{
-						Filename: os.Stdin.Name(),
+						Filename: f1.Name(),
 						Offset:   0,
 						Line:     1,
 						Column:   18,
@@ -148,7 +62,104 @@ func parsePathTests(t *testing.T) {
 		}
 		assert.EqualValues(t, &expected, pr.results[0])
 	})
-	assert.NoError(t, err)
+
+	t.Run("no violations", func(t *testing.T) {
+		f, err := newFile(t, "i have a no violations\n")
+		assert.NoError(t, err)
+
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, f.Name())
+
+		assert.NoError(t, err)
+		assert.Len(t, pr.results, 0)
+		assert.Equal(t, len(pr.results), violations)
+	})
+	t.Run("IsTextFileFromFilename failure", func(t *testing.T) {
+		f, err := newFile(t, "")
+		assert.NoError(t, err)
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, f.Name())
+		assert.NoError(t, err)
+		assert.Len(t, pr.results, 0)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
+	t.Run("multiple paths", func(t *testing.T) {
+		f1, err := newFile(t, "i have a whitelist\n")
+		assert.NoError(t, err)
+		f2, err := newFile(t, "i have a no violations\n")
+		assert.NoError(t, err)
+
+		// Test with multiple paths supplied
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, f1.Name(), f2.Name())
+		assert.NoError(t, err)
+		fmt.Println(pr.results)
+		assert.Len(t, pr.results, 1)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
+	t.Run("ignored", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist violation, but am ignored\n")
+		assert.NoError(t, err)
+
+		p := testParser()
+		p.Ignorer = ignore.NewIgnore([]string{f.Name()}, []string{})
+		pr := new(testPrinter)
+
+		violations := p.ParsePaths(pr, f.Name())
+		assert.NoError(t, err)
+		assert.Len(t, pr.results, 0)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
+	t.Run("default path", func(t *testing.T) {
+		// Test default path (which would run tests against the parser package)
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr)
+
+		assert.Equal(t, len(pr.results), violations)
+		assert.Greater(t, len(pr.results), 0)
+	})
+
+	t.Run("stdin", func(t *testing.T) {
+		err := writeToStdin(t, "i have a whitelist here\n", func() {
+			p := testParser()
+			pr := new(testPrinter)
+			violations := p.ParsePaths(pr, os.Stdin.Name())
+			assert.Len(t, pr.results, 1)
+			assert.Equal(t, len(pr.results), violations)
+
+			expected := result.FileResults{
+				Filename: os.Stdin.Name(),
+				Results: []result.Result{
+					{
+						Rule:      &rule.WhitelistRule,
+						Violation: "whitelist",
+						Line:      "i have a whitelist here",
+						StartPosition: &token.Position{
+							Filename: os.Stdin.Name(),
+							Offset:   0,
+							Line:     1,
+							Column:   9,
+						},
+						EndPosition: &token.Position{
+							Filename: os.Stdin.Name(),
+							Offset:   0,
+							Line:     1,
+							Column:   18,
+						},
+					},
+				},
+			}
+			assert.EqualValues(t, &expected, pr.results[0])
+		})
+		assert.NoError(t, err)
+	})
 }
 
 func TestParser_ParsePaths(t *testing.T) {
