@@ -5,6 +5,8 @@ rules:
     terms:
       - whitelist
       - white-list
+      - whitelisted
+      - white-listed
     alternatives:
       - allowlist
     severity: warning
@@ -13,6 +15,8 @@ rules:
     terms:
       - blacklist
       - black-list
+      - blacklisted
+      - black-listed
     alternatives:
       - denylist
       - blocklist

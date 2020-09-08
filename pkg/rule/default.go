@@ -6,7 +6,7 @@ package rule
 // BlacklistRule is the default rule for "blacklist"
 var BlacklistRule = Rule{
 	Name:         "blacklist",
-	Terms:        []string{"blacklist", "black-list"},
+	Terms:        []string{"blacklist", "black-list", "blacklisted", "black-listed"},
 	Alternatives: []string{"denylist", "blocklist"},
 	Severity:     1,
 }
@@ -70,7 +70,7 @@ var SlaveRule = Rule{
 // WhitelistRule is the default rule for "whitelist"
 var WhitelistRule = Rule{
 	Name:         "whitelist",
-	Terms:        []string{"whitelist", "white-list"},
+	Terms:        []string{"whitelist", "white-list", "whitelisted", "white-listed"},
 	Alternatives: []string{"allowlist"},
 	Severity:     1,
 }
