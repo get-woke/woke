@@ -33,7 +33,7 @@ func TestSeverity_Colorize(t *testing.T) {
 		input    Severity
 		expected string
 	}{
-		{SevWarn, "\x1b[33mwarn\x1b[0m"},
+		{SevWarn, "\x1b[33mwarning\x1b[0m"},
 		{SevError, "\x1b[31merror\x1b[0m"},
 		{SevInfo, "\x1b[32minfo\x1b[0m"},
 		{Severity(999), "\x1b[32minfo\x1b[0m"},

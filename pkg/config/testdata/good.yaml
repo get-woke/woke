@@ -8,7 +8,7 @@ rules:
       - rule1
     alternatives:
       - alt-rule1
-    severity: warn
+    severity: warning
 
   - name: rule2
     terms:

@@ -12,7 +12,7 @@ const (
 	// SevError translates to Error
 	// This will be the default severity
 	SevError Severity = iota
-	// SevWarn translates to Warn
+	// SevWarn translates to Warning
 	SevWarn
 	// SevInfo translates to Info
 	SevInfo
@@ -23,7 +23,7 @@ func NewSeverity(s string) Severity {
 	switch s {
 	case SevInfo.String():
 		return SevInfo
-	case "warning":
+	case "warn":
 		return SevWarn
 	case SevWarn.String():
 		return SevWarn
@@ -34,7 +34,7 @@ func NewSeverity(s string) Severity {
 }
 
 func (s Severity) String() string {
-	vals := [...]string{"error", "warn", "info"}
+	vals := [...]string{"error", "warning", "info"}
 	if int(s) > len(vals) {
 		return vals[len(vals)-1]
 	}

@@ -18,4 +18,4 @@ rules:
     alternatives:
       - denylist
       - blocklist
-    severity: warn
+    severity: warning
