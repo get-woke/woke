@@ -18,14 +18,12 @@ const (
 	OutFormatText          = "text"
 	OutFormatSimple        = "simple"
 	OutFormatGitHubActions = "github-actions"
-	OutFormatErrorformat   = "efm"
 )
 
 var OutFormats = []string{
 	OutFormatText,
 	OutFormatSimple,
 	OutFormatGitHubActions,
-	OutFormatErrorformat,
 }
 
 var OutFormatsString = strings.Join(OutFormats, ",")
@@ -39,8 +37,6 @@ func NewPrinter(f string) (Printer, error) {
 		p = NewSimple()
 	case OutFormatGitHubActions:
 		p = NewGitHubActions()
-	case OutFormatErrorformat:
-		p = NewErrorFormat()
 	default:
 		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}
