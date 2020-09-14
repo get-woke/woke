@@ -1,0 +1,8 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommits"
+  ],
+  "postUpdateOptions": ["gomodTidy"],
+  "labels": ["renovate"]
+}
