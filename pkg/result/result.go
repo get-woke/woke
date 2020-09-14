@@ -11,7 +11,7 @@ import (
 
 // MaxLineLength is the max line length that this printer
 // will show the source of the violation and the location within the line of the violation.
-// Helps avoid consuming the console when minified files contine violations.
+// Helps avoid consuming the console when minified files contain violations.
 const MaxLineLength = 200
 
 // Result contains data about the result of a broken rule
@@ -19,7 +19,7 @@ type Result struct {
 	Rule      *rule.Rule
 	Violation string
 	// Line is the full string of the line, unless it's over MaxLintLength,
-	// where Line will be an emtpy string
+	// where Line will be an empty string
 	Line          string
 	StartPosition *token.Position
 	EndPosition   *token.Position
