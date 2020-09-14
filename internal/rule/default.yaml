@@ -86,3 +86,19 @@ rules:
       - people
       - you all
       - y'all
+
+  - name: whitebox
+    terms:
+      - white-box
+      - whitebox
+      - white box
+    alternatives:
+      - open-box
+
+  - name: blackbox
+    terms:
+      - black-box
+      - blackbox
+      - black box
+    alternatives:
+      - closed-box

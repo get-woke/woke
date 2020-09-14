@@ -3,6 +3,13 @@
 
 package rule
 
+// BlackboxRule is the default rule for "blackbox"
+var BlackboxRule = Rule{
+	Name:         "blackbox",
+	Terms:        []string{"black-box", "blackbox", "black box"},
+	Alternatives: []string{"closed-box"},
+}
+
 // BlacklistRule is the default rule for "blacklist"
 var BlacklistRule = Rule{
 	Name:         "blacklist",
@@ -67,6 +74,13 @@ var SlaveRule = Rule{
 	Alternatives: []string{"follower", "replica", "standby"},
 }
 
+// WhiteboxRule is the default rule for "whitebox"
+var WhiteboxRule = Rule{
+	Name:         "whitebox",
+	Terms:        []string{"white-box", "whitebox", "white box"},
+	Alternatives: []string{"open-box"},
+}
+
 // WhitelistRule is the default rule for "whitelist"
 var WhitelistRule = Rule{
 	Name:         "whitelist",
@@ -77,6 +91,7 @@ var WhitelistRule = Rule{
 
 // DefaultRules are the default rules always used
 var DefaultRules = []*Rule{
+	&BlackboxRule,
 	&BlacklistRule,
 	&DummyRule,
 	&GrandfatheredRule,
@@ -86,5 +101,6 @@ var DefaultRules = []*Rule{
 	&MasterSlaveRule,
 	&SanityRule,
 	&SlaveRule,
+	&WhiteboxRule,
 	&WhitelistRule,
 }
