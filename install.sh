@@ -286,9 +286,17 @@ github_release() {
   version=$2
   test -z "$version" && version="latest"
   giturl="https://github.com/${owner_repo}/releases/${version}"
-  json=$(http_copy "$giturl" "Accept:application/json")
-  test -z "$json" && return 1
-  version=$(echo "$json" | tr -s '\n' ' ' | sed 's/.*"tag_name":"//' | sed 's/".*//')
+  json=$(http_copy "$giturl" "Accept:application/json" || true)
+  if [ -z "$json" ]; then
+    # Best guess for the latest version of the major/minor tag provided
+    # ie: supplying `v0` will return the latest version for the major version v0
+    # or supplying `v0.1` will return the latest version for the major version v0 and minor version 1
+    releases_json=$(http_copy "https://api.github.com/repos/${owner_repo}/releases")
+    versions=$(echo "$releases_json" | grep tag_name  | sed -E 's/.*"tag_name": "(.*)",?/\1/g' | grep "$version")
+    version=$(echo "$versions" | sort -Vr | head -n 1)
+  else
+    version=$(echo "$json" | tr -s '\n' ' ' | sed 's/.*"tag_name":"//' | sed 's/".*//')
+  fi
   test -z "$version" && return 1
   echo "$version"
 }
