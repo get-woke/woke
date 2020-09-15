@@ -39,13 +39,6 @@ var GuysRule = Rule{
 	Alternatives: []string{"folks", "people", "you all", "y'all"},
 }
 
-// HeRule is the default rule for "he"
-var HeRule = Rule{
-	Name:         "he",
-	Terms:        []string{"he", "his", "him"},
-	Alternatives: []string{"they", "them", "their"},
-}
-
 // ManHoursRule is the default rule for "man-hours"
 var ManHoursRule = Rule{
 	Name:         "man-hours",
@@ -96,7 +89,6 @@ var DefaultRules = []*Rule{
 	&DummyRule,
 	&GrandfatheredRule,
 	&GuysRule,
-	&HeRule,
 	&ManHoursRule,
 	&MasterSlaveRule,
 	&SanityRule,

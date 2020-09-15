@@ -68,16 +68,6 @@ rules:
       - placeholder
       - sample
 
-  - name: he
-    terms:
-      - he
-      - his
-      - him
-    alternatives:
-      - they
-      - them
-      - their
-
   - name: guys
     terms:
       - guys
