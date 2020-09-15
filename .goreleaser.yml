@@ -37,6 +37,7 @@ changelog:
     - '^test:'
     - '^dev:'
     - 'README'
+    - '^chore(deps):'
     - Merge pull request
     - Merge branch
 
