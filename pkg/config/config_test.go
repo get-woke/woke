@@ -58,7 +58,7 @@ func TestNewConfig(t *testing.T) {
 			Rules:       expectedRules,
 			IgnoreFiles: []string{"README.md", "pkg/rule/default.go", "testdata/good.yaml"},
 		}
-		expected.AddDefaultRules()
+		expected.ConfigureRules()
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 	})

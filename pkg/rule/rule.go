@@ -28,13 +28,15 @@ func (r *Rule) FindAllStringIndex(text string) [][]int {
 	if len(r.Terms) == 0 {
 		return [][]int{}
 	}
-
 	if r.re == nil {
-		re := strings.Join(escape(r.Terms), "|")
-		r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, re))
+		r.SetRegexp()
 	}
-
 	return r.re.FindAllStringIndex(text, -1)
+}
+
+func (r *Rule) SetRegexp() {
+	re := strings.Join(escape(r.Terms), "|")
+	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, re))
 }
 
 // Reason returns a human-readable reason for the rule violation

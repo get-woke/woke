@@ -37,7 +37,7 @@ func NewConfig(filename string) (*Config, error) {
 		}
 	}
 
-	c.AddDefaultRules()
+	c.ConfigureRules()
 
 	// For debugging/informational purposes
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
@@ -60,12 +60,16 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 	return false
 }
 
-// AddDefaultRules adds the config Rules to DefaultRules
-func (c *Config) AddDefaultRules() {
+// ConfigureRules adds the config Rules to DefaultRules
+func (c *Config) ConfigureRules() {
 	for _, r := range rule.DefaultRules {
 		if !c.inExistingRules(r) {
 			c.Rules = append(c.Rules, r)
 		}
+	}
+
+	for _, r := range c.Rules {
+		r.SetRegexp()
 	}
 }
 
