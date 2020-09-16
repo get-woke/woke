@@ -18,7 +18,7 @@ type Rule struct {
 	Note         string   `yaml:"note"`
 	Severity     Severity `yaml:"severity"`
 
-	re *regexp.Regexp
+	textRe *regexp.Regexp
 }
 
 func (r *Rule) FindAllStringIndex(text string) [][]int {
@@ -28,15 +28,17 @@ func (r *Rule) FindAllStringIndex(text string) [][]int {
 	if len(r.Terms) == 0 {
 		return [][]int{}
 	}
-	if r.re == nil {
+
+	if r.textRe == nil {
 		r.SetRegexp()
 	}
-	return r.re.FindAllStringIndex(text, -1)
+
+	return r.textRe.FindAllStringIndex(text, -1)
 }
 
 func (r *Rule) SetRegexp() {
-	re := strings.Join(escape(r.Terms), "|")
-	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, re))
+	group := strings.Join(escape(r.Terms), "|")
+	r.textRe = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, group))
 }
 
 // Reason returns a human-readable reason for the rule violation
