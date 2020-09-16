@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRule_FindAllStringIndex(t *testing.T) {
+func TestRule_FindMatchIndexes(t *testing.T) {
 	r := testRule()
 	tests := []struct {
 		text     string
@@ -19,12 +19,12 @@ func TestRule_FindAllStringIndex(t *testing.T) {
 		// ^ This case should be a violation, but the code needs to be updated to support it.
 	}
 	for _, test := range tests {
-		got := r.FindAllStringIndex(test.text)
+		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expected, got)
 	}
 
 	e := Rule{Name: "rule1"}
-	assert.Equal(t, [][]int{}, e.FindAllStringIndex("rule1"))
+	assert.Equal(t, [][]int(nil), e.FindMatchIndexes("rule1"))
 }
 
 func TestRule_Reason(t *testing.T) {

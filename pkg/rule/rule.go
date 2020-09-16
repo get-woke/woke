@@ -21,19 +21,49 @@ type Rule struct {
 	textRe *regexp.Regexp
 }
 
-func (r *Rule) FindAllStringIndex(text string) [][]int {
+// FindMatchIndexs returns the start and end indexes for all rule violations for the text supplied.
+func (r *Rule) FindMatchIndexes(text string) [][]int {
 	// If no terms are provided, this essentially disables the rule
 	// which is helpful for disabling default rules. Eventually, there should be
 	// a way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
 	if len(r.Terms) == 0 {
-		return [][]int{}
+		return [][]int(nil)
 	}
 
 	if r.textRe == nil {
 		r.SetRegexp()
 	}
 
-	return r.textRe.FindAllStringIndex(text, -1)
+	matches := r.textRe.FindAllStringSubmatchIndex(text, -1)
+	if matches == nil {
+		return [][]int(nil)
+	}
+
+	idx := [][]int{}
+
+	// Need to return a list of int pairs, which are the start and end index
+	// of all matches in all capture groups. For FindAllStringSubmatchIndex,
+	// Submatch 0 is the match of the entire expression, submatch 1 the match
+	// of the first parenthesized subexpression, and so on. We only care about Submatch 1+
+	for _, m := range matches {
+		if len(m) < 4 {
+			continue
+		}
+
+		// Right now, assume there's only one capture group.
+		// This should be updated to support more capture groups if necessary.
+		start := m[2]
+		end := m[3]
+
+		if start == -1 || end == -1 {
+			// something went wrong with the regex
+			continue
+		}
+
+		idx = append(idx, []int{start, end})
+	}
+
+	return idx
 }
 
 func (r *Rule) SetRegexp() {

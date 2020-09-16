@@ -39,7 +39,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 		return
 	}
 
-	idxs := r.FindAllStringIndex(text)
+	idxs := r.FindMatchIndexes(text)
 
 	for _, idx := range idxs {
 		start := idx[0]
