@@ -43,18 +43,26 @@ func (r *Rule) SetRegexp() {
 
 // Reason returns a human-readable reason for the rule violation
 func (r *Rule) Reason(violation string) string {
-	reason := fmt.Sprintf("`%s` may be insensitive, ", violation)
+	// fall back to the rule name if no violation was found
+	// violation is mostly used for informational purposes
+	if len(violation) == 0 {
+		violation = r.Name
+	}
+
+	reason := new(strings.Builder)
+	reason.WriteString(util.MarkdownCodify(violation) + " may be insensitive, ")
+
 	if len(r.Alternatives) > 0 {
 		alt := make([]string, len(r.Alternatives))
 		for i, a := range r.Alternatives {
 			alt[i] = util.MarkdownCodify(a)
 		}
-		reason += fmt.Sprintf("use %s instead", strings.Join(alt, ", "))
+		reason.WriteString(fmt.Sprintf("use %s instead", strings.Join(alt, ", ")))
 	} else {
-		reason += "try not to use it"
+		reason.WriteString("try not to use it")
 	}
 
-	return reason
+	return reason.String()
 }
 
 // ReasonWithNote returns a human-readable reason for the rule violation
