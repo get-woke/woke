@@ -24,6 +24,23 @@ func TestGenerateFileViolations(t *testing.T) {
 			{
 				Rule:      &rule.WhitelistRule,
 				Violation: "whitelist",
+				Line:      f.Name(),
+				StartPosition: &token.Position{
+					Filename: f.Name(),
+					Offset:   0,
+					Line:     1,
+					Column:   10,
+				},
+				EndPosition: &token.Position{
+					Filename: f.Name(),
+					Offset:   0,
+					Line:     1,
+					Column:   19,
+				},
+			},
+			{
+				Rule:      &rule.WhitelistRule,
+				Violation: "whitelist",
 				Line:      "this has whitelist",
 				StartPosition: &token.Position{
 					Filename: f.Name(),

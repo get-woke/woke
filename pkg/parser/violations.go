@@ -48,6 +48,11 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 		}
 
 		for _, r := range rules {
+			// Check the filename itself for violations
+			if line == 1 {
+				fileNameResults := result.FindResults(r, results.Filename, results.Filename, line)
+				results.Results = append(results.Results, fileNameResults...)
+			}
 			lineResults := result.FindResults(r, results.Filename, text, line)
 			results.Results = append(results.Results, lineResults...)
 		}
