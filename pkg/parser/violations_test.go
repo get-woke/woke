@@ -13,8 +13,6 @@ import (
 
 func TestGenerateFileViolations(t *testing.T) {
 	f, err := newFile(t, "this has whitelist\n")
-	defer os.Remove(f.Name())
-
 	assert.NoError(t, err)
 
 	res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
@@ -55,6 +53,9 @@ func newFile(t *testing.T, text string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
+	t.Cleanup(func() {
+		os.Remove(tmpFile.Name())
+	})
 
 	b := []byte(text)
 	_, err = tmpFile.Write(b)

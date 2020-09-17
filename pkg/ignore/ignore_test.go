@@ -40,6 +40,7 @@ func TestIgnore_AddIgnoreFiles(t *testing.T) {
 func TestAddRecursiveGitIgnores(t *testing.T) {
 	dir, err := ioutil.TempDir(os.TempDir(), "")
 	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
 	assert.DirExists(t, dir)
 	expected := make([]string, 0)
 	lastDir := dir
@@ -58,7 +59,6 @@ func TestAddRecursiveGitIgnores(t *testing.T) {
 		expected = append(expected, filepath.Join(lastDir, content))
 		expected = append(expected, ignoreFilename)
 	}
-	defer os.RemoveAll(dir)
 	lines := addRecursiveGitIgnores([]string{".gitignore"}, []string{dir})
 	sort.Strings(lines)
 	sort.Strings(expected)
@@ -69,6 +69,7 @@ func TestAddRecursiveGitIgnores(t *testing.T) {
 func BenchmarkIgnoreAddIgnoreFiles(b *testing.B) {
 	dir, err := ioutil.TempDir(os.TempDir(), "")
 	assert.NoError(b, err)
+	defer os.RemoveAll(dir)
 	assert.DirExists(b, dir)
 	expected := []string{}
 
@@ -87,8 +88,6 @@ func BenchmarkIgnoreAddIgnoreFiles(b *testing.B) {
 		expected = append(expected, ignoreFilename)
 		expected = append(expected, filepath.Join(newDir, content))
 	}
-
-	defer os.RemoveAll(dir)
 	lines := addRecursiveGitIgnores([]string{".gitignore"}, []string{dir})
 	sort.Strings(lines)
 	sort.Strings(expected)
