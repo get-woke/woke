@@ -38,7 +38,7 @@ func TestIgnore_AddIgnoreFiles(t *testing.T) {
 }
 
 func TestAddRecursiveGitIgnores(t *testing.T) {
-	dir, err := ioutil.TempDir(t.TempDir(), "")
+	dir, err := ioutil.TempDir(os.TempDir(), "")
 	assert.NoError(t, err)
 	assert.DirExists(t, dir)
 	expected := make([]string, 0)

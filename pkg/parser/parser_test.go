@@ -172,7 +172,7 @@ func TestParser_ParsePaths(t *testing.T) {
 }
 
 func writeToStdin(t *testing.T, text string, f func()) error {
-	tmpfile, err := ioutil.TempFile(t.TempDir(), "")
+	tmpfile, err := ioutil.TempFile(os.TempDir(), "")
 	if err != nil {
 		return err
 	}
