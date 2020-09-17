@@ -13,8 +13,6 @@ import (
 
 func TestGenerateFileViolations(t *testing.T) {
 	f, err := newFile(t, "this has whitelist\n")
-	defer os.Remove(f.Name())
-
 	assert.NoError(t, err)
 
 	res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
@@ -51,10 +49,13 @@ func TestGenerateFileViolations(t *testing.T) {
 // newFile creates a new file for testing. The file, and the directory that the file
 // was created in will be removed at the completion of the test
 func newFile(t *testing.T, text string) (*os.File, error) {
-	tmpFile, err := ioutil.TempFile(t.TempDir(), "woke-")
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "woke-")
 	if err != nil {
 		return nil, err
 	}
+	t.Cleanup(func() {
+		os.Remove(tmpFile.Name())
+	})
 
 	b := []byte(text)
 	_, err = tmpFile.Write(b)

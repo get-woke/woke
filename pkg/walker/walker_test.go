@@ -13,6 +13,7 @@ import (
 func TestWalker_Walk(t *testing.T) {
 	dir, err := ioutil.TempDir(os.TempDir(), "")
 	assert.NoError(t, err)
+	defer os.RemoveAll(dir)
 	assert.DirExists(t, dir)
 
 	for i := 0; i < 10; i++ {
@@ -30,7 +31,6 @@ func TestWalker_Walk(t *testing.T) {
 		assert.NoError(t, file.Close())
 	}
 
-	defer os.RemoveAll(dir)
 	err = Walk(dir, func(p string, typ os.FileMode) error {
 		assert.False(t, isDotGit(p), "path should not be returned in walk: %s", p)
 		return nil

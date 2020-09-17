@@ -31,7 +31,6 @@ func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
 		f1, err := newFile(t, "i have a whitelist\n")
 		assert.NoError(t, err)
-		defer os.Remove(f1.Name())
 		pr := new(testPrinter)
 		p := testParser()
 		violations := p.ParsePaths(pr, f1.Name())
@@ -78,6 +77,7 @@ func parsePathTests(t *testing.T) {
 	t.Run("IsTextFileFromFilename failure", func(t *testing.T) {
 		f, err := newFile(t, "")
 		assert.NoError(t, err)
+
 		p := testParser()
 		pr := new(testPrinter)
 		violations := p.ParsePaths(pr, f.Name())
@@ -172,7 +172,7 @@ func TestParser_ParsePaths(t *testing.T) {
 }
 
 func writeToStdin(t *testing.T, text string, f func()) error {
-	tmpfile, err := ioutil.TempFile(t.TempDir(), "")
+	tmpfile, err := ioutil.TempFile(os.TempDir(), "")
 	if err != nil {
 		return err
 	}
