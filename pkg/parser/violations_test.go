@@ -2,8 +2,7 @@ package parser
 
 import (
 	"go/token"
-	"io/ioutil"
-	"os"
+	"strings"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/result"
@@ -12,8 +11,10 @@ import (
 )
 
 func TestGenerateFileViolations(t *testing.T) {
-	f, err := newFile(t, "this has whitelist\n")
+	violatingPrefix := "whitelist"
+	f, err := newFileWithPrefix(t, violatingPrefix+"-", "this has whitelist\n")
 	assert.NoError(t, err)
+	column := strings.Index(f.Name(), violatingPrefix)
 
 	res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
 	assert.NoError(t, err)
@@ -29,13 +30,13 @@ func TestGenerateFileViolations(t *testing.T) {
 					Filename: f.Name(),
 					Offset:   0,
 					Line:     1,
-					Column:   10,
+					Column:   column,
 				},
 				EndPosition: &token.Position{
 					Filename: f.Name(),
 					Offset:   0,
 					Line:     1,
-					Column:   19,
+					Column:   column + len(violatingPrefix),
 				},
 			},
 			{
@@ -61,21 +62,4 @@ func TestGenerateFileViolations(t *testing.T) {
 
 	_, err = generateFileViolationsFromFilename("missing.file", rule.DefaultRules)
 	assert.Error(t, err)
-}
-
-// newFile creates a new file for testing. The file, and the directory that the file
-// was created in will be removed at the completion of the test
-func newFile(t *testing.T, text string) (*os.File, error) {
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "woke-")
-	if err != nil {
-		return nil, err
-	}
-	t.Cleanup(func() {
-		os.Remove(tmpFile.Name())
-	})
-
-	b := []byte(text)
-	_, err = tmpFile.Write(b)
-
-	return tmpFile, err
 }
