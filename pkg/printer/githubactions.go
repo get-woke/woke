@@ -19,17 +19,17 @@ func NewGitHubActions() *GitHubActions {
 // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
 func (p *GitHubActions) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Println(formatResultForGitHubAction(&r))
+		fmt.Println(formatResultForGitHubAction(r))
 	}
 	return nil
 }
 
-func formatResultForGitHubAction(r *result.Result) string {
+func formatResultForGitHubAction(r result.ResultService) string {
 	return fmt.Sprintf("::%s file=%s,line=%d,col=%d::%s",
-		translateSeverityForAction(r.Rule.Severity),
-		r.StartPosition.Filename,
-		r.StartPosition.Line,
-		r.StartPosition.Column,
+		translateSeverityForAction(r.GetSeverity()),
+		r.GetStartPosition().Filename,
+		r.GetStartPosition().Line,
+		r.GetStartPosition().Column,
 		r.Reason())
 }
 

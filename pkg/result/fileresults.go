@@ -5,7 +5,7 @@ import "strings"
 // FileResults contains all the Results for the file
 type FileResults struct {
 	Filename string
-	Results  []Result
+	Results  []ResultService
 }
 
 func (fr *FileResults) String() string {
@@ -28,9 +28,9 @@ func (fr FileResults) Swap(i, j int) {
 
 // Less is part of sort.Interface
 func (fr FileResults) Less(i, j int) bool {
-	if fr.Results[i].StartPosition.Line == fr.Results[j].StartPosition.Line {
-		return fr.Results[i].StartPosition.Column < fr.Results[j].StartPosition.Column
+	if fr.Results[i].GetStartPosition().Line == fr.Results[j].GetStartPosition().Line {
+		return fr.Results[i].GetStartPosition().Column < fr.Results[j].GetStartPosition().Column
 	}
 
-	return fr.Results[i].StartPosition.Line < fr.Results[j].StartPosition.Line
+	return fr.Results[i].GetStartPosition().Line < fr.Results[j].GetStartPosition().Line
 }

@@ -35,6 +35,11 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 		Filename: file.Name(),
 	}
 
+	// Check for violations in the filename itself
+	for _, pathResult := range result.MatchPathRules(rules, file.Name()) {
+		results.Results = append(results.Results, pathResult)
+	}
+
 	reader := bufio.NewReader(file)
 
 	line := 1

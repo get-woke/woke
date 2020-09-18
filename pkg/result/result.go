@@ -25,9 +25,26 @@ type Result struct {
 	EndPosition   *token.Position
 }
 
+func NewResult(r *rule.Rule, violation, filename string, line, startColumn, endColumn int) Result {
+	return Result{
+		Rule:      r,
+		Violation: violation,
+		StartPosition: &token.Position{
+			Filename: filename,
+			Line:     line,
+			Column:   startColumn,
+		},
+		EndPosition: &token.Position{
+			Filename: filename,
+			Line:     line,
+			Column:   endColumn,
+		},
+	}
+}
+
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
-func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
+func FindResults(r *rule.Rule, filename, text string, line int) (rs []ResultService) {
 	text = strings.TrimSpace(text)
 
 	if r.CanIgnoreLine(text) {
@@ -44,20 +61,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 	for _, idx := range idxs {
 		start := idx[0]
 		end := idx[1]
-		newResult := Result{
-			Rule:      r,
-			Violation: text[start:end],
-			StartPosition: &token.Position{
-				Filename: filename,
-				Line:     line,
-				Column:   start,
-			},
-			EndPosition: &token.Position{
-				Filename: filename,
-				Line:     line,
-				Column:   end,
-			},
-		}
+		newResult := NewResult(r, text[start:end], filename, line, start, end)
 
 		if len(text) < MaxLineLength {
 			newResult.Line = text
@@ -69,13 +73,18 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 }
 
 // Reason outputs the suggested alternatives for this rule
-func (r *Result) Reason() string {
+func (r Result) Reason() string {
 	return r.Rule.Reason(r.Violation)
 }
 
-func (r *Result) String() string {
+func (r Result) String() string {
 	pos := fmt.Sprintf("%s-%s",
 		r.StartPosition.String(),
 		r.EndPosition.String())
 	return fmt.Sprintf("    %-14s %-10s %s", pos, r.Rule.Severity, r.Reason())
 }
+
+func (r Result) GetSeverity() rule.Severity        { return r.Rule.Severity }
+func (r Result) GetStartPosition() *token.Position { return r.StartPosition }
+func (r Result) GetEndPosition() *token.Position   { return r.EndPosition }
+func (r Result) GetLine() string                   { return r.Line }

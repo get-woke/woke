@@ -20,24 +20,23 @@ func TestGenerateFileViolations(t *testing.T) {
 
 	expected := &result.FileResults{
 		Filename: f.Name(),
-		Results: []result.Result{
-			{
-				Rule:      &rule.WhitelistRule,
-				Violation: "whitelist",
-				Line:      "this has whitelist",
-				StartPosition: &token.Position{
-					Filename: f.Name(),
-					Offset:   0,
-					Line:     1,
-					Column:   9,
-				},
-				EndPosition: &token.Position{
-					Filename: f.Name(),
-					Offset:   0,
-					Line:     1,
-					Column:   18,
-				},
-			},
+		Results:  make([]result.ResultService, 1),
+	}
+	expected.Results[0] = result.Result{
+		Rule:      &rule.WhitelistRule,
+		Violation: "whitelist",
+		Line:      "this has whitelist",
+		StartPosition: &token.Position{
+			Filename: f.Name(),
+			Offset:   0,
+			Line:     1,
+			Column:   9,
+		},
+		EndPosition: &token.Position{
+			Filename: f.Name(),
+			Offset:   0,
+			Line:     1,
+			Column:   18,
 		},
 	}
 	assert.EqualValues(t, expected, res)
