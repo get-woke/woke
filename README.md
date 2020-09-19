@@ -197,7 +197,7 @@ ignore_files:
 
 `woke` will also automatically ignore anything listed in `.gitignore`.
 
-`woke` uses [go-gitignore](github.com/sabhiram/go-gitignore) to ignores.
+`woke` uses [go-gitignore](https://github.com/get-woke/go-gitignore) to ignores.
 This follows the common `.gitignore` convention. See link for more details on matching.
 
 #### `.wokeignore`
