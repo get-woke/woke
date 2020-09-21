@@ -27,37 +27,37 @@ func (t *Text) Print(fs *result.FileResults) error {
 
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d",
-			r.StartPosition.Line,
-			r.StartPosition.Column,
-			r.EndPosition.Column)
-		sev := r.Rule.Severity.Colorize()
+			r.GetStartPosition().Line,
+			r.GetStartPosition().Column,
+			r.GetEndPosition().Column)
+		sev := r.GetSeverity()
 		fmt.Printf("%s:%s: %s (%s)\n",
 			color.New(color.Bold, color.FgHiCyan).Sprint(fs.Filename),
 			color.New(color.Bold).Sprint(pos),
 			color.New(color.FgHiMagenta).Sprint(r.Reason()),
-			sev)
+			sev.Colorize())
 
 		// If the line empty, skip showing the source code
 		// This could happen if the line is too long to be worth showing
-		if len(r.Line) > 0 {
-			fmt.Println(r.Line)
-			fmt.Printf("%s\n", t.arrowUnderLine(&r))
+		if len(r.GetLine()) > 0 {
+			fmt.Println(r.GetLine())
+			fmt.Printf("%s\n", t.arrowUnderLine(r))
 		}
 	}
 
 	return nil
 }
 
-func (t *Text) arrowUnderLine(r *result.Result) string {
+func (t *Text) arrowUnderLine(r result.ResultService) string {
 	// if columns == 0 it means column is unknown
-	if r.StartPosition.Column == 0 && r.EndPosition.Column == 0 {
+	if r.GetStartPosition().Column == 0 && r.GetEndPosition().Column == 0 {
 		return ""
 	}
 
-	line := r.Line
+	line := r.GetLine()
 	prefix := make([]rune, 0, len(line))
 
-	for i := 0; i < len(line) && i < r.StartPosition.Column; i++ {
+	for i := 0; i < len(line) && i < r.GetStartPosition().Column; i++ {
 		if line[i] == '\t' {
 			prefix = append(prefix, '\t')
 		} else {

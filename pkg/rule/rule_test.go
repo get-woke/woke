@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,12 +31,13 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 func TestRule_Reason(t *testing.T) {
 	r := testRule()
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead", r.Reason("rule-1"))
+	assert.Equal(t, "`rule1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead", r.Reason(""))
 
 	r.Alternatives = []string(nil)
 	assert.Equal(t, "`rule-1` may be insensitive, try not to use it", r.Reason("rule-1"))
 }
 
-func TestRule_ReasonWithNode(t *testing.T) {
+func TestRule_ReasonWithNote(t *testing.T) {
 	r := testRule()
 
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead", r.ReasonWithNote("rule-1"))
@@ -78,5 +80,25 @@ func TestRule_CanIgnoreLine(t *testing.T) {
 			tt.assertion(t, r.CanIgnoreLine(tt.line))
 		})
 	}
+}
 
+func TestRule_MatchString(t *testing.T) {
+	r := testRule()
+	tests := []struct {
+		s         string
+		wb        bool
+		assertion assert.BoolAssertionFunc
+	}{
+		{s: "this has rule1 in the middle with word boundaries", wb: true, assertion: assert.True},
+		{s: "this has rule1 in the middle", wb: false, assertion: assert.True},
+		{s: "rule1shouldn't match with word boundaries", wb: true, assertion: assert.False},
+		{s: "rule1should match without word boundaries", wb: false, assertion: assert.True},
+		{s: "thisrule1should match without word boundaries", wb: false, assertion: assert.True},
+	}
+	for _, tt := range tests {
+		t.Run(tt.s, func(t *testing.T) {
+			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
+			tt.assertion(t, r.MatchString(tt.s, tt.wb))
+		})
+	}
 }

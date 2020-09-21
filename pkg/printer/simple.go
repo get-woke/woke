@@ -20,8 +20,8 @@ func NewSimple() *Simple {
 func (p *Simple) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
 		fmt.Printf("%v: [%s] %s\n",
-			positionString(r.StartPosition),
-			r.Rule.Severity,
+			positionString(r.GetStartPosition()),
+			r.GetSeverity(),
 			r.Reason())
 	}
 	return nil

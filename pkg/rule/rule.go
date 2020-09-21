@@ -18,7 +18,8 @@ type Rule struct {
 	Note         string   `yaml:"note"`
 	Severity     Severity `yaml:"severity"`
 
-	textRe *regexp.Regexp
+	reWordBoundary *regexp.Regexp
+	re             *regexp.Regexp
 }
 
 // FindMatchIndexs returns the start and end indexes for all rule violations for the text supplied.
@@ -30,11 +31,11 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 		return [][]int(nil)
 	}
 
-	if r.textRe == nil {
+	if r.reWordBoundary == nil {
 		r.SetRegexp()
 	}
 
-	matches := r.textRe.FindAllStringSubmatchIndex(text, -1)
+	matches := r.reWordBoundary.FindAllStringSubmatchIndex(text, -1)
 	if matches == nil {
 		return [][]int(nil)
 	}
@@ -66,9 +67,30 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	return idx
 }
 
+func (r *Rule) MatchString2(s string, wordBoundary bool) bool {
+	return true
+}
+
+// MatchString reports whether the string s
+// contains any match of the regular expression re.
+func (r *Rule) MatchString(s string, wordBoundary bool) bool {
+	if wordBoundary {
+		if r.reWordBoundary == nil {
+			r.SetRegexp()
+		}
+		return r.reWordBoundary.MatchString(s)
+	}
+	if r.re == nil {
+		r.SetRegexp()
+	}
+	return r.re.MatchString(s)
+}
+
+// SetRegexp populates the regex for matching this rule
 func (r *Rule) SetRegexp() {
 	group := strings.Join(escape(r.Terms), "|")
-	r.textRe = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, group))
+	r.reWordBoundary = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, group))
+	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)(%s)`, group))
 }
 
 // Reason returns a human-readable reason for the rule violation

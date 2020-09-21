@@ -2,6 +2,25 @@ name: 'woke'
 on:
   - pull_request
 jobs:
+  woke-pr:
+    name: run checked-out version of woke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - run: go run main.go testdata --no-ignore -o github-actions
+
   woke:
     name: 'woke'
     runs-on: ubuntu-latest

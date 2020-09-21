@@ -39,8 +39,8 @@ func parsePathTests(t *testing.T) {
 		assert.Equal(t, len(pr.results), violations)
 		expected := result.FileResults{
 			Filename: f1.Name(),
-			Results: []result.Result{
-				{
+			Results: []result.ResultService{
+				result.Result{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
 					Line:      "i have a whitelist",
@@ -136,8 +136,8 @@ func parsePathTests(t *testing.T) {
 
 			expected := result.FileResults{
 				Filename: os.Stdin.Name(),
-				Results: []result.Result{
-					{
+				Results: []result.ResultService{
+					result.Result{
 						Rule:      &rule.WhitelistRule,
 						Violation: "whitelist",
 						Line:      "i have a whitelist here",
