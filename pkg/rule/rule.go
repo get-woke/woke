@@ -127,9 +127,9 @@ func (r *Rule) ReasonWithNote(violation string) string {
 }
 
 // CanIgnoreLine returns a boolean value if the line contains the ignore directive.
-// For example, if a line has anywhere, `woke:disable=whitelist`
+// For example, if a line has anywhere, wokeignore:rule=whitelist
 // (should be commented out via whatever the language comment syntax is)
-// it will not report that line in violation with the Rule with the name `whitelist`
+// it will not report that line in violation with the Rule with the name `whitelist` wokeignore:rule=whitelist
 func (r *Rule) CanIgnoreLine(line string) bool {
 	matches := ignoreRuleRegex.FindAllStringSubmatch(line, -1)
 	if matches == nil {
