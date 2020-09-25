@@ -3,13 +3,16 @@
 _I stay woke - Erykah Badu_
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)](https://github.com/get-woke/woke/releases)
+![GitHub All Releases](https://img.shields.io/github/downloads/get-woke/woke/total)
 [![Build](https://github.com/get-woke/woke/workflows/Build/badge.svg?branch=main)](https://github.com/get-woke/woke/actions)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
+
+<!--[![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)-->
 [![Coverage Status](https://coveralls.io/repos/github/get-woke/woke/badge.svg?branch=main)](https://coveralls.io/github/get-woke/woke?branch=main)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![HitCount](http://hits.dwyl.com/get-woke/woke.svg)](http://hits.dwyl.com/get-woke/woke)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/get-woke/woke)
+<!--[![HitCount](http://hits.dwyl.com/get-woke/woke.svg)](http://hits.dwyl.com/get-woke/woke)-->
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
 
