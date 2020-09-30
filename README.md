@@ -40,14 +40,11 @@ _I stay woke - Erykah Badu_
     - [Parallelism](#parallelism)
   - [Tools](#tools)
   - [Resources](#resources)
-  - [License](#license)
   - [Contributing](#contributing)
   - [Versioning](#versioning)
   - [Authors](#authors)
   - [Acknowledgments](#acknowledgments)
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_large)
+  - [License](#license)
 
 ## About
 
@@ -274,11 +271,6 @@ Read more about go's concurrency patterns [here](https://blog.golang.org/pipelin
 - <https://www.marketplace.org/2020/06/17/tech-companies-update-language-to-avoid-offensive-terms/>
 - <https://tools.ietf.org/html/draft-knodel-terminology-02>
 
-## License
-
-This application is licensed under the MIT License, you may obtain a copy of it
-[here](https://github.com/get-woke/woke/blob/main/LICENSE).
-
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
@@ -300,3 +292,10 @@ The following projects provided inspiration for parts of `woke`
 - <https://github.com/get-alex/alex>
 - <https://github.com/retextjs/retext-equality>
 - <https://github.com/golangci/golangci-lint>
+
+## License
+
+This application is licensed under the MIT License, you may obtain a copy of it
+[here](https://github.com/get-woke/woke/blob/main/LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_large)
