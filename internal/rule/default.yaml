@@ -76,6 +76,7 @@ rules:
       - people
       - you all
       - y'all
+      - yinz
 
   - name: whitebox
     terms:
