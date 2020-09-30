@@ -11,6 +11,7 @@ _I stay woke - Erykah Badu_
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/get-woke/woke)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_shield)
 <!--[![HitCount](http://hits.dwyl.com/get-woke/woke.svg)](http://hits.dwyl.com/get-woke/woke)-->
 
 `woke` is a text file analysis tool that detects non-inclusive language in your source code.
@@ -44,6 +45,9 @@ _I stay woke - Erykah Badu_
   - [Versioning](#versioning)
   - [Authors](#authors)
   - [Acknowledgments](#acknowledgments)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_large)
 
 ## About
 
