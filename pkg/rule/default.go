@@ -36,7 +36,7 @@ var GrandfatheredRule = Rule{
 var GuysRule = Rule{
 	Name:         "guys",
 	Terms:        []string{"guys"},
-	Alternatives: []string{"folks", "people", "you all", "y'all"},
+	Alternatives: []string{"folks", "people", "you all", "y'all", "yinz"},
 }
 
 // ManHoursRule is the default rule for "man-hours"
