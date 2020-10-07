@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/stretchr/testify/assert"
 )
 

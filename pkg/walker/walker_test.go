@@ -36,7 +36,6 @@ func TestWalker_Walk(t *testing.T) {
 		return nil
 	})
 	assert.NoError(t, err)
-
 }
 
 func TestInSlice(t *testing.T) {

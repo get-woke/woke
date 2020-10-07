@@ -8,6 +8,7 @@ import (
 
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,9 +21,9 @@ func TestGenerateFileViolations(t *testing.T) {
 
 	expected := &result.FileResults{
 		Filename: f.Name(),
-		Results:  make([]result.ResultService, 1),
+		Results:  make([]result.Result, 1),
 	}
-	expected.Results[0] = result.Result{
+	expected.Results[0] = result.LineResult{
 		Rule:      &rule.WhitelistRule,
 		Violation: "whitelist",
 		Line:      "this has whitelist",

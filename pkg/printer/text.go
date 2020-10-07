@@ -3,8 +3,9 @@ package printer
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/get-woke/woke/pkg/result"
+
+	"github.com/fatih/color"
 )
 
 // Text is a text printer meant for humans to read
@@ -48,7 +49,7 @@ func (t *Text) Print(fs *result.FileResults) error {
 	return nil
 }
 
-func (t *Text) arrowUnderLine(r result.ResultService) string {
+func (t *Text) arrowUnderLine(r result.Result) string {
 	// if columns == 0 it means column is unknown
 	if r.GetStartPosition().Column == 0 && r.GetEndPosition().Column == 0 {
 		return ""

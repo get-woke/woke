@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,5 +44,4 @@ func TestFileResult_Sort(t *testing.T) {
 	assert.EqualValues(t, fr.Results[4].GetStartPosition().Column, 25)
 	assert.EqualValues(t, fr.Results[5].GetStartPosition().Line, 2)
 	assert.EqualValues(t, fr.Results[5].GetStartPosition().Column, 36)
-
 }

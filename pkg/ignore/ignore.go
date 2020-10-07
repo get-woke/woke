@@ -9,9 +9,10 @@ import (
 	"sync"
 	"time"
 
-	gitignore "github.com/get-woke/go-gitignore"
 	"github.com/get-woke/woke/pkg/util"
 	"github.com/get-woke/woke/pkg/walker"
+
+	gitignore "github.com/get-woke/go-gitignore"
 	"github.com/rs/zerolog/log"
 )
 
@@ -59,7 +60,7 @@ func (i *Ignore) AddIgnoreFiles(paths []string, ignoreNames ...string) {
 // addRecursiveGitIgnores walks each path, search for a file that matches
 // ignoreName and reads each file's lines
 // NOTE: this is very costly in large directories and should be used with caution
-func addRecursiveGitIgnores(ignoreNames []string, paths []string) (lines []string) {
+func addRecursiveGitIgnores(ignoreNames []string, paths []string) []string {
 	start := time.Now()
 	defer func() {
 		log.Debug().
@@ -93,11 +94,12 @@ func addRecursiveGitIgnores(ignoreNames []string, paths []string) (lines []strin
 		close(ch)
 	}()
 
+	lines := make([]string, 0)
 	for c := range ch {
 		lines = append(lines, c...)
 	}
 
-	return
+	return lines
 }
 
 func readIgnoreFile(file string) []string {

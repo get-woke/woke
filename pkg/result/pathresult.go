@@ -7,16 +7,16 @@ import (
 	"github.com/get-woke/woke/pkg/rule"
 )
 
-// PathResult is a ResultService meant for showing violations in a file path
+// PathResult is a Result meant for showing violations in a file path
 type PathResult struct {
-	Result
+	LineResult
 }
 
 // Reason is the reason for the PathResult violation.
 // It is similar to Result.Reason, but makes it clear that the violation is
 // with the file path and not a line in the file
 func (r PathResult) Reason() string {
-	return "Filename violation: " + r.Rule.Reason(r.Result.Violation)
+	return "Filename violation: " + r.Rule.Reason(r.LineResult.Violation)
 }
 
 // MatchPathRules will match the path against all the rules provided
@@ -35,7 +35,7 @@ func MatchPath(r *rule.Rule, path string) (rs []PathResult) {
 
 	for _, p := range dirParts {
 		if r.MatchString(p, false) {
-			rs = append(rs, PathResult{Result: NewResult(r, p, path, 1, 1, 1)})
+			rs = append(rs, PathResult{LineResult: NewLineResult(r, p, path, 1, 1, 1)})
 		}
 	}
 

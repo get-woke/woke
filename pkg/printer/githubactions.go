@@ -24,7 +24,7 @@ func (p *GitHubActions) Print(fs *result.FileResults) error {
 	return nil
 }
 
-func formatResultForGitHubAction(r result.ResultService) string {
+func formatResultForGitHubAction(r result.Result) string {
 	return fmt.Sprintf("::%s file=%s,line=%d,col=%d::%s",
 		translateSeverityForAction(r.GetSeverity()),
 		r.GetStartPosition().Filename,

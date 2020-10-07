@@ -12,6 +12,7 @@ import (
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
 	"github.com/get-woke/woke/pkg/walker"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -109,7 +110,6 @@ func (p *Parser) processViolationInPath(path string, done chan bool) {
 				wg.Done()
 			}()
 		}
-
 	} else {
 		// run parallel unbounded. Potential high memory consumption
 		log.Debug().Str("path", path).Str("type", "parallel").Msg("process files")
@@ -127,10 +127,12 @@ func (p *Parser) walkDir(dirname string, done chan bool) <-chan string {
 		defer close(paths)
 		_ = walker.Walk(dirname, func(path string, _ os.FileMode) error {
 			if p.Ignorer != nil && p.Ignorer.Match(path) {
+				log.Debug().Str("file", path).Msg("skipping, ignored file")
 				return nil
 			}
 
 			if util.IsTextFileFromFilename(path) != nil {
+				log.Debug().Str("file", path).Msg("skipping, not text file")
 				return nil
 			}
 
