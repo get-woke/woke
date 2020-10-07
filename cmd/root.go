@@ -115,6 +115,10 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		err = fmt.Errorf("files with violations: %d", violations)
 	}
 
+	if violations == 0 {
+		fmt.Println("No violations found. Stay woke \u270a")
+	}
+
 	return err
 }
 
