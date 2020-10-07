@@ -66,65 +66,61 @@ language and provide suggestions for alternatives. Rules can be customized
 to suit your needs.
 
 Provide a list file globs for files you'd like to check.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		setLogLevel()
-		runtime.GOMAXPROCS(runtime.NumCPU())
+	RunE: rootRunE,
+}
 
-		log.Debug().Msg(getVersion("default"))
+func rootRunE(cmd *cobra.Command, args []string) error {
+	setLogLevel()
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
-		start := time.Now()
-		defer func() {
-			log.Debug().
-				TimeDiff("durationMS", time.Now(), start).
-				Msg("woke completed")
-		}()
+	log.Debug().Msg(getVersion("default"))
 
-		if len(args) == 0 {
-			args = parser.DefaultPath
-		}
+	start := time.Now()
+	defer func() {
+		log.Debug().
+			TimeDiff("durationMS", time.Now(), start).
+			Msg("woke completed")
+	}()
 
-		cfg, err := config.NewConfig(ruleConfig)
-		if err != nil {
-			return err
-		}
+	if len(args) == 0 {
+		args = parser.DefaultPath
+	}
 
-		var ignorer *ignore.Ignore
-		if !noIgnore {
-			ignorer = ignore.NewIgnore(cfg.IgnoreFiles, args)
-		}
-
-		p := parser.NewParser(cfg.Rules, ignorer)
-
-		if stdin {
-			args = []string{os.Stdin.Name()}
-		}
-
-		print, err := printer.NewPrinter(output)
-		if err != nil {
-			return err
-		}
-
-		violations := p.ParsePaths(print, args...)
-
-		if exitOneOnFailure && violations > 0 {
-			// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
-			cmd.SilenceUsage = true
-			err = fmt.Errorf("files with violations: %d", violations)
-		}
-
+	cfg, err := config.NewConfig(ruleConfig)
+	if err != nil {
 		return err
-	},
+	}
+
+	var ignorer *ignore.Ignore
+	if !noIgnore {
+		ignorer = ignore.NewIgnore(cfg.IgnoreFiles, args)
+	}
+
+	p := parser.NewParser(cfg.Rules, ignorer)
+
+	if stdin {
+		args = []string{os.Stdin.Name()}
+	}
+
+	print, err := printer.NewPrinter(output)
+	if err != nil {
+		return err
+	}
+
+	violations := p.ParsePaths(print, args...)
+
+	if exitOneOnFailure && violations > 0 {
+		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
+		cmd.SilenceUsage = true
+		err = fmt.Errorf("files with violations: %d", violations)
+	}
+
+	return err
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() error {
-	return rootCmd.Execute()
-}
-
-// TestExecute is only used for testing, so it will run against the root of the repo, instead of the package root
-func TestExecute() error {
-	rootCmd.SetArgs([]string{".."})
 	return rootCmd.Execute()
 }
 
