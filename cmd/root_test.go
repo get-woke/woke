@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"sync"
 	"regexp"
+	"sync"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -30,12 +30,12 @@ func TestRunE(t *testing.T) {
 		noIgnore = false
 	})
 	t.Run("no violations found", func(t *testing.T) {
-    	got := captureOutput(func() {
-           err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
-           assert.NoError(t, err)
-        })
-        expected := "No violations found. Stay woke \u270a\n"
-        assert.Equal(t, expected, got)
+		got := captureOutput(func() {
+			err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
+			assert.NoError(t, err)
+		})
+		expected := "No violations found. Stay woke \u270a\n"
+		assert.Equal(t, expected, got)
 	})
 	t.Run("violations w error", func(t *testing.T) {
 		exitOneOnFailure = true
@@ -44,6 +44,7 @@ func TestRunE(t *testing.T) {
 		assert.Regexp(t, regexp.MustCompile(`^files with violations: \d`), err.Error())
 	})
 }
+
 // Returns output of `os.Stdout` as string.
 // Based on https://medium.com/@hau12a1/golang-capturing-log-println-and-fmt-println-output-770209c791b4
 func captureOutput(f func()) string {
