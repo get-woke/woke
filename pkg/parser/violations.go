@@ -8,6 +8,7 @@ import (
 
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/rs/zerolog/log"
 )
 

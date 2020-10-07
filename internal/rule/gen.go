@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/get-woke/woke/pkg/rule"
+
 	"gopkg.in/yaml.v2"
 )
 

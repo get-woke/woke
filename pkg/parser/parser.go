@@ -12,6 +12,7 @@ import (
 	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
 	"github.com/get-woke/woke/pkg/walker"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -109,7 +110,6 @@ func (p *Parser) processViolationInPath(path string, done chan bool) {
 				wg.Done()
 			}()
 		}
-
 	} else {
 		// run parallel unbounded. Potential high memory consumption
 		log.Debug().Str("path", path).Str("type", "parallel").Msg("process files")

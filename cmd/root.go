@@ -33,6 +33,7 @@ import (
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

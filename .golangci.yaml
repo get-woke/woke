@@ -1,4 +1,46 @@
 # https://golangci-lint.run/usage/configuration/
 linters-settings:
-  errcheck:
-    ignore: fmt:.*,github.com/Netflix/go-expect:.*
+  gocyclo:
+    min-complexity: 15
+  goimports:
+    local-prefixes: github.com/get-woke/woke
+  golint:
+    min-confidence: 0
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  # disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exhaustive
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - interfacer
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+    - whitespace

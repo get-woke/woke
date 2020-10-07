@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/get-woke/woke/cmd"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

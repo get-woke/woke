@@ -5,7 +5,7 @@ import "strings"
 // FileResults contains all the Results for the file
 type FileResults struct {
 	Filename string
-	Results  []ResultService
+	Results  []Result
 }
 
 func (fr *FileResults) String() string {

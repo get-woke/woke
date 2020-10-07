@@ -7,11 +7,12 @@ import (
 
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFormatResultForGitHubAction(t *testing.T) {
-	testResult := result.Result{
+	testResult := result.LineResult{
 		Rule:      &rule.WhitelistRule,
 		Violation: "whitelist",
 		StartPosition: &token.Position{

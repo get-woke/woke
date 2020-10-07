@@ -10,6 +10,7 @@ import (
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,8 +40,8 @@ func parsePathTests(t *testing.T) {
 		assert.Equal(t, len(pr.results), violations)
 		expected := result.FileResults{
 			Filename: f1.Name(),
-			Results: []result.ResultService{
-				result.Result{
+			Results: []result.Result{
+				result.LineResult{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
 					Line:      "i have a whitelist",
@@ -136,8 +137,8 @@ func parsePathTests(t *testing.T) {
 
 			expected := result.FileResults{
 				Filename: os.Stdin.Name(),
-				Results: []result.ResultService{
-					result.Result{
+				Results: []result.Result{
+					result.LineResult{
 						Rule:      &rule.WhitelistRule,
 						Violation: "whitelist",
 						Line:      "i have a whitelist here",

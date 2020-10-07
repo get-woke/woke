@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
@@ -86,5 +87,4 @@ func TestNewConfig(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, c)
 	})
-
 }

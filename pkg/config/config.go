@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-
 	"gopkg.in/yaml.v2"
 )
 
@@ -29,12 +29,10 @@ func NewConfig(filename string) (*Config, error) {
 		}
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, filename)
-	} else {
-		if defaultCfg := loadDefaultConfigFiles(); defaultCfg != nil {
-			c = *defaultCfg
+	} else if defaultCfg := loadDefaultConfigFiles(); defaultCfg != nil {
+		c = *defaultCfg
 
-			c.IgnoreFiles = append(c.IgnoreFiles, defaultConfigFilenames...)
-		}
+		c.IgnoreFiles = append(c.IgnoreFiles, defaultConfigFilenames...)
 	}
 
 	c.ConfigureRules()
@@ -95,7 +93,6 @@ func loadConfig(filename string) (*Config, error) {
 
 func loadDefaultConfigFiles() (cfg *Config) {
 	for _, file := range defaultConfigFilenames {
-
 		if _, err := os.Stat(file); os.IsNotExist(err) {
 			log.Debug().Str("cfg", file).Err(err).Msg("tried default config file")
 			continue

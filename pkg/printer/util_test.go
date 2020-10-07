@@ -17,9 +17,9 @@ func generateFileResult() *result.FileResults {
 	return &r
 }
 
-func generateResults(filename string) []result.ResultService {
-	return []result.ResultService{
-		result.Result{
+func generateResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
 			Rule:      &rule.BlacklistRule,
 			Violation: "blacklist",
 			Line:      "this blacklist must change",

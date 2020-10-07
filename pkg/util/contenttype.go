@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -10,7 +11,7 @@ import (
 var ErrFileEmpty = errors.New("file is empty")
 var ErrFileNotText = errors.New("file is not a text file")
 
-func detectContentType(file *os.File) string {
+func detectContentType(file io.Reader) string {
 	// Only the first 512 bytes are used to sniff the content type.
 	buffer := make([]byte, 512)
 	n, _ := file.Read(buffer)
