@@ -2,37 +2,50 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+Thank you for creating the issue!
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+- [ ] Yes, I've searched similar issues on GitHub and didn't find any.
+- [ ] Yes, I've included all information below (version, config, etc).
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+Please include the following information:
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+<details><summary>Version of woke</summary>
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+```console
+$ woke --version
+# paste output here
+```
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+</details>
 
-**Additional context**
-Add any other context about the problem here.
+<details><summary>Config file</summary>
+
+```console
+$ cat .woke.yml
+# paste output here
+```
+
+</details>
+
+<details><summary>Go environment</summary>
+
+```console
+$ go version && go env
+# paste output here
+```
+
+</details>
+
+<details><summary>Verbose output of running</summary>
+
+```console
+$ woke --debug
+# paste output here
+```
+
+</details>
