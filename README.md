@@ -1,6 +1,15 @@
-# woke
+<p align="center">
+  <a href="https://github.com/get-woke/woke">
+    <img alt="woke logo" src="assets/default-monochrome.svg" height="80" />
+  </a>
+  <h3 align="center">
+    A text file analysis tool that detects non-inclusive language in your source code.
+  </h3>
+  <p align="center"><i>I stay woke - Erykah Badu</i></p>
+</p>
 
-_I stay woke - Erykah Badu_
+---
+<br />
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)](https://github.com/get-woke/woke/releases)
 ![GitHub All Releases](https://img.shields.io/github/downloads/get-woke/woke/total)
@@ -8,53 +17,50 @@ _I stay woke - Erykah Badu_
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
 [![Coverage Status](https://coveralls.io/repos/github/get-woke/woke/badge.svg?branch=main)](https://coveralls.io/github/get-woke/woke?branch=main)
+
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/get-woke/woke)](https://pkg.go.dev/github.com/get-woke/woke)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/get-woke/woke)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_shield)
 <!--[![HitCount](http://hits.dwyl.com/get-woke/woke.svg)](http://hits.dwyl.com/get-woke/woke)-->
 
-`woke` is a text file analysis tool that detects non-inclusive language in your source code.
+---
+
+Creating an inclusive work environment is imperitive to a healthy, supportive, and
+productive culture, and an environment where everyone feels welcome and included.
+
+`woke` is a text file analysis tool that finds places within your source code that contain
+non-inclusive languagem and suggests replacing them with more inclusive alternatives.
+
+Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
 
 ![woke.gif](https://raw.githubusercontent.com/get-woke/get-woke.github.io/main/img/woke.gif)
 
 **Table of Contents**
 
-- [woke](#woke)
-  - [About](#about)
-  - [Installation](#installation)
-    - [macOS](#macos)
-    - [Simple installation](#simple-installation)
-    - [Build from source](#build-from-source)
-    - [Releases](#releases)
-    - [Docker](#docker)
-  - [Usage](#usage)
-    - [File globs](#file-globs)
-    - [stdin](#stdin)
-    - [Rules](#rules)
-    - [Ignoring](#ignoring)
-      - [Files](#files)
-      - [`.wokeignore`](#wokeignore)
-      - [In-line ignoring](#in-line-ignoring)
-    - [Exit Code](#exit-code)
-    - [Parallelism](#parallelism)
-  - [Tools](#tools)
-  - [Resources](#resources)
-  - [Contributing](#contributing)
-  - [Versioning](#versioning)
-  - [Authors](#authors)
-  - [Acknowledgments](#acknowledgments)
-  - [License](#license)
-
-## About
-
-Creating an inclusive work environment is imperitive to a healthy, supportive, and
-productive culture, and an environment where everyone feels welcome and included.
-
-`woke`'s purpose is to point out places where improvements can be made by removing
- non-inclusive language and replacing it with more inclusive alternatives.
-
-Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
+- [Installation](#installation)
+  - [macOS](#macos)
+  - [Simple installation](#simple-installation)
+  - [Build from source](#build-from-source)
+  - [Releases](#releases)
+  - [Docker](#docker)
+- [Usage](#usage)
+  - [File globs](#file-globs)
+  - [stdin](#stdin)
+  - [Rules](#rules)
+  - [Ignoring](#ignoring)
+    - [Files](#files)
+    - [`.wokeignore`](#wokeignore)
+    - [In-line ignoring](#in-line-ignoring)
+  - [Exit Code](#exit-code)
+  - [Parallelism](#parallelism)
+- [Tools](#tools)
+- [Resources](#resources)
+- [Contributing](#contributing)
+- [Versioning](#versioning)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
 
 ## Installation
 
