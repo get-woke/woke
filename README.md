@@ -55,6 +55,7 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
   - [Exit Code](#exit-code)
   - [Parallelism](#parallelism)
 - [Tools](#tools)
+- [Who uses `woke`](#who-uses-woke)
 - [Resources](#resources)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
@@ -269,6 +270,12 @@ Read more about go's concurrency patterns [here](https://blog.golang.org/pipelin
 
 - [GitHub Action](https://github.com/marketplace/actions/run-woke)
 - [GitHub Action (reviewdog)](https://github.com/marketplace/actions/run-woke-with-reviewdog)
+
+## Who uses `woke`
+
+Are you using `woke` in your org? We'd love to know! Please send a PR and add your organization name/link to this list.
+
+- [Rent the Runway](https://www.renttherunway.com) ([blog post](https://dresscode.renttherunway.com/blog/woke))
 
 ## Resources
 
