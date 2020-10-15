@@ -74,6 +74,9 @@ func (r *Rule) MatchString2(s string, wordBoundary bool) bool {
 // MatchString reports whether the string s
 // contains any match of the regular expression re.
 func (r *Rule) MatchString(s string, wordBoundary bool) bool {
+	if len(r.Terms) == 0 {
+		return false
+	}
 	if wordBoundary {
 		if r.reWordBoundary == nil {
 			r.SetRegexp()
