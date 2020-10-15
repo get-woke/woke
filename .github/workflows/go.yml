@@ -7,7 +7,40 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.14.x, 1.15.x]
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    name: Tests
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build
+        run: go build -v .
+
+      - name: Install dependencies
+        run: |
+          go mod download
+
+      - name: Run Unit tests
+        run: |
+          go test -v ./...
+
+  Build:
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -25,13 +58,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Build
-        run: go build -v .
-
       - name: Install dependencies
         run: |
           go mod download
-
       - name: Check that go generate produced no diff
         run: |
           go generate -x ./... && git diff --exit-code
@@ -50,13 +79,18 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: goveralls -coverprofile=covprofile -service=github
 
+  # https://github.com/golangci/golangci-lint-action#multiple-os-support
   lint:
+    strategy:
+      matrix:
+        go-version: [1.14.x, 1.15.x]
+        os: [macos-latest, windows-latest]
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v1
+        uses: golangci/golangci-lint-action@v2
         with:
           # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
           version: v1.30
