@@ -48,6 +48,7 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
   - [File globs](#file-globs)
   - [stdin](#stdin)
   - [Rules](#rules)
+    - [Disabling Default Rules](#disabling-default-rules)
   - [Ignoring](#ignoring)
     - [Files](#files)
     - [`.wokeignore`](#wokeignore)
@@ -191,6 +192,17 @@ rules:
       - white-list
     alternatives:
       - allowlist
+```
+
+#### Disabling Default Rules
+
+You can disable default rules by providing a rule in your `woke` config file (ie `.woke.yml`), with no terms or alternatives.
+
+This will disable the default `whitelist` rule:
+
+```yaml
+rules:
+  - name: whitelist
 ```
 
 ### Ignoring
