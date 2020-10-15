@@ -10,7 +10,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.14.x, 1.15.x]
+        go-version: [1.14.x]
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     name: Tests
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.15
+          go-version: 1.14.x
 
       - uses: actions/cache@v2
         with:
@@ -83,7 +83,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        go-version: [1.14.x, 1.15.x]
+        go-version: [1.14.x]
         os: [macos-latest, windows-latest]
     name: Lint
     runs-on: ${{ matrix.os }}
