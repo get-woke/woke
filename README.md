@@ -26,11 +26,11 @@
 
 ---
 
-Creating an inclusive work environment is imperitive to a healthy, supportive, and
+Creating an inclusive work environment is imperative to a healthy, supportive, and
 productive culture, and an environment where everyone feels welcome and included.
 
 `woke` is a text file analysis tool that finds places within your source code that contain
-non-inclusive languagem and suggests replacing them with more inclusive alternatives.
+non-inclusive language and suggests replacing them with more inclusive alternatives.
 
 Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
 
@@ -273,7 +273,7 @@ By default, `woke` will parse files in parallel and will consume as many resourc
 This means `woke` will be fast, but might run out of memory, depending on how large the files/lines are.
 
 We can limit these allocations by bounding the number of files read in parallel. To accomplish this,
-set the environment variable `WORKER_POOL_COUNT` to an integer value of te fixed number of goroutines
+set the environment variable `WORKER_POOL_COUNT` to an integer value of the fixed number of goroutines
 you would like to spawn for reading files.
 
 Read more about go's concurrency patterns [here](https://blog.golang.org/pipelines).
