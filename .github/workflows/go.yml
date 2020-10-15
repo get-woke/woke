@@ -29,16 +29,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Install dependencies
+        run: go mod download
+
       - name: Build
         run: go build -v .
 
-      - name: Install dependencies
-        run: |
-          go mod download
-
       - name: Run Unit tests
-        run: |
-          go test ./...
+        run: go test ./...
 
   Build:
     name: Build
