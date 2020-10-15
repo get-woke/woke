@@ -29,6 +29,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/get-woke/woke/pkg/config"
 	"github.com/get-woke/woke/pkg/ignore"
 	"github.com/get-woke/woke/pkg/parser"
@@ -145,6 +146,9 @@ func setLogLevel() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
+	if runtime.GOOS == "windows" {
+		log.Output(zerolog.ConsoleWriter{Out: color.Output})
 	}
 }
 
