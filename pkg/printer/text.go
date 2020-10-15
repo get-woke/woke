@@ -6,6 +6,7 @@ import (
 	"github.com/get-woke/woke/pkg/result"
 
 	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 )
 
 // Text is a text printer meant for humans to read
@@ -26,13 +27,15 @@ func (t *Text) Print(fs *result.FileResults) error {
 		color.NoColor = true
 	}
 
+	output := colorable.NewColorableStdout()
+
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d",
 			r.GetStartPosition().Line,
 			r.GetStartPosition().Column,
 			r.GetEndPosition().Column)
 		sev := r.GetSeverity()
-		fmt.Printf("%s:%s: %s (%s)\n",
+		fmt.Fprintf(output, "%s:%s: %s (%s)\n",
 			color.New(color.Bold, color.FgHiCyan).Sprint(fs.Filename),
 			color.New(color.Bold).Sprint(pos),
 			color.New(color.FgHiMagenta).Sprint(r.Reason()),
@@ -41,8 +44,8 @@ func (t *Text) Print(fs *result.FileResults) error {
 		// If the line empty, skip showing the source code
 		// This could happen if the line is too long to be worth showing
 		if len(r.GetLine()) > 0 {
-			fmt.Println(r.GetLine())
-			fmt.Printf("%s\n", t.arrowUnderLine(r))
+			fmt.Fprintln(output, r.GetLine())
+			fmt.Fprintf(output, "%s\n", t.arrowUnderLine(r))
 		}
 	}
 
