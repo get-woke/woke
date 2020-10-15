@@ -3,7 +3,7 @@
     <img alt="woke logo" src="assets/default-monochrome.svg" height="80" />
   </a>
   <h3 align="center">
-    A text file analysis tool that detects non-inclusive language in your source code.
+    Detect non-inclusive language in your source code.
   </h3>
   <p align="center"><i>I stay woke - Erykah Badu</i></p>
 </p>
