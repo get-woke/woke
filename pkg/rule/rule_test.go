@@ -102,3 +102,25 @@ func TestRule_MatchString(t *testing.T) {
 		})
 	}
 }
+
+func TestRule_EmptyTerms(t *testing.T) {
+	r := Rule{
+		Name:         "rule1",
+		Terms:        []string{},
+		Alternatives: []string{},
+		Severity:     SevWarn,
+	}
+	tests := []struct {
+		s         string
+		wb        bool
+		assertion assert.BoolAssertionFunc
+	}{
+		{s: "this has rule with empty terms", wb: false, assertion: assert.False},
+	}
+	for _, tt := range tests {
+		t.Run(tt.s, func(t *testing.T) {
+			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
+			tt.assertion(t, r.MatchString(tt.s, tt.wb))
+		})
+	}
+}
