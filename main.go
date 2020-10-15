@@ -22,17 +22,17 @@ THE SOFTWARE.
 package main
 
 import (
-	"os"
 	"time"
 
 	"github.com/get-woke/woke/cmd"
 
+	"github.com/mattn/go-colorable"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339})
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: colorable.NewColorableStdout(), TimeFormat: time.RFC3339})
 
 	err := cmd.Execute()
 	if err != nil {

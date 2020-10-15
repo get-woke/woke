@@ -34,7 +34,6 @@ import (
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
 
-	"github.com/fatih/color"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -146,9 +145,6 @@ func setLogLevel() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	}
-	if runtime.GOOS == "windows" {
-		log.Output(zerolog.ConsoleWriter{Out: color.Output})
 	}
 }
 

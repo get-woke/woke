@@ -2,13 +2,11 @@ package printer
 
 import (
 	"fmt"
-	"io"
-	"os"
-	"runtime"
 
 	"github.com/get-woke/woke/pkg/result"
 
 	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 )
 
 // Text is a text printer meant for humans to read
@@ -29,10 +27,7 @@ func (t *Text) Print(fs *result.FileResults) error {
 		color.NoColor = true
 	}
 
-	var output io.Writer = os.Stdout
-	if runtime.GOOS == "windows" {
-		output = color.Output
-	}
+	output := colorable.NewColorableStdout()
 
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d",
