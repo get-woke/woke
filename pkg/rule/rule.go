@@ -24,10 +24,7 @@ type Rule struct {
 
 // FindMatchIndexs returns the start and end indexes for all rule violations for the text supplied.
 func (r *Rule) FindMatchIndexes(text string) [][]int {
-	// If no terms are provided, this essentially disables the rule
-	// which is helpful for disabling default rules. Eventually, there should be
-	// a way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
-	if len(r.Terms) == 0 {
+	if r.Disabled() {
 		return [][]int(nil)
 	}
 
@@ -67,16 +64,13 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	return idx
 }
 
-func (r *Rule) MatchString2(s string, wordBoundary bool) bool {
-	return true
-}
-
 // MatchString reports whether the string s
 // contains any match of the regular expression re.
 func (r *Rule) MatchString(s string, wordBoundary bool) bool {
-	if len(r.Terms) == 0 {
+	if r.Disabled() {
 		return false
 	}
+
 	if wordBoundary {
 		if r.reWordBoundary == nil {
 			r.SetRegexp()
@@ -159,4 +153,12 @@ func escape(ss []string) []string {
 		ss[i] = regexp.QuoteMeta(s)
 	}
 	return ss
+}
+
+// Disabled denotes if the rule is disabled
+// If no terms are provided, this essentially disables the rule
+// which is helpful for disabling default rules. Eventually, there should be a better
+// way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
+func (r *Rule) Disabled() bool {
+	return len(r.Terms) == 0
 }
