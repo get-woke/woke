@@ -30,10 +30,12 @@ func MatchPathRules(rules []*rule.Rule, path string) (rs []PathResult) {
 // MatchPath matches the path against the rule. If it is a match, it will
 // return a PathResult with the line/start column/end column all at 1
 func MatchPath(r *rule.Rule, path string) (rs []PathResult) {
+	path = filepath.ToSlash(path)
 	dir, filename := filepath.Split(path)
 	dirParts := append(filepath.SplitList(dir), strings.TrimSuffix(filename, filepath.Ext(filename)))
 
 	for _, p := range dirParts {
+		p = filepath.ToSlash(p)
 		if r.MatchString(p, false) {
 			rs = append(rs, PathResult{LineResult: NewLineResult(r, p, path, 1, 1, 1)})
 		}

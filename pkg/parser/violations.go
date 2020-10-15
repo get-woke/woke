@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/get-woke/woke/pkg/result"
@@ -24,16 +25,17 @@ func generateFileViolationsFromFilename(filename string, rules []*rule.Rule) (*r
 // generateFileViolations reads the file and returns results of places where rules are broken
 // this function will not close the file, that should be handled by the caller
 func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResults, error) {
+	filename := filepath.ToSlash(file.Name())
 	start := time.Now()
 	defer func() {
 		log.Debug().
 			TimeDiff("durationMS", time.Now(), start).
-			Str("file", file.Name()).
+			Str("file", filename).
 			Msg("finished generateFileViolations")
 	}()
 
 	results := &result.FileResults{
-		Filename: file.Name(),
+		Filename: filename,
 	}
 
 	// Check for violations in the filename itself
