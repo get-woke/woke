@@ -32,11 +32,11 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Build
-        run: go build -v .
-
       - name: Run Unit tests
         run: go test ./...
+
+      - name: Build
+        run: go build -v .
 
   Build:
     name: Build
