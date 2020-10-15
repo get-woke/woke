@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/ignore"
@@ -25,7 +26,7 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 }
 
 func testParser() *Parser {
-	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
+	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}))
 }
 
 func parsePathTests(t *testing.T) {
@@ -108,7 +109,7 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 
 		p := testParser()
-		p.Ignorer = ignore.NewIgnore([]string{f.Name()}, []string{})
+		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())})
 		pr := new(testPrinter)
 
 		violations := p.ParsePaths(pr, f.Name())

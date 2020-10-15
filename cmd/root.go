@@ -94,7 +94,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 
 	var ignorer *ignore.Ignore
 	if !noIgnore {
-		ignorer = ignore.NewIgnore(cfg.IgnoreFiles, args)
+		ignorer = ignore.NewIgnore(cfg.IgnoreFiles)
 	}
 
 	p := parser.NewParser(cfg.Rules, ignorer)
