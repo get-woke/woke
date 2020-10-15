@@ -38,6 +38,7 @@ changelog:
     - '^dev:'
     - 'README'
     - '^chore(deps):'
+    - '^ci:'
     - Merge pull request
     - Merge branch
 
