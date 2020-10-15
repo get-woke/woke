@@ -47,12 +47,12 @@ func IsTextFile(file *os.File) error {
 	if err != nil {
 		return err
 	}
-	if e.Size() == 0 {
-		return ErrFileEmpty
-	}
-
 	if e.IsDir() {
 		return ErrIsDir
+	}
+
+	if e.Size() == 0 {
+		return ErrFileEmpty
 	}
 
 	if !isTextFile(file) {
