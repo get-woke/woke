@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/get-woke/woke">
-    <img alt="woke logo" src="assets/default-monochrome.svg" height="80" />
+    <img alt="woke logo" src="https://raw.githubusercontent.com/get-woke/woke/main/assets/default-monochrome.svg" height="80" />
   </a>
   <h3 align="center">
     Detect non-inclusive language in your source code.
