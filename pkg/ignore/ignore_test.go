@@ -1,6 +1,7 @@
 package ignore
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -18,6 +19,12 @@ func TestIgnore_Match(t *testing.T) {
 	assert.False(t, i.Match("not/foo"))
 	assert.True(t, i.Match("my/files/file1"))
 	assert.False(t, i.Match("my/files"))
+
+	if runtime.GOOS == "windows" {
+		assert.False(t, i.Match(`not\foo`))
+		assert.True(t, i.Match(`my\files\file1`))
+		assert.False(t, i.Match(`my\files`))
+	}
 }
 
 func TestReadIgnoreFile(t *testing.T) {
