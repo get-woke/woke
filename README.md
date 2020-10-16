@@ -22,7 +22,7 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/get-woke/woke)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_shield)
-<!--[![HitCount](http://hits.dwyl.com/get-woke/woke.svg)](http://hits.dwyl.com/get-woke/woke)-->
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#other-software)
 
 ---
 
