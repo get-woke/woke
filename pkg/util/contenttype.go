@@ -8,8 +8,12 @@ import (
 	"strings"
 )
 
-var ErrFileEmpty = errors.New("file is empty")
-var ErrFileNotText = errors.New("file is not a text file")
+var (
+	// ErrFileEmpty is an error to signify the file is empty
+	ErrFileEmpty = errors.New("file is empty")
+	// ErrFileNotText is an error to signify the file type is not a text file that can be read
+	ErrFileNotText = errors.New("file is not a text file")
+)
 
 func detectContentType(file io.Reader) string {
 	// Only the first 512 bytes are used to sniff the content type.
@@ -25,6 +29,7 @@ func isTextFile(file *os.File) bool {
 	return strings.HasPrefix(contentType, "text/plain")
 }
 
+// IsTextFileFromFilename returns an error if the filename is not of content-type 'text/plain'
 func IsTextFileFromFilename(filename string) error {
 	f, err := os.Open(filename)
 	if err != nil {

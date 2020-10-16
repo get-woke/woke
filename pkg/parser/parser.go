@@ -16,6 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// DefaultPath is the default path if no paths are provided
 var DefaultPath = []string{"."}
 
 // TODO: can this be dynamically determined?
@@ -29,6 +30,8 @@ type Parser struct {
 	rchan chan result.FileResults
 }
 
+// NewParser returns a pointer to a Parser that is used to check for violations
+// based on the rules provided, ignoring files based on the ignorer provided
 func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	return &Parser{
 		Rules:   rules,

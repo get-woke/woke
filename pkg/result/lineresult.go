@@ -15,7 +15,7 @@ import (
 // Helps avoid consuming the console when minified files contain violations.
 const MaxLineLength = 200
 
-// Result contains data about the result of a broken rule
+// LineResult contains data about the result of a broken rule
 type LineResult struct {
 	Rule      *rule.Rule
 	Violation string
@@ -26,6 +26,7 @@ type LineResult struct {
 	EndPosition   *token.Position
 }
 
+// NewLineResult returns a LineResult based on the metadata from a violation
 func NewLineResult(r *rule.Rule, violation, filename string, line, startColumn, endColumn int) LineResult {
 	return LineResult{
 		Rule:      r,
@@ -85,7 +86,14 @@ func (r LineResult) String() string {
 	return fmt.Sprintf("    %-14s %-10s %s", pos, r.Rule.Severity, r.Reason())
 }
 
-func (r LineResult) GetSeverity() rule.Severity        { return r.Rule.Severity }
+// GetSeverity returns the rule severity for the Result
+func (r LineResult) GetSeverity() rule.Severity { return r.Rule.Severity }
+
+// GetStartPosition returns the start position for the Result
 func (r LineResult) GetStartPosition() *token.Position { return r.StartPosition }
-func (r LineResult) GetEndPosition() *token.Position   { return r.EndPosition }
-func (r LineResult) GetLine() string                   { return r.Line }
+
+// GetEndPosition returns the start position for the Result
+func (r LineResult) GetEndPosition() *token.Position { return r.EndPosition }
+
+// GetLine returns the entire line for the LineResult
+func (r LineResult) GetLine() string { return r.Line }

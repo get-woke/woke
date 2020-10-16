@@ -22,7 +22,7 @@ type Rule struct {
 	re             *regexp.Regexp
 }
 
-// FindMatchIndexs returns the start and end indexes for all rule violations for the text supplied.
+// FindMatchIndexes returns the start and end indexes for all rule violations for the text supplied.
 func (r *Rule) FindMatchIndexes(text string) [][]int {
 	if r.Disabled() {
 		return [][]int(nil)

@@ -16,19 +16,26 @@ type Printer interface {
 }
 
 const (
-	OutFormatText          = "text"
-	OutFormatSimple        = "simple"
+	// OutFormatText is a text-based output format, best for CLIs
+	OutFormatText = "text"
+	// OutFormatSimple is a simplified output format, which can be used with something like https://github.com/reviewdog/reviewdog
+	OutFormatSimple = "simple"
+	// OutFormatGitHubActions is an output format supported by GitHub Actions annotations
+	// https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#setting-a-warning-message
 	OutFormatGitHubActions = "github-actions"
 )
 
+// OutFormats are all the available output formats. The first one should be the default
 var OutFormats = []string{
 	OutFormatText,
 	OutFormatSimple,
 	OutFormatGitHubActions,
 }
 
+// OutFormatsString is all OutFormats, as a comma-separated string
 var OutFormatsString = strings.Join(OutFormats, ",")
 
+// NewPrinter returns a valid new Printer from a string, or an error if the printer is invalid
 func NewPrinter(f string) (Printer, error) {
 	var p Printer
 	switch f {

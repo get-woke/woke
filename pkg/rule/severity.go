@@ -41,6 +41,7 @@ func (s Severity) String() string {
 	return vals[s]
 }
 
+// Colorize returns a the Severity as a colorized string
 func (s *Severity) Colorize() string {
 	switch *s {
 	case SevInfo:
