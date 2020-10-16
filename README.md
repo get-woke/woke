@@ -209,7 +209,7 @@ rules:
 
 #### Files
 
-In your config file, you can ignore files by adding:
+You can ignore files by adding to your config file. All ways of ignoring files below should follow the [gitignore](https://git-scm.com/docs/gitignore) convention.
 
 ```yaml
 ignore_files:
@@ -220,13 +220,10 @@ ignore_files:
 
 `woke` will also automatically ignore anything listed in `.gitignore`.
 
-`woke` uses [go-gitignore](https://github.com/get-woke/go-gitignore) to ignores.
-This follows the common `.gitignore` convention. See link for more details on matching.
-
 #### `.wokeignore`
 
 You may also specify a `.wokeignore` file at the root of the directory to add additional ignore files.
-This also follows the `.gitignore` convention.
+This also follows the [gitignore](https://git-scm.com/docs/gitignore) convention.
 
 #### In-line ignoring
 
@@ -241,7 +238,7 @@ Simply add the following to the line you wish to ignore, using comment syntax th
 (`woke` is not responsible for broken code due to in-line ignoring. Make sure you comment correctly!)
 
 ```bash
-# wokeignore:rule=RULE_NAME
+This line has RULE_NAME but will be ignored # wokeignore:rule=RULE_NAME
 
 # for example, to ignore the following line for the whitelist rule
 whitelist # wokeignore:rule=whitelist
