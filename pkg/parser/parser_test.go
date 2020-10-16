@@ -168,11 +168,13 @@ func parsePathTests(t *testing.T) {
 }
 
 func TestParser_ParsePaths(t *testing.T) {
+	t.Cleanup(func() {
+		os.Unsetenv("WORKER_POOL_COUNT")
+	})
 	os.Unsetenv("WORKER_POOL_COUNT")
 	parsePathTests(t)
 
 	os.Setenv("WORKER_POOL_COUNT", "10")
-	defer os.Unsetenv("WORKER_POOL_COUNT")
 	parsePathTests(t)
 }
 
