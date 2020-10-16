@@ -31,29 +31,31 @@ func testParser() *Parser {
 
 func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
-		f1, err := newFile(t, "i have a whitelist\n")
+		f, err := newFile(t, "i have a whitelist\n")
 		assert.NoError(t, err)
 		pr := new(testPrinter)
 		p := testParser()
-		violations := p.ParsePaths(pr, f1.Name())
+		violations := p.ParsePaths(pr, f.Name())
 
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), violations)
+
+		filename := filepath.ToSlash(f.Name())
 		expected := result.FileResults{
-			Filename: f1.Name(),
+			Filename: filename,
 			Results: []result.Result{
 				result.LineResult{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
 					Line:      "i have a whitelist",
 					StartPosition: &token.Position{
-						Filename: f1.Name(),
+						Filename: filename,
 						Offset:   0,
 						Line:     1,
 						Column:   9,
 					},
 					EndPosition: &token.Position{
-						Filename: f1.Name(),
+						Filename: filename,
 						Offset:   0,
 						Line:     1,
 						Column:   18,
@@ -136,21 +138,22 @@ func parsePathTests(t *testing.T) {
 			assert.Len(t, pr.results, 1)
 			assert.Equal(t, len(pr.results), violations)
 
+			filename := filepath.ToSlash(os.Stdin.Name())
 			expected := result.FileResults{
-				Filename: os.Stdin.Name(),
+				Filename: filename,
 				Results: []result.Result{
 					result.LineResult{
 						Rule:      &rule.WhitelistRule,
 						Violation: "whitelist",
 						Line:      "i have a whitelist here",
 						StartPosition: &token.Position{
-							Filename: os.Stdin.Name(),
+							Filename: filename,
 							Offset:   0,
 							Line:     1,
 							Column:   9,
 						},
 						EndPosition: &token.Position{
-							Filename: os.Stdin.Name(),
+							Filename: filename,
 							Offset:   0,
 							Line:     1,
 							Column:   18,
