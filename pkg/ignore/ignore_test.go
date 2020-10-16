@@ -19,3 +19,11 @@ func TestIgnore_Match(t *testing.T) {
 	assert.True(t, i.Match("my/files/file1"))
 	assert.False(t, i.Match("my/files"))
 }
+
+func TestReadIgnoreFile(t *testing.T) {
+	ignoreLines := readIgnoreFile("testdata/.gitignore")
+	assert.Equal(t, []string{"*.DS_Store"}, ignoreLines)
+
+	noIgnoreLines := readIgnoreFile(".gitignore")
+	assert.Equal(t, []string{}, noIgnoreLines)
+}
