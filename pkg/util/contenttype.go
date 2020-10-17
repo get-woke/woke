@@ -13,6 +13,8 @@ var (
 	ErrFileEmpty = errors.New("file is empty")
 	// ErrFileNotText is an error to signify the file type is not a text file that can be read
 	ErrFileNotText = errors.New("file is not a text file")
+	// ErrIsDir is an error to signify a directory
+	ErrIsDir = errors.New("file is a directory")
 )
 
 func detectContentType(file io.Reader) string {
@@ -45,12 +47,12 @@ func IsTextFile(file *os.File) error {
 	if err != nil {
 		return err
 	}
-	if e.Size() == 0 {
-		return ErrFileEmpty
+	if e.IsDir() {
+		return ErrIsDir
 	}
 
-	if e.IsDir() {
-		return os.ErrInvalid
+	if e.Size() == 0 {
+		return ErrFileEmpty
 	}
 
 	if !isTextFile(file) {

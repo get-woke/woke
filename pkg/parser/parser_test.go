@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/ignore"
@@ -25,34 +26,36 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 }
 
 func testParser() *Parser {
-	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}, []string{}))
+	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}))
 }
 
 func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
-		f1, err := newFile(t, "i have a whitelist\n")
+		f, err := newFile(t, "i have a whitelist\n")
 		assert.NoError(t, err)
 		pr := new(testPrinter)
 		p := testParser()
-		violations := p.ParsePaths(pr, f1.Name())
+		violations := p.ParsePaths(pr, f.Name())
 
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), violations)
+
+		filename := filepath.ToSlash(f.Name())
 		expected := result.FileResults{
-			Filename: f1.Name(),
+			Filename: filename,
 			Results: []result.Result{
 				result.LineResult{
 					Rule:      &rule.WhitelistRule,
 					Violation: "whitelist",
 					Line:      "i have a whitelist",
 					StartPosition: &token.Position{
-						Filename: f1.Name(),
+						Filename: filename,
 						Offset:   0,
 						Line:     1,
 						Column:   9,
 					},
 					EndPosition: &token.Position{
-						Filename: f1.Name(),
+						Filename: filename,
 						Offset:   0,
 						Line:     1,
 						Column:   18,
@@ -108,7 +111,7 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 
 		p := testParser()
-		p.Ignorer = ignore.NewIgnore([]string{f.Name()}, []string{})
+		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())})
 		pr := new(testPrinter)
 
 		violations := p.ParsePaths(pr, f.Name())
@@ -135,21 +138,22 @@ func parsePathTests(t *testing.T) {
 			assert.Len(t, pr.results, 1)
 			assert.Equal(t, len(pr.results), violations)
 
+			filename := filepath.ToSlash(os.Stdin.Name())
 			expected := result.FileResults{
-				Filename: os.Stdin.Name(),
+				Filename: filename,
 				Results: []result.Result{
 					result.LineResult{
 						Rule:      &rule.WhitelistRule,
 						Violation: "whitelist",
 						Line:      "i have a whitelist here",
 						StartPosition: &token.Position{
-							Filename: os.Stdin.Name(),
+							Filename: filename,
 							Offset:   0,
 							Line:     1,
 							Column:   9,
 						},
 						EndPosition: &token.Position{
-							Filename: os.Stdin.Name(),
+							Filename: filename,
 							Offset:   0,
 							Line:     1,
 							Column:   18,
@@ -164,11 +168,13 @@ func parsePathTests(t *testing.T) {
 }
 
 func TestParser_ParsePaths(t *testing.T) {
+	t.Cleanup(func() {
+		os.Unsetenv("WORKER_POOL_COUNT")
+	})
 	os.Unsetenv("WORKER_POOL_COUNT")
 	parsePathTests(t)
 
 	os.Setenv("WORKER_POOL_COUNT", "10")
-	defer os.Unsetenv("WORKER_POOL_COUNT")
 	parsePathTests(t)
 }
 

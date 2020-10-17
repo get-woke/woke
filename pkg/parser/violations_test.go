@@ -4,6 +4,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/result"
@@ -19,8 +20,9 @@ func TestGenerateFileViolations(t *testing.T) {
 	res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
 	assert.NoError(t, err)
 
+	filename := filepath.ToSlash(f.Name())
 	expected := &result.FileResults{
-		Filename: f.Name(),
+		Filename: filename,
 		Results:  make([]result.Result, 1),
 	}
 	expected.Results[0] = result.LineResult{
@@ -28,13 +30,13 @@ func TestGenerateFileViolations(t *testing.T) {
 		Violation: "whitelist",
 		Line:      "this has whitelist",
 		StartPosition: &token.Position{
-			Filename: f.Name(),
+			Filename: filename,
 			Offset:   0,
 			Line:     1,
 			Column:   9,
 		},
 		EndPosition: &token.Position{
-			Filename: f.Name(),
+			Filename: filename,
 			Offset:   0,
 			Line:     1,
 			Column:   18,

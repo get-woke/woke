@@ -31,7 +31,7 @@ func TestIsTextFile(t *testing.T) {
 	f5, _ := os.Open("testdata")
 	defer f5.Close()
 	err5 := IsTextFile(f5)
-	assert.EqualError(t, err5, os.ErrInvalid.Error())
+	assert.EqualError(t, err5, ErrIsDir.Error())
 }
 
 func TestIsTextFileFromFilename(t *testing.T) {
@@ -48,5 +48,5 @@ func TestIsTextFileFromFilename(t *testing.T) {
 	assert.True(t, os.IsNotExist(err4))
 
 	err5 := IsTextFileFromFilename("testdata")
-	assert.EqualError(t, err5, os.ErrInvalid.Error())
+	assert.EqualError(t, err5, ErrIsDir.Error())
 }
