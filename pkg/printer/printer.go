@@ -23,6 +23,9 @@ const (
 	// OutFormatGitHubActions is an output format supported by GitHub Actions annotations
 	// https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#setting-a-warning-message
 	OutFormatGitHubActions = "github-actions"
+
+	// OutFormatJSON outputs in json
+	OutFormatJSON = "json"
 )
 
 // OutFormats are all the available output formats. The first one should be the default
@@ -30,6 +33,7 @@ var OutFormats = []string{
 	OutFormatText,
 	OutFormatSimple,
 	OutFormatGitHubActions,
+	OutFormatJSON,
 }
 
 // OutFormatsString is all OutFormats, as a comma-separated string
@@ -45,6 +49,8 @@ func NewPrinter(f string) (Printer, error) {
 		p = NewSimple()
 	case OutFormatGitHubActions:
 		p = NewGitHubActions()
+	case OutFormatJSON:
+		p = NewJSON()
 	default:
 		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}

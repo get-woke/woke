@@ -18,6 +18,12 @@ func TestSeverity_UnmarshalYAML(t *testing.T) {
 		{"error", SevError},
 		{"info", SevInfo},
 		{"not-valid", SevInfo},
+		{"0", SevInfo},
+		{"1", SevInfo},
+		{"2", SevInfo},
+		{"3", SevInfo},
+		{"4", SevInfo},
+		{"99", SevInfo},
 	}
 	for _, test := range tests {
 		sev := new(Severity)
@@ -25,6 +31,24 @@ func TestSeverity_UnmarshalYAML(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equalf(t, test.expected, *sev, "expected: %s, got: %s", test.expected, sev)
+	}
+}
+
+func TestSeverity_MarshalJSON(t *testing.T) {
+	tests := []struct {
+		input    Severity
+		expected string
+	}{
+		{SevWarn, `"warning"`},
+		{SevError, `"error"`},
+		{SevInfo, `"info"`},
+	}
+	for _, test := range tests {
+		sev := new(Severity)
+		b, err := test.input.MarshalJSON()
+		assert.NoError(t, err)
+
+		assert.Equalf(t, test.expected, string(b), "expected: %s, got: %s", test.expected, sev)
 	}
 }
 
