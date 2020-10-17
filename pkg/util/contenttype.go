@@ -28,10 +28,10 @@ func detectContentType(file io.Reader) string {
 func isTextFile(file *os.File) bool {
 	contentType := detectContentType(file)
 
-	return strings.HasPrefix(contentType, "text/plain")
+	return strings.HasPrefix(contentType, "text/")
 }
 
-// IsTextFileFromFilename returns an error if the filename is not of content-type 'text/plain'
+// IsTextFileFromFilename returns an error if the filename is not of content-type 'text/*'
 func IsTextFileFromFilename(filename string) error {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -41,7 +41,7 @@ func IsTextFileFromFilename(filename string) error {
 	return IsTextFile(f)
 }
 
-// IsTextFile returns an error if the file is not of content-type 'text/plain'
+// IsTextFile returns an error if the file is not of content-type 'text/*'
 func IsTextFile(file *os.File) error {
 	e, err := file.Stat()
 	if err != nil {
