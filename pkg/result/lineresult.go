@@ -1,6 +1,7 @@
 package result
 
 import (
+	"encoding/json"
 	"fmt"
 	"go/token"
 	"strings"
@@ -97,3 +98,16 @@ func (r LineResult) GetEndPosition() *token.Position { return r.EndPosition }
 
 // GetLine returns the entire line for the LineResult
 func (r LineResult) GetLine() string { return r.Line }
+
+type jsonLineResult LineResult
+
+// MarshalJSON override to include Reason in the json response
+func (r LineResult) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		jsonLineResult
+		Reason string
+	}{
+		jsonLineResult: jsonLineResult(r),
+		Reason:         r.Reason(),
+	})
+}
