@@ -2,6 +2,7 @@ package result
 
 import (
 	"fmt"
+	"go/token"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/rule"
@@ -20,4 +21,41 @@ func TestFindResults(t *testing.T) {
 
 	rs = FindResults(&rule.WhitelistRule, "my/file", "this has the term whitelist #wokeignore:rule=whitelist", 1)
 	assert.Len(t, rs, 0)
+}
+
+func TestLineResult_MarshalJSON(t *testing.T) {
+	lr := testLineResult()
+	b, err := lr.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Contains(t, string(b), fmt.Sprintf(`"Reason":"%s"`, lr.Reason()))
+}
+
+func TestLineResult_GetSeverity(t *testing.T) {
+	lr := testLineResult()
+	assert.Equal(t, lr.GetSeverity(), lr.Rule.Severity)
+}
+
+func TestLineResult_GetStartPosition(t *testing.T) {
+	lr := testLineResult()
+	assert.Equal(t, lr.GetStartPosition(), lr.StartPosition)
+}
+
+func TestLineResult_GetEndPosition(t *testing.T) {
+	lr := testLineResult()
+	assert.Equal(t, lr.GetEndPosition(), lr.EndPosition)
+}
+
+func TestLineResult_GetLine(t *testing.T) {
+	lr := testLineResult()
+	assert.Equal(t, lr.GetLine(), lr.Line)
+}
+
+func testLineResult() LineResult {
+	return LineResult{
+		Rule:          &rule.WhitelistRule,
+		Violation:     "whitelist",
+		Line:          "whitelist",
+		StartPosition: &token.Position{Line: 1, Offset: 0},
+		EndPosition:   &token.Position{Line: 1, Offset: 8},
+	}
 }
