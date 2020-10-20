@@ -61,23 +61,19 @@ jobs:
       - name: Install dependencies
         run: |
           go mod download
+
       - name: Check that go generate produced no diff
         run: |
           go generate -x ./... && git diff --exit-code
 
       - name: Run Unit tests
         run: |
-          go test -race -covermode atomic -coverprofile=covprofile ./...
+          go test -race -covermode=atomic -coverprofile=coverage.txt ./...
 
-      - name: Install goveralls
+      - name: Send to Codecov
         env:
-          GO111MODULE: off
-        run: go get github.com/mattn/goveralls
-
-      - name: Send coverage
-        env:
-          COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -coverprofile=covprofile -service=github
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
 
   lint:
     strategy:
