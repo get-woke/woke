@@ -1,0 +1,14 @@
+comment:
+  require_changes: true  # Only post a comment if coverage changes.
+
+coverage:
+  range: 80..100 # coverage lower than 50 is red, higher than 90 green, between color code
+
+  status:
+    project: # settings affecting project coverage
+      default:
+        target: auto # auto % coverage target
+        threshold: 5% # allow for 5% reduction of coverage without failing
+
+    # do not run coverage on patch nor changes
+    patch: false
