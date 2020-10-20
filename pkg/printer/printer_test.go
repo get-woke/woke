@@ -14,6 +14,7 @@ func TestCreatePrinter(t *testing.T) {
 		{OutFormatSimple, &Simple{}},
 		{OutFormatText, &Text{}},
 		{OutFormatGitHubActions, &GitHubActions{}},
+		{OutFormatJSON, &JSON{}},
 	}
 
 	for _, test := range tests {

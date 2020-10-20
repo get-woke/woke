@@ -132,7 +132,7 @@ Flags:
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
       --no-ignore           Files matching entries in .gitignore/.wokeignore are parsed
-  -o, --output string       Output type [text,simple,github-actions] (default "text")
+  -o, --output string       Output type [text,simple,github-actions,json] (default "text")
       --stdin               Read from stdin
   -v, --version             version for woke
 ```

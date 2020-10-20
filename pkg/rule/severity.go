@@ -1,6 +1,8 @@
 package rule
 
 import (
+	"encoding/json"
+
 	"github.com/fatih/color"
 	"gopkg.in/yaml.v2"
 )
@@ -66,4 +68,12 @@ func (s *Severity) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	*s = NewSeverity(str)
 
 	return nil
+}
+
+// compile-time check that Severity satisfies the yaml Unmarshaler
+var _ json.Marshaler = (*Severity)(nil)
+
+// MarshalJSON to marshal Severity as a string
+func (s *Severity) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + s.String() + `"`), nil
 }
