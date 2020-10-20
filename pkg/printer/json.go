@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -20,10 +21,8 @@ func NewJSON() *JSON {
 // It will not be presented as an array of FileResults. You will neeed to
 // Split by new line to parse the full output
 func (p *JSON) Print(fs *result.FileResults) error {
-	b, err := json.Marshal(fs)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(b))
-	return nil
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(fs)
+	fmt.Print(buf.String()) // json Encoder already puts a new line in, so no need for Println here
+	return err
 }
