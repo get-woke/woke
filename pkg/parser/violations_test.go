@@ -14,7 +14,7 @@ import (
 )
 
 func TestGenerateFileViolations(t *testing.T) {
-	f, err := newFile(t, "this has whitelist\n")
+	f, err := newFile(t, " this has whitelist\n")
 	assert.NoError(t, err)
 
 	res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
@@ -28,18 +28,18 @@ func TestGenerateFileViolations(t *testing.T) {
 	expected.Results[0] = result.LineResult{
 		Rule:      &rule.WhitelistRule,
 		Violation: "whitelist",
-		Line:      "this has whitelist",
+		Line:      " this has whitelist",
 		StartPosition: &token.Position{
 			Filename: filename,
 			Offset:   0,
 			Line:     1,
-			Column:   9,
+			Column:   10,
 		},
 		EndPosition: &token.Position{
 			Filename: filename,
 			Offset:   0,
 			Line:     1,
-			Column:   18,
+			Column:   19,
 		},
 	}
 	assert.EqualValues(t, expected, res)
