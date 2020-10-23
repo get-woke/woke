@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"go/token"
-	"strings"
 
 	"github.com/get-woke/woke/pkg/rule"
 
@@ -48,8 +47,6 @@ func NewLineResult(r *rule.Rule, violation, filename string, line, startColumn, 
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
 func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
-	text = strings.TrimSpace(text)
-
 	if r.CanIgnoreLine(text) {
 		log.Debug().
 			Str("rule", r.Name).

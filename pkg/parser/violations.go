@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/get-woke/woke/pkg/result"
@@ -54,6 +55,9 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 		if err != nil {
 			return nil, err
 		}
+
+		// text will have a trailing new line, trim it
+		text = strings.TrimSuffix(text, "\n")
 
 		for _, r := range rules {
 			lineResults := result.FindResults(r, results.Filename, text, line)
