@@ -40,6 +40,7 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 
 - [Installation](#installation)
   - [macOS](#macos)
+  - [Windows](#windows)
   - [Simple installation](#simple-installation)
   - [Build from source](#build-from-source)
   - [Releases](#releases)
@@ -73,6 +74,15 @@ You can install a binary release on macOS using [brew](https://brew.sh)
 ```bash
 brew install get-woke/tap/woke
 brew upgrade get-woke/tap/woke
+```
+
+### Windows
+
+You can install `woke` with [`scoop`](https://scoop.sh/)
+
+```sh
+scoop bucket add get-woke https://github.com/get-woke/scoop-bucket.git
+scoop install get-woke/woke
 ```
 
 ### Simple installation

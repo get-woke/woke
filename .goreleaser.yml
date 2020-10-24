@@ -1,9 +1,10 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod download
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -11,6 +12,9 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - "amd64"
+      - "386"
     ldflags: -s -w -X github.com/get-woke/woke/cmd.Version={{.Version}} -X github.com/get-woke/woke/cmd.Commit={{.ShortCommit}} -X github.com/get-woke/woke/cmd.Date={{.Date}}
 
 archives:
@@ -29,6 +33,7 @@ snapshot:
 
 checksum:
   name_template: '{{ .ProjectName }}-{{ .Version }}-checksums.txt'
+
 changelog:
   sort: asc
   filters:
@@ -58,6 +63,24 @@ brews:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     folder: Formula
     homepage: https://getwoke.tech
-    description: A text file analysis tool that detects non-inclusive language in your source code.
+    description: Detect non-inclusive language in your source code.
     test: |
       system "#{bin}/woke --version"
+
+scoop:
+  bucket:
+    owner: get-woke
+    name: scoop-bucket
+    token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+
+  # The project name and current git tag are used in the format string.
+  commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
+
+  homepage: https://getwoke.tech
+  description: Detect non-inclusive language in your source code.
+  license: MIT
+
+  # Persist data between application updates
+  # persist:
+  # - "data"
+  # - "config.toml"
