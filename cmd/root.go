@@ -73,7 +73,7 @@ Provide a list file globs for files you'd like to check.`,
 }
 
 func rootRunE(cmd *cobra.Command, args []string) error {
-	setLogLevel()
+	setDebugLogLevel()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	log.Debug().Msg(getVersion("default"))
@@ -143,9 +143,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
-func setLogLevel() {
-	// Default level for this example is info, unless debug flag is present
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+func setDebugLogLevel() {
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
