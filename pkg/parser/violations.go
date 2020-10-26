@@ -47,24 +47,24 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 	reader := bufio.NewReader(file)
 
 	line := 1
+
+Loop:
 	for {
-		text, err := reader.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
+		switch text, err := reader.ReadString('\n'); {
+		case err == nil || (err == io.EOF && text != ""):
+			text = strings.TrimSuffix(text, "\n")
+
+			for _, r := range rules {
+				lineResults := result.FindResults(r, results.Filename, text, line)
+				results.Results = append(results.Results, lineResults...)
+			}
+
+			line++
+		case err == io.EOF:
+			break Loop
+		case err != nil:
 			return nil, err
 		}
-
-		// text will have a trailing new line, trim it
-		text = strings.TrimSuffix(text, "\n")
-
-		for _, r := range rules {
-			lineResults := result.FindResults(r, results.Filename, text, line)
-			results.Results = append(results.Results, lineResults...)
-		}
-
-		line++
 	}
 
 	return results, nil

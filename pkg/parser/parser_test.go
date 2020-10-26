@@ -31,7 +31,7 @@ func testParser() *Parser {
 
 func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist\n")
+		f, err := newFile(t, "i have a whitelist")
 		assert.NoError(t, err)
 		pr := new(testPrinter)
 		p := testParser()
