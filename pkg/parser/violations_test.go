@@ -63,12 +63,28 @@ func TestGenerateFileViolations(t *testing.T) {
 		_, err := generateFileViolationsFromFilename("missing.file", rule.DefaultRules)
 		assert.Error(t, err)
 	})
+
+	t.Run("filename violation", func(t *testing.T) {
+		f, err := newFileWithPrefix(t, "whitelist-", "content")
+		assert.NoError(t, err)
+
+		res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+		assert.NoError(t, err)
+		assert.Len(t, res.Results, 1)
+		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
+	})
 }
 
 // newFile creates a new file for testing. The file, and the directory that the file
 // was created in will be removed at the completion of the test
 func newFile(t *testing.T, text string) (*os.File, error) {
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "woke-")
+	return newFileWithPrefix(t, "woke-", text)
+}
+
+// newFile creates a new file with the prefix defined for testing.
+// The file, and the directory that the file was created in will be removed at the completion of the test
+func newFileWithPrefix(t *testing.T, prefix, text string) (*os.File, error) {
+	tmpFile, err := ioutil.TempFile(os.TempDir(), prefix)
 	if err != nil {
 		return nil, err
 	}
