@@ -8,45 +8,89 @@ import (
 )
 
 func TestIsTextFile(t *testing.T) {
-	f1, _ := os.Open("testdata/empty.txt")
-	defer f1.Close()
-	err := IsTextFile(f1)
-	assert.EqualError(t, err, ErrFileEmpty.Error())
+	t.Run("empty file", func(t *testing.T) {
+		f, _ := os.Open("testdata/empty.txt")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.EqualError(t, err, ErrFileEmpty.Error())
+	})
 
-	f2, _ := os.Open("testdata/binary.dat")
-	defer f2.Close()
-	err2 := IsTextFile(f2)
-	assert.EqualError(t, err2, ErrFileNotText.Error())
+	t.Run("html file", func(t *testing.T) {
+		f, _ := os.Open("testdata/index.html")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.NoError(t, err)
+	})
 
-	f3, _ := os.Open("testdata/text.txt")
-	defer f3.Close()
-	err3 := IsTextFile(f3)
-	assert.NoError(t, err3)
+	t.Run("binary file", func(t *testing.T) {
+		f, _ := os.Open("testdata/binary.dat")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.EqualError(t, err, ErrFileNotText.Error())
+	})
 
-	f4, _ := os.Open("testdata/missing.txt")
-	defer f4.Close()
-	err4 := IsTextFile(f4)
-	assert.Error(t, err4)
+	t.Run("text file", func(t *testing.T) {
+		f, _ := os.Open("testdata/text.txt")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.NoError(t, err)
+	})
 
-	f5, _ := os.Open("testdata")
-	defer f5.Close()
-	err5 := IsTextFile(f5)
-	assert.EqualError(t, err5, ErrIsDir.Error())
+	t.Run("xml file", func(t *testing.T) {
+		f, _ := os.Open("testdata/index.xml")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.NoError(t, err)
+	})
+
+	t.Run("missing file", func(t *testing.T) {
+		f, _ := os.Open("testdata/missing.txt")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.Error(t, err)
+	})
+
+	t.Run("directory", func(t *testing.T) {
+		f, _ := os.Open("testdata")
+		defer f.Close()
+		err := IsTextFile(f)
+		assert.EqualError(t, err, ErrIsDir.Error())
+	})
 }
 
 func TestIsTextFileFromFilename(t *testing.T) {
-	err := IsTextFileFromFilename("testdata/empty.txt")
-	assert.EqualError(t, err, ErrFileEmpty.Error())
+	t.Run("empty file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/empty.txt")
+		assert.EqualError(t, err, ErrFileEmpty.Error())
+	})
 
-	err2 := IsTextFileFromFilename("testdata/binary.dat")
-	assert.EqualError(t, err2, ErrFileNotText.Error())
+	t.Run("html file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/index.html")
+		assert.NoError(t, err)
+	})
 
-	err3 := IsTextFileFromFilename("testdata/text.txt")
-	assert.NoError(t, err3)
+	t.Run("binary file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/binary.dat")
+		assert.EqualError(t, err, ErrFileNotText.Error())
+	})
 
-	err4 := IsTextFileFromFilename("testdata/missing.txt")
-	assert.True(t, os.IsNotExist(err4))
+	t.Run("text file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/text.txt")
+		assert.NoError(t, err)
+	})
 
-	err5 := IsTextFileFromFilename("testdata")
-	assert.EqualError(t, err5, ErrIsDir.Error())
+	t.Run("xml file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/index.xml")
+		assert.NoError(t, err)
+	})
+
+	t.Run("missing file", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata/missing.txt")
+		assert.True(t, os.IsNotExist(err))
+	})
+
+	t.Run("directory", func(t *testing.T) {
+		err := IsTextFileFromFilename("testdata")
+		assert.EqualError(t, err, ErrIsDir.Error())
+	})
 }
