@@ -21,7 +21,7 @@ func TestDefaultRules(t *testing.T) {
 				assert.Len(t, r.FindMatchIndexes(fmt.Sprintf("other %s words %s before", term, term)), 2)
 				assert.Len(t, r.FindMatchIndexes(fmt.Sprintf("other %s words before %s", term, term)), 2)
 
-				assert.Len(t, r.FindMatchIndexes(fmt.Sprintf("other %s%s.", term, term)), 0)
+				assert.Len(t, r.FindMatchIndexes(fmt.Sprintf("other %s%s.", term, term)), 2)
 			})
 		}
 	}
