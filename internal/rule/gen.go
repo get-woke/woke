@@ -89,6 +89,9 @@ var {{ .Name | sanitize }}Rule = Rule{
 	{{- if .Severity }}
 	Severity: {{ printf "%#v" .Severity }},
 	{{- end }}
+	Options: Options{
+		WordBoundary: {{ .Options.WordBoundary }},
+	},
 }
 {{- end }}
 

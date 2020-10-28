@@ -10,18 +10,24 @@ import (
 func TestRule_FindMatchIndexes(t *testing.T) {
 	r := testRule()
 	tests := []struct {
-		text     string
-		expected [][]int
+		text       string
+		expected   [][]int
+		expectedWb [][]int
 	}{
-		{"this string has rule-1 and rule1 included", [][]int{{16, 22}, {27, 32}}},
-		{"this string has rule-2 and rule1 included", [][]int{{27, 32}}},
-		{"this string does not have any violations", [][]int(nil)},
-		{"this string has no violation due to word boundary rule1rule-1", [][]int(nil)},
-		// ^ This case should be a violation, but the code needs to be updated to support it.
+		{"this string has rule-1 and rule1 included", [][]int{{16, 22}, {27, 32}}, [][]int{{16, 22}, {27, 32}}},
+		{"this string has rule-2 and rule1 included", [][]int{{27, 32}}, [][]int{{27, 32}}},
+		{"this string does not have any violations", [][]int(nil), [][]int(nil)},
+		{"this string has violation with word boundary rule1rule-1", [][]int{{45, 50}, {50, 56}}, [][]int(nil)},
 	}
 	for _, test := range tests {
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expected, got)
+	}
+
+	r.Options.WordBoundary = true
+	for _, test := range tests {
+		got := r.FindMatchIndexes(test.text)
+		assert.Equal(t, test.expectedWb, got)
 	}
 
 	e := Rule{Name: "rule1"}

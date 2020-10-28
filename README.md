@@ -49,6 +49,7 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
   - [File globs](#file-globs)
   - [stdin](#stdin)
   - [Rules](#rules)
+    - [Options](#options)
     - [Disabling Default Rules](#disabling-default-rules)
   - [Ignoring](#ignoring)
     - [Files](#files)
@@ -202,7 +203,19 @@ rules:
       - white-list
     alternatives:
       - allowlist
+    # options:
+    #   word_boundary: false
 ```
+
+#### Options
+
+You can configure options for each rule. Add an `options` key to your rule definition to customize.
+
+Current options include:
+
+- `word_boundary` (default: `false`)
+  - If `true`, terms will trigger violations when they are surrounded by ASCII word boundaries.
+  - If `false`, will trigger violations if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
 
 #### Disabling Default Rules
 
