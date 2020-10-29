@@ -1,12 +1,12 @@
-on:
-  release:
-    types:
-      - created
-
 name: Documentation refresh
 
+on:
+  push:
+    tags:
+      - v*
+
 jobs:
-  build:
+  docs:
     name: Renew documentation
     runs-on: ubuntu-latest
     steps:
