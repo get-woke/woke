@@ -3,7 +3,7 @@ module github.com/get-woke/woke
 go 1.14
 
 require (
-	github.com/fatih/color v1.9.0
+	github.com/fatih/color v1.10.0
 	github.com/get-woke/fastwalk v1.0.0
 	github.com/get-woke/go-gitignore v1.1.1
 	github.com/mattn/go-colorable v0.1.8
