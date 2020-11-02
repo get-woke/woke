@@ -309,6 +309,7 @@ Read more about go's concurrency patterns [here](https://blog.golang.org/pipelin
 Are you using `woke` in your org? We'd love to know! Please send a PR and add your organization name/link to this list.
 
 - [Rent the Runway](https://www.renttherunway.com) ([blog post](https://dresscode.renttherunway.com/blog/woke))
+- [Veue](https://veuelive.com)
 
 ## Resources
 
