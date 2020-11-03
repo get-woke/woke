@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
@@ -17,9 +18,9 @@ func NewGitHubActions() *GitHubActions {
 
 // Print prints in the format for GitHub actions
 // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
-func (p *GitHubActions) Print(fs *result.FileResults) error {
+func (p *GitHubActions) Print(w io.Writer, fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Println(formatResultForGitHubAction(r))
+		fmt.Fprintln(w, formatResultForGitHubAction(r))
 	}
 	return nil
 }

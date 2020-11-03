@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"go/token"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -20,7 +21,8 @@ type testPrinter struct {
 	results []*result.FileResults
 }
 
-func (p *testPrinter) Print(r *result.FileResults) error {
+// Print doesn't actually write anything, just stores the results in memory so they can be read later
+func (p *testPrinter) Print(_ io.Writer, r *result.FileResults) error {
 	p.results = append(p.results, r)
 	return nil
 }

@@ -31,6 +31,7 @@ import (
 
 	"github.com/get-woke/woke/pkg/config"
 	"github.com/get-woke/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
 
@@ -45,7 +46,7 @@ var (
 	ruleConfig       string
 	debug            bool
 	stdin            bool
-	output           string
+	outputName       string
 	noIgnore         bool
 
 	// Version is populated by goreleaser during build
@@ -103,7 +104,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		args = []string{os.Stdin.Name()}
 	}
 
-	print, err := printer.NewPrinter(output)
+	print, err := printer.NewPrinter(outputName)
 	if err != nil {
 		return err
 	}
@@ -117,7 +118,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if violations == 0 {
-		fmt.Println("No violations found. Stay woke \u270a")
+		fmt.Fprintln(output.Stdout, "No violations found. Stay woke \u270a")
 	}
 
 	return err
@@ -137,7 +138,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Files matching entries in .gitignore/.wokeignore are parsed")
-	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
+	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
 func setLogLevel() {
