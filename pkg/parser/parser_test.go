@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"go/token"
 	"io/ioutil"
 	"os"
@@ -25,26 +24,32 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 	return nil
 }
 
-func testRules() []*rule.Rule {
-	testRule := rule.NewTestRule()
-	return []*rule.Rule{&testRule}
+func getTestPrinterResults(p *Parser) []*result.FileResults {
+	_printer := p.Printer
+	_testPrinter := _printer.(*testPrinter)
+	return _testPrinter.results
 }
 
 func testParser() *Parser {
-	return NewParser(testRules(), ignore.NewIgnore([]string{}))
+	return NewParser(testRules(), ignore.NewIgnore([]string{}), new(testPrinter))
+}
+
+func testRules() []*rule.Rule {
+	testRule := rule.NewTestRule()
+	return []*rule.Rule{&testRule}
 }
 
 func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
 		f, err := newFile(t, "i have a test-rule")
 		assert.NoError(t, err)
-		pr := new(testPrinter)
+
 		p := testParser()
 		testRule := p.Rules[0]
-		violations := p.ParsePaths(pr, f.Name())
+		violations := p.ParsePaths(f.Name())
 
-		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Len(t, getTestPrinterResults(p), 1)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
 
 		filename := filepath.ToSlash(f.Name())
 		expected := result.FileResults{
@@ -69,7 +74,7 @@ func parsePathTests(t *testing.T) {
 				},
 			},
 		}
-		assert.EqualValues(t, &expected, pr.results[0])
+		assert.EqualValues(t, &expected, getTestPrinterResults(p)[0])
 	})
 
 	t.Run("no violations", func(t *testing.T) {
@@ -77,23 +82,21 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 
 		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f.Name())
+		violations := p.ParsePaths(f.Name())
 
 		assert.NoError(t, err)
-		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Len(t, getTestPrinterResults(p), 0)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
 	})
 	t.Run("IsTextFileFromFilename failure", func(t *testing.T) {
 		f, err := newFile(t, "")
 		assert.NoError(t, err)
 
 		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f.Name())
+		violations := p.ParsePaths(f.Name())
 		assert.NoError(t, err)
-		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Len(t, getTestPrinterResults(p), 0)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
 	})
 
 	t.Run("multiple paths", func(t *testing.T) {
@@ -104,12 +107,11 @@ func parsePathTests(t *testing.T) {
 
 		// Test with multiple paths supplied
 		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f1.Name(), f2.Name())
+		violations := p.ParsePaths(f1.Name(), f2.Name())
 		assert.NoError(t, err)
-		fmt.Println(pr.results)
-		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+
+		assert.Len(t, getTestPrinterResults(p), 1)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
 	})
 
 	t.Run("ignored", func(t *testing.T) {
@@ -118,32 +120,29 @@ func parsePathTests(t *testing.T) {
 
 		p := testParser()
 		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())})
-		pr := new(testPrinter)
 
-		violations := p.ParsePaths(pr, f.Name())
+		violations := p.ParsePaths(f.Name())
 		assert.NoError(t, err)
-		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Len(t, getTestPrinterResults(p), 0)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
 	})
 
 	t.Run("default path", func(t *testing.T) {
 		// Test default path (which would run tests against the parser package)
 		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr)
+		violations := p.ParsePaths()
 
-		assert.Equal(t, len(pr.results), violations)
-		assert.Greater(t, len(pr.results), 0)
+		assert.Equal(t, len(getTestPrinterResults(p)), violations)
+		assert.Greater(t, len(getTestPrinterResults(p)), 0)
 	})
 
 	t.Run("stdin", func(t *testing.T) {
 		err := writeToStdin(t, "i have a test-rule here\n", func() {
 			p := testParser()
 			testRule := p.Rules[0]
-			pr := new(testPrinter)
-			violations := p.ParsePaths(pr, os.Stdin.Name())
-			assert.Len(t, pr.results, 1)
-			assert.Equal(t, len(pr.results), violations)
+			violations := p.ParsePaths(os.Stdin.Name())
+			assert.Len(t, getTestPrinterResults(p), 1)
+			assert.Equal(t, len(getTestPrinterResults(p)), violations)
 
 			filename := filepath.ToSlash(os.Stdin.Name())
 			expected := result.FileResults{
@@ -168,7 +167,7 @@ func parsePathTests(t *testing.T) {
 					},
 				},
 			}
-			assert.EqualValues(t, &expected, pr.results[0])
+			assert.EqualValues(t, &expected, getTestPrinterResults(p)[0])
 		})
 		assert.NoError(t, err)
 	})
@@ -229,8 +228,7 @@ func BenchmarkParsePaths(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		p := testParser()
-		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, tmpFile.Name())
+		violations := p.ParsePaths(tmpFile.Name())
 		assert.Equal(b, 1, violations)
 	}
 }
@@ -241,10 +239,9 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		assert.NotPanics(b, func() {
 			p := testParser()
-			pr := new(testPrinter)
 			// Unknown how many violations this will return since it's parsing the whole repo
 			// there's no way to know for sure at any given time, so just check that it doesn't panic
-			_ = p.ParsePaths(pr, "../..")
+			_ = p.ParsePaths("../..")
 		})
 	}
 }

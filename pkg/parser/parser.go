@@ -26,27 +26,29 @@ const numWorkers = 20
 type Parser struct {
 	Rules   []*rule.Rule
 	Ignorer *ignore.Ignore
+	Printer printer.Printer
 
 	rchan chan result.FileResults
 }
 
 // NewParser returns a pointer to a Parser that is used to check for violations
 // based on the rules provided, ignoring files based on the ignorer provided
-func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
+func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore, print printer.Printer) *Parser {
 	return &Parser{
 		Rules:   rules,
 		Ignorer: ignorer,
+		Printer: print,
 		rchan:   make(chan result.FileResults),
 	}
 }
 
 // ParsePaths parses all files provided and returns the number of files with violations
-func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
+func (p *Parser) ParsePaths(paths ...string) int {
 	// data provided through stdin
 	if util.InSlice(os.Stdin.Name(), paths) {
 		r, _ := generateFileViolations(os.Stdin, p.Rules)
 		if r.Len() > 0 {
-			print.Print(r)
+			p.Printer.Print(r)
 		}
 		return r.Len()
 	}
@@ -75,7 +77,7 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	violations := 0
 	for r := range p.rchan {
 		sort.Sort(r)
-		print.Print(&r)
+		p.Printer.Print(&r)
 		violations++
 	}
 	return violations

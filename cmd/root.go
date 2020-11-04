@@ -97,18 +97,18 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		ignorer = ignore.NewIgnore(cfg.IgnoreFiles)
 	}
 
-	p := parser.NewParser(cfg.Rules, ignorer)
-
-	if stdin {
-		args = []string{os.Stdin.Name()}
-	}
-
 	print, err := printer.NewPrinter(output)
 	if err != nil {
 		return err
 	}
 
-	violations := p.ParsePaths(print, args...)
+	p := parser.NewParser(cfg.Rules, ignorer, print)
+
+	if stdin {
+		args = []string{os.Stdin.Name()}
+	}
+
+	violations := p.ParsePaths(args...)
 
 	if exitOneOnFailure && violations > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
