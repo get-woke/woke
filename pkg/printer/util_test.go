@@ -18,11 +18,12 @@ func generateFileResult() *result.FileResults {
 }
 
 func generateResults(filename string) []result.Result {
+	r := rule.NewTestRule()
 	return []result.Result{
 		result.LineResult{
-			Rule:      &rule.BlacklistRule,
-			Violation: "blacklist",
-			Line:      "this blacklist must change",
+			Rule:      &r,
+			Violation: "testrule",
+			Line:      "this testrule must change",
 			StartPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,

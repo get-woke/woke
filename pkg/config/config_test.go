@@ -49,7 +49,7 @@ func TestNewConfig(t *testing.T) {
 			Severity:     rule.SevError,
 		})
 		expectedRules = append(expectedRules, &rule.Rule{
-			Name:         "whitelist",
+			Name:         "rulewl",
 			Terms:        []string{"rulewl", "rule-wl"},
 			Alternatives: []string{"alt-rulewl", "alt-rule-wl"},
 			Severity:     rule.SevError,

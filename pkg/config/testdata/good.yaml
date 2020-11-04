@@ -18,7 +18,7 @@ rules:
       - alt-rule2
       - alt-rule-2
 
-  - name: whitelist
+  - name: rulewl
     terms:
       - rulewl
       - rule-wl

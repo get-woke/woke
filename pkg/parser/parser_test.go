@@ -25,16 +25,22 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 	return nil
 }
 
+func testRules() []*rule.Rule {
+	testRule := rule.NewTestRule()
+	return []*rule.Rule{&testRule}
+}
+
 func testParser() *Parser {
-	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}))
+	return NewParser(testRules(), ignore.NewIgnore([]string{}))
 }
 
 func parsePathTests(t *testing.T) {
 	t.Run("violation", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist")
+		f, err := newFile(t, "i have a test-rule")
 		assert.NoError(t, err)
 		pr := new(testPrinter)
 		p := testParser()
+		testRule := p.Rules[0]
 		violations := p.ParsePaths(pr, f.Name())
 
 		assert.Len(t, pr.results, 1)
@@ -45,9 +51,9 @@ func parsePathTests(t *testing.T) {
 			Filename: filename,
 			Results: []result.Result{
 				result.LineResult{
-					Rule:      &rule.WhitelistRule,
-					Violation: "whitelist",
-					Line:      "i have a whitelist",
+					Rule:      testRule,
+					Violation: "test-rule",
+					Line:      "i have a test-rule",
 					StartPosition: &token.Position{
 						Filename: filename,
 						Offset:   0,
@@ -91,7 +97,7 @@ func parsePathTests(t *testing.T) {
 	})
 
 	t.Run("multiple paths", func(t *testing.T) {
-		f1, err := newFile(t, "i have a whitelist\n")
+		f1, err := newFile(t, "i have a test-rule\n")
 		assert.NoError(t, err)
 		f2, err := newFile(t, "i have a no violations\n")
 		assert.NoError(t, err)
@@ -107,7 +113,7 @@ func parsePathTests(t *testing.T) {
 	})
 
 	t.Run("ignored", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist violation, but am ignored\n")
+		f, err := newFile(t, "i have a test-rule violation, but am ignored\n")
 		assert.NoError(t, err)
 
 		p := testParser()
@@ -131,8 +137,9 @@ func parsePathTests(t *testing.T) {
 	})
 
 	t.Run("stdin", func(t *testing.T) {
-		err := writeToStdin(t, "i have a whitelist here\n", func() {
+		err := writeToStdin(t, "i have a test-rule here\n", func() {
 			p := testParser()
+			testRule := p.Rules[0]
 			pr := new(testPrinter)
 			violations := p.ParsePaths(pr, os.Stdin.Name())
 			assert.Len(t, pr.results, 1)
@@ -143,9 +150,9 @@ func parsePathTests(t *testing.T) {
 				Filename: filename,
 				Results: []result.Result{
 					result.LineResult{
-						Rule:      &rule.WhitelistRule,
-						Violation: "whitelist",
-						Line:      "i have a whitelist here",
+						Rule:      testRule,
+						Violation: "test-rule",
+						Line:      "i have a test-rule here",
 						StartPosition: &token.Position{
 							Filename: filename,
 							Offset:   0,
@@ -216,7 +223,7 @@ func BenchmarkParsePaths(b *testing.B) {
 	defer os.Remove(tmpFile.Name())
 
 	for i := 0; i < b.N; i++ {
-		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n")
+		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n") // wokeignore:rule=whitelist,man-hours,sanity,master-slave,slave,dummy
 	}
 	tmpFile.Close()
 

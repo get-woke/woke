@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/get-woke/woke/pkg/result"
-	"github.com/get-woke/woke/pkg/rule"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -21,17 +20,19 @@ func TestGenerateFileViolations(t *testing.T) {
 		start   int
 		end     int
 	}{
-		{"leading whitespace", " this has whitelist\n", " this has whitelist", 10, 19},
-		{"no leading whitespace", "this has whitelist\n", "this has whitelist", 9, 18},
-		{"leading whitespace, no new line", " this has whitelist", " this has whitelist", 10, 19},
-		{"no leading whitespace, no new line", "this has whitelist", "this has whitelist", 9, 18},
+		{"leading whitespace", " this has test-rule\n", " this has test-rule", 10, 19},
+		{"no leading whitespace", "this has test-rule\n", "this has test-rule", 9, 18},
+		{"leading whitespace, no new line", " this has test-rule", " this has test-rule", 10, 19},
+		{"no leading whitespace, no new line", "this has test-rule", "this has test-rule", 9, 18},
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 
-			res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+			rules := testRules()
+			// testRule := rules[0]
+			res, err := generateFileViolationsFromFilename(f.Name(), rules)
 			assert.NoError(t, err)
 
 			filename := filepath.ToSlash(f.Name())
@@ -40,8 +41,8 @@ func TestGenerateFileViolations(t *testing.T) {
 				Results:  make([]result.Result, 1),
 			}
 			expected.Results[0] = result.LineResult{
-				Rule:      &rule.WhitelistRule,
-				Violation: "whitelist",
+				Rule:      rules[0],
+				Violation: "test-rule",
 				Line:      tc.line,
 				StartPosition: &token.Position{
 					Filename: filename,
@@ -60,15 +61,15 @@ func TestGenerateFileViolations(t *testing.T) {
 		})
 	}
 	t.Run("missing file", func(t *testing.T) {
-		_, err := generateFileViolationsFromFilename("missing.file", rule.DefaultRules)
+		_, err := generateFileViolationsFromFilename("missing.file", testRules())
 		assert.Error(t, err)
 	})
 
 	t.Run("filename violation", func(t *testing.T) {
-		f, err := newFileWithPrefix(t, "whitelist-", "content")
+		f, err := newFileWithPrefix(t, "test-rule-", "content")
 		assert.NoError(t, err)
 
-		res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+		res, err := generateFileViolationsFromFilename(f.Name(), testRules())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
 		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
