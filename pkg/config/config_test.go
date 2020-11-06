@@ -88,3 +88,21 @@ func TestNewConfig(t *testing.T) {
 		assert.Nil(t, c)
 	})
 }
+
+func TestConfig_InExistingRules(t *testing.T) {
+	tests := []struct {
+		desc      string
+		name      string
+		assertion assert.BoolAssertionFunc
+	}{
+		{"in existing rules", "rule-1", assert.True},
+		{"not in existing rules", "not-rule-1", assert.False},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			c := Config{Rules: []*rule.Rule{{Name: "rule-1"}}}
+			tt.assertion(t, c.inExistingRules(&rule.Rule{Name: tt.name}))
+		})
+	}
+}
