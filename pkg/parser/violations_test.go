@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/rule"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -30,8 +31,8 @@ func TestGenerateFileViolations(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 
-			rules := testRules()
-			// testRule := rules[0]
+			testRule := rule.NewTestRule()
+			rules := []*rule.Rule{testRule}
 			res, err := generateFileViolationsFromFilename(f.Name(), rules)
 			assert.NoError(t, err)
 
@@ -61,15 +62,19 @@ func TestGenerateFileViolations(t *testing.T) {
 		})
 	}
 	t.Run("missing file", func(t *testing.T) {
-		_, err := generateFileViolationsFromFilename("missing.file", testRules())
+		testRule := rule.NewTestRule()
+		rules := []*rule.Rule{testRule}
+		_, err := generateFileViolationsFromFilename("missing.file", rules)
 		assert.Error(t, err)
 	})
 
 	t.Run("filename violation", func(t *testing.T) {
 		f, err := newFileWithPrefix(t, "test-rule-", "content")
 		assert.NoError(t, err)
+		testRule := rule.NewTestRule()
+		rules := []*rule.Rule{testRule}
 
-		res, err := generateFileViolationsFromFilename(f.Name(), testRules())
+		res, err := generateFileViolationsFromFilename(f.Name(), rules)
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
 		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())

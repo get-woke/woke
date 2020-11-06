@@ -36,7 +36,7 @@ func testParser() *Parser {
 
 func testRules() []*rule.Rule {
 	testRule := rule.NewTestRule()
-	return []*rule.Rule{&testRule}
+	return []*rule.Rule{testRule}
 }
 
 func parsePathTests(t *testing.T) {

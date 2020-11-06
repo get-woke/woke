@@ -21,7 +21,7 @@ func generateResults(filename string) []result.Result {
 	r := rule.NewTestRule()
 	return []result.Result{
 		result.LineResult{
-			Rule:      &r,
+			Rule:      r,
 			Violation: "testrule",
 			Line:      "this testrule must change",
 			StartPosition: &token.Position{

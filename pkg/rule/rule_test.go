@@ -8,7 +8,6 @@ import (
 )
 
 func TestRule_FindMatchIndexes(t *testing.T) {
-	r := NewTestRule()
 	tests := []struct {
 		text       string
 		expected   [][]int
@@ -21,14 +20,17 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.text, func(t *testing.T) {
+			r := NewTestRule()
 			got := r.FindMatchIndexes(test.text)
 			assert.Equal(t, test.expected, got)
 		})
 	}
 
-	r.Options.WordBoundary = true
 	for _, test := range tests {
 		t.Run("word_boundary_"+test.text, func(t *testing.T) {
+			r := NewTestRule()
+			r.Options.WordBoundary = true
+
 			got := r.FindMatchIndexes(test.text)
 			assert.Equal(t, test.expectedWb, got)
 		})
@@ -85,7 +87,6 @@ func TestRule_CanIgnoreLine(t *testing.T) {
 }
 
 func TestRule_MatchString(t *testing.T) {
-	r := NewTestRule()
 	tests := []struct {
 		s         string
 		wb        bool
@@ -99,6 +100,7 @@ func TestRule_MatchString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
+			r := NewTestRule()
 			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
 			tt.assertion(t, r.MatchString(tt.s, tt.wb))
 		})
@@ -106,9 +108,6 @@ func TestRule_MatchString(t *testing.T) {
 }
 
 func TestRule_EmptyTerms(t *testing.T) {
-	r := NewTestRule()
-	r.Terms = []string{}
-
 	tests := []struct {
 		s         string
 		wb        bool
@@ -118,6 +117,9 @@ func TestRule_EmptyTerms(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
+			r := NewTestRule()
+			r.Terms = []string{}
+
 			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
 			tt.assertion(t, r.MatchString(tt.s, tt.wb))
 		})

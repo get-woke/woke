@@ -12,15 +12,15 @@ import (
 
 func TestFindResults(t *testing.T) {
 	r := rule.NewTestRule()
-	rs := FindResults(&r, "my/file", "this has the term test-rule", 1)
+	rs := FindResults(r, "my/file", "this has the term test-rule", 1)
 	assert.Len(t, rs, 1)
 	assert.Equal(t, r.Reason("test-rule"), rs[0].Reason())
 	assert.Equal(t, fmt.Sprintf("    my/file:1:18-my/file:1:27 error      %s", rs[0].Reason()), rs[0].String())
 
-	rs = FindResults(&r, "my/file", "this has no rule violations", 1)
+	rs = FindResults(r, "my/file", "this has no rule violations", 1)
 	assert.Len(t, rs, 0)
 
-	rs = FindResults(&r, "my/file", "this has the term test-rule #wokeignore:rule=test-rule", 1)
+	rs = FindResults(r, "my/file", "this has the term test-rule #wokeignore:rule=test-rule", 1)
 	assert.Len(t, rs, 0)
 }
 
@@ -54,7 +54,7 @@ func TestLineResult_GetLine(t *testing.T) {
 func testLineResult() LineResult {
 	r := rule.NewTestRule()
 	return LineResult{
-		Rule:          &r,
+		Rule:          r,
 		Violation:     "test-rule",
 		Line:          "test-rule",
 		StartPosition: &token.Position{Line: 1, Offset: 0},

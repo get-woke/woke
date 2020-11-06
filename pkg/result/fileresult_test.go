@@ -11,19 +11,19 @@ import (
 
 func TestFileResult_String(t *testing.T) {
 	r := rule.NewTestRule()
-	rs := FindResults(&r, "my/file", "this has the term testrule", 1)
+	rs := FindResults(r, "my/file", "this has the term testrule", 1)
 	fr := FileResults{Filename: "my/file", Results: rs}
 	assert.Equal(t, "my/file\n    my/file:1:18-my/file:1:26 error      `testrule` may be insensitive, use `better-rule` instead", fr.String())
 
-	rs = FindResults(&r, "my/file", "this has no rule violations", 1)
+	rs = FindResults(r, "my/file", "this has no rule violations", 1)
 	fr = FileResults{Filename: "my/file", Results: rs}
 	assert.Equal(t, "my/file", fr.String())
 }
 
 func TestFileResult_Sort(t *testing.T) {
 	r := rule.NewTestRule()
-	rs1 := FindResults(&r, "my/file", "this has a few testrule test-rule testrule", 1)
-	rs2 := FindResults(&r, "my/file", "this testrule has a few test-rule testrule", 2)
+	rs1 := FindResults(r, "my/file", "this has a few testrule test-rule testrule", 1)
+	rs2 := FindResults(r, "my/file", "this testrule has a few test-rule testrule", 2)
 
 	rs := append(rs2, rs1...)
 

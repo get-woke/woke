@@ -10,14 +10,14 @@ import (
 
 func TestMatchPathRules(t *testing.T) {
 	testRule := rule.NewTestRule()
-	secondTestRule := rule.Rule{
+	secondTestRule := &rule.Rule{
 		Name:         "rule-2",
 		Terms:        []string{"rule-2"},
 		Alternatives: []string{"alt-2"},
 	}
 	testRules := []*rule.Rule{
-		&testRule,
-		&secondTestRule,
+		testRule,
+		secondTestRule,
 	}
 	tt := []struct {
 		path    string
