@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/get-woke/woke/pkg/util"
 )
@@ -21,6 +22,7 @@ type Rule struct {
 
 	reWordBoundary *regexp.Regexp
 	re             *regexp.Regexp
+	mu             sync.Mutex
 }
 
 func (r *Rule) findAllStringSubmatchIndex(text string) [][]int {
@@ -90,6 +92,8 @@ func (r *Rule) SetRegexp() {
 	if r.re != nil && r.reWordBoundary != nil {
 		return
 	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	group := strings.Join(escape(r.Terms), "|")
 	r.reWordBoundary = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, group))
 	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)(%s)`, group))
