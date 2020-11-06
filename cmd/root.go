@@ -135,7 +135,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Version = getVersion("short")
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file (default is $HOME/.woke.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file (default is .woke.yaml in current directory, or $HOME)")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
