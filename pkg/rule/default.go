@@ -129,3 +129,9 @@ var DefaultRules = []*Rule{
 	&WhiteboxRule,
 	&WhitelistRule,
 }
+
+func init() {
+	for _, r := range DefaultRules {
+		r.SetRegexp()
+	}
+}

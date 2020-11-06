@@ -101,4 +101,10 @@ var DefaultRules = []*Rule{
 	&{{ .Name | sanitize }}Rule,
 {{- end }}
 }
+
+func init() {
+	for _, r := range DefaultRules {
+		r.SetRegexp()
+	}
+}
 `))
