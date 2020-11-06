@@ -25,6 +25,8 @@ func NewConfig(filename string) (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, filename)
 	}
 
