@@ -130,3 +130,27 @@ func TestRule_EmptyTerms(t *testing.T) {
 		})
 	}
 }
+
+func Test_removeInlineIgnore(t *testing.T) {
+	tests := []struct {
+		desc     string
+		line     string
+		expected string
+	}{
+		{
+			desc:     "replace wokeignore:rule",
+			line:     "wokeignore:rule=master-slave",
+			expected: "����������������������������",
+		},
+		{
+			desc:     "not replace wokeignore:rule",
+			line:     "no inline ignore",
+			expected: "no inline ignore",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			assert.Equal(t, tt.expected, removeInlineIgnore(tt.line))
+		})
+	}
+}
