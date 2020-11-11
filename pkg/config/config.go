@@ -28,6 +28,8 @@ func NewConfig(filename string) (*Config, error) {
 			return nil, err
 		}
 
+		log.Debug().Str("config", filename).Msg("loaded config file")
+
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, relative(filename))
 	}

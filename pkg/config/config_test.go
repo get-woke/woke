@@ -29,7 +29,7 @@ func TestNewConfig(t *testing.T) {
 		}
 
 		assert.Equal(t,
-			fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
+			fmt.Sprintf(`{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`+"\n"+`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
 			out.String())
 	})
 
