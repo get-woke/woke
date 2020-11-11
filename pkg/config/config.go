@@ -2,6 +2,8 @@ package config
 
 import (
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/get-woke/woke/pkg/rule"
 
@@ -27,7 +29,7 @@ func NewConfig(filename string) (*Config, error) {
 		}
 
 		// Ignore the config filename, it will always match on its own rules
-		c.IgnoreFiles = append(c.IgnoreFiles, filename)
+		c.IgnoreFiles = append(c.IgnoreFiles, relative(filename))
 	}
 
 	c.ConfigureRules()
@@ -74,4 +76,16 @@ func loadConfig(filename string) (c Config, err error) {
 	err = yaml.Unmarshal(yamlFile, &c)
 
 	return c, err
+}
+
+func relative(filename string) string {
+	// viper provides an absolute path to the config file, but we want the relative
+	// path to the config file from the current directory to make it easy for woke to ignore it
+	if filepath.IsAbs(filename) {
+		cwd, _ := os.Getwd()
+		if relfilename, err := filepath.Rel(cwd, filename); err == nil {
+			return relfilename
+		}
+	}
+	return filename
 }
