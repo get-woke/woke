@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"bytes"
 	"fmt"
 	"go/token"
 	"testing"
@@ -40,9 +41,9 @@ func TestSimple_positionString(t *testing.T) {
 func TestSimple_Print(t *testing.T) {
 	p := NewSimple()
 	res := generateFileResult()
-	got := captureOutput(func() {
-		assert.NoError(t, p.Print(res))
-	})
+	buf := new(bytes.Buffer)
+	assert.NoError(t, p.Print(buf, res))
+	got := buf.String()
 	expected := fmt.Sprintf("foo.txt:1:6: [warning] %s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }
