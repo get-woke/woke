@@ -32,7 +32,7 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 		log.Debug().
 			TimeDiff("durationMS", time.Now(), start).
 			Str("file", filename).
-			Msg("finished generateFileViolations")
+			Msg("finished processing violations")
 	}()
 
 	results := &result.FileResults{
