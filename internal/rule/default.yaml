@@ -93,3 +93,17 @@ rules:
       - black box
     alternatives:
       - closed-box
+  
+  - name: brownout
+    terms:
+      - brown out
+      - brown-out
+    alternatives:
+      - dimout
+
+  - name: blackout
+    terms:
+      - black out
+      - black-out
+    alternatives:
+      - dimout
