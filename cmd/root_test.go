@@ -24,6 +24,23 @@ func BenchmarkExecute(b *testing.B) {
 	}
 }
 
+func TestInitConfig(t *testing.T) {
+	t.Cleanup(func() {
+		cfgFile = ""
+		debug = false
+	})
+	debug = true
+	t.Run("good config", func(t *testing.T) {
+		cfgFile = "../testdata/good.yml"
+		initConfig()
+	})
+
+	t.Run("no config", func(t *testing.T) {
+		cfgFile = ""
+		initConfig()
+	})
+}
+
 func TestRunE(t *testing.T) {
 	t.Cleanup(func() {
 		exitOneOnFailure = false
