@@ -86,8 +86,6 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 			Msg("woke completed")
 	}()
 
-	args = parseArgs(args)
-
 	cfg, err := config.NewConfig(viper.ConfigFileUsed())
 	if err != nil {
 		return err
@@ -105,7 +103,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	violations := p.ParsePaths(print, args...)
+	violations := p.ParsePaths(print, parseArgs(args)...)
 
 	if exitOneOnFailure && violations > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
