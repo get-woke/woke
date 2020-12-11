@@ -75,9 +75,8 @@ func loadConfig(filename string) (c Config, err error) {
 	if err != nil {
 		return c, err
 	}
-	err = yaml.Unmarshal(yamlFile, &c)
 
-	return c, err
+	return c, yaml.Unmarshal(yamlFile, &c)
 }
 
 func relative(filename string) string {
