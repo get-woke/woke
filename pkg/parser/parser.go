@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/printer"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
@@ -46,7 +47,7 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	if util.InSlice(os.Stdin.Name(), paths) {
 		r, _ := generateFileViolations(os.Stdin, p.Rules)
 		if r.Len() > 0 {
-			print.Print(r)
+			print.Print(output.Stdout, r)
 		}
 		return r.Len()
 	}
@@ -75,7 +76,7 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	violations := 0
 	for r := range p.rchan {
 		sort.Sort(r)
-		print.Print(&r)
+		print.Print(output.Stdout, &r)
 		violations++
 	}
 	return violations

@@ -3,6 +3,7 @@ package printer
 import (
 	"fmt"
 	"go/token"
+	"io"
 
 	"github.com/get-woke/woke/pkg/result"
 )
@@ -17,9 +18,9 @@ func NewSimple() *Simple {
 
 // Print prints in the format 'filename:line:column: message'
 // based on golint's output: https://github.com/golang/lint/blob/738671d3881b9731cc63024d5d88cf28db875626/golint/golint.go#L121
-func (p *Simple) Print(fs *result.FileResults) error {
+func (p *Simple) Print(w io.Writer, fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Printf("%v: [%s] %s\n",
+		fmt.Fprintf(w, "%v: [%s] %s\n",
 			positionString(r.GetStartPosition()),
 			r.GetSeverity(),
 			r.Reason())

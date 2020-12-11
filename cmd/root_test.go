@@ -2,12 +2,11 @@ package cmd
 
 import (
 	"bytes"
-	"io"
 	"os"
 	"regexp"
-	"sync"
 	"testing"
 
+	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 
 	"github.com/spf13/cobra"
@@ -56,53 +55,30 @@ func TestParseArgs(t *testing.T) {
 }
 
 func TestRunE(t *testing.T) {
+	origStdout := output.Stdout
 	t.Cleanup(func() {
 		exitOneOnFailure = false
 		noIgnore = false
+		// Reset back to original
+		output.Stdout = origStdout
 	})
+
 	t.Run("no violations found", func(t *testing.T) {
-		got := captureOutput(func() {
-			err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
-			assert.NoError(t, err)
-		})
+		buf := new(bytes.Buffer)
+		output.Stdout = buf
+
+		err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
+		assert.NoError(t, err)
+
+		got := buf.String()
 		expected := "No violations found. Stay woke \u270a\n"
 		assert.Equal(t, expected, got)
 	})
 	t.Run("violations w error", func(t *testing.T) {
 		exitOneOnFailure = true
+
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 		assert.Regexp(t, regexp.MustCompile(`^files with violations: \d`), err.Error())
 	})
-}
-
-// Returns output of `os.Stdout` as string.
-// Based on https://medium.com/@hau12a1/golang-capturing-log-println-and-fmt-println-output-770209c791b4
-func captureOutput(f func()) string {
-	reader, writer, err := os.Pipe()
-	if err != nil {
-		panic(err)
-	}
-	stdout := os.Stdout
-	stderr := os.Stderr
-	defer func() {
-		os.Stdout = stdout
-		os.Stderr = stderr
-	}()
-	os.Stdout = writer
-	os.Stderr = writer
-
-	out := make(chan string)
-	wg := new(sync.WaitGroup)
-	wg.Add(1)
-	go func() {
-		var buf bytes.Buffer
-		wg.Done()
-		_, _ = io.Copy(&buf, reader)
-		out <- buf.String()
-	}()
-	wg.Wait()
-	f()
-	writer.Close()
-	return <-out
 }
