@@ -85,9 +85,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 			Msg("woke completed")
 	}()
 
-	if len(args) == 0 {
-		args = parser.DefaultPath
-	}
+	args = parseArgs(args)
 
 	cfg, err := config.NewConfig(viper.ConfigFileUsed())
 	if err != nil {
@@ -100,10 +98,6 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	p := parser.NewParser(cfg.Rules, ignorer)
-
-	if stdin {
-		args = []string{os.Stdin.Name()}
-	}
 
 	print, err := printer.NewPrinter(output)
 	if err != nil {
@@ -141,6 +135,18 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Files matching entries in .gitignore/.wokeignore are parsed")
 	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
+}
+
+func parseArgs(args []string) []string {
+	if len(args) == 0 {
+		args = parser.DefaultPath
+	}
+
+	if stdin {
+		args = []string{os.Stdin.Name()}
+	}
+
+	return args
 }
 
 func setDebugLogLevel() {

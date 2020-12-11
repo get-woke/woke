@@ -8,6 +8,8 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/get-woke/woke/pkg/parser"
+
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,6 +41,18 @@ func TestInitConfig(t *testing.T) {
 		cfgFile = ""
 		initConfig()
 	})
+}
+
+func TestParseArgs(t *testing.T) {
+	t.Cleanup(func() {
+		stdin = false
+	})
+	assert.Equal(t, parser.DefaultPath, parseArgs([]string{}))
+	assert.Equal(t, []string{"../.."}, parseArgs([]string{"../.."}))
+
+	stdin = true
+	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{}))
+	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{"../.."}))
 }
 
 func TestRunE(t *testing.T) {
