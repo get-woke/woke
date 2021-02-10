@@ -3,6 +3,8 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -27,7 +29,7 @@ func TestNewConfig(t *testing.T) {
 		}
 
 		assert.Equal(t,
-			fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
+			fmt.Sprintf(`{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`+"\n"+`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
 			out.String())
 	})
 
@@ -74,11 +76,6 @@ func TestNewConfig(t *testing.T) {
 			IgnoreFiles: []string(nil),
 		}
 		assert.Equal(t, expectedEmpty, c)
-
-		defaultConfigFilenames = []string{"testdata/default.yaml"}
-		c, err = NewConfig("")
-		assert.NoError(t, err)
-		assert.EqualValues(t, defaultConfigFilenames, c.IgnoreFiles)
 	})
 
 	t.Run("config-missing", func(t *testing.T) {
@@ -87,4 +84,13 @@ func TestNewConfig(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, c)
 	})
+}
+
+func Test_relative(t *testing.T) {
+	cwd, err := os.Getwd()
+	assert.NoError(t, err)
+
+	assert.Equal(t, ".woke.yml", relative(filepath.Join(cwd, ".woke.yml")))
+	assert.Equal(t, ".woke.yml", relative(".woke.yml"))
+	assert.Equal(t, "dir/.woke.yml", relative("dir/.woke.yml"))
 }

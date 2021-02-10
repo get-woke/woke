@@ -138,7 +138,7 @@ Usage:
   woke [globs ...] [flags]
 
 Flags:
-  -c, --config string       YAML file with list of rules
+  -c, --config string       Config file (default is .woke.yaml in current directory, or $HOME)
       --debug               Enable debug logging
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
@@ -186,8 +186,12 @@ This has whitelist from stdin
 
 A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.go).
 
-Configure your custom rules config in `.woke.yaml` or `.woke.yml`, `woke` will pick up one of these files in the cwd of where you run `woke` from.
-This file will be picked up automatically up your customizations automatically!
+Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses the following precedence order. Each item takes precedence over the item below it:
+
+- `current working directory`
+- `$HOME`
+
+This file will be picked up automatically up your customizations without needing to supply it with the `-c` flag.
 
 See [example.yaml](https://github.com/get-woke/woke/blob/main/example.yaml) for an example of adding custom rules.
 You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
