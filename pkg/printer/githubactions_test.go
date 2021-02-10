@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
@@ -25,9 +26,9 @@ func TestTranslateSeverityForAction(t *testing.T) {
 func TestGitHubActions_Print(t *testing.T) {
 	p := NewGitHubActions()
 	res := generateFileResult()
-	got := captureOutput(func() {
-		assert.NoError(t, p.Print(res))
-	})
+	buf := new(bytes.Buffer)
+	assert.NoError(t, p.Print(buf, res))
+	got := buf.String()
 	expected := fmt.Sprintf("::error file=foo.txt,line=1,col=6::%s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }

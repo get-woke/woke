@@ -103,3 +103,26 @@ func newFileWithPrefix(t *testing.T, prefix, text string) (*os.File, error) {
 
 	return tmpFile, err
 }
+
+// Tests for when a rule name is used with inline wokeignore, when that rule name matches another rule
+func TestGenerateFileViolationsOverlappingRules(t *testing.T) {
+	tests := []struct {
+		desc    string
+		content string
+		matches int
+	}{
+		{"overlapping rule", "this has master #wokeignore:rule=master-slave", 0},
+		{"overlapping rule two ignores", "this has master #wokeignore:rule=master-slave,slave", 0},
+		{"wrong rule", "this has whitelist # wokeignore:rule=blacklist", 1},
+	}
+	for _, tc := range tests {
+		t.Run(tc.desc, func(t *testing.T) {
+			f, err := newFile(t, tc.content)
+			assert.NoError(t, err)
+
+			res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+			assert.NoError(t, err)
+			assert.Len(t, res.Results, tc.matches)
+		})
+	}
+}

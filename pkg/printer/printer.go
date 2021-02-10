@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/get-woke/woke/pkg/result"
@@ -12,7 +13,7 @@ import (
 
 // Printer is an interface for printing FileResults
 type Printer interface {
-	Print(*result.FileResults) error
+	Print(io.Writer, *result.FileResults) error
 }
 
 const (

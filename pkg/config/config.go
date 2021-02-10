@@ -3,6 +3,7 @@ package config
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/get-woke/woke/pkg/rule"
 
@@ -10,8 +11,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v2"
 )
-
-var defaultConfigFilenames = []string{".woke.yaml", ".woke.yml"}
 
 // Config contains a list of rules
 type Config struct {
@@ -22,17 +21,17 @@ type Config struct {
 // NewConfig returns a new Config
 func NewConfig(filename string) (*Config, error) {
 	var c Config
-
-	if filename != "" {
-		if err := c.load(filename); err != nil {
+	if len(filename) > 0 {
+		var err error
+		c, err = loadConfig(filename)
+		if err != nil {
 			return nil, err
 		}
-		// Ignore the config filename, it will always match on its own rules
-		c.IgnoreFiles = append(c.IgnoreFiles, filename)
-	} else if defaultCfg := loadDefaultConfigFiles(); defaultCfg != nil {
-		c = *defaultCfg
 
-		c.IgnoreFiles = append(c.IgnoreFiles, defaultConfigFilenames...)
+		log.Debug().Str("config", filename).Msg("loaded config file")
+
+		// Ignore the config filename, it will always match on its own rules
+		c.IgnoreFiles = append(c.IgnoreFiles, relative(filename))
 	}
 
 	c.ConfigureRules()
@@ -71,38 +70,23 @@ func (c *Config) ConfigureRules() {
 	}
 }
 
-func (c *Config) load(filename string) error {
-	cfg, err := loadConfig(filename)
-	if err != nil {
-		return err
-	}
-	*c = *cfg
-	return nil
-}
-
-func loadConfig(filename string) (*Config, error) {
+func loadConfig(filename string) (c Config, err error) {
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return c, err
 	}
-	var c Config
-	err = yaml.Unmarshal(yamlFile, &c)
 
-	return &c, err
+	return c, yaml.Unmarshal(yamlFile, &c)
 }
 
-func loadDefaultConfigFiles() (cfg *Config) {
-	for _, file := range defaultConfigFilenames {
-		if _, err := os.Stat(file); os.IsNotExist(err) {
-			log.Debug().Str("cfg", file).Err(err).Msg("tried default config file")
-			continue
-		}
-		var err error
-		cfg, err = loadConfig(file)
-		if err == nil && cfg != nil {
-			log.Debug().Str("cfg", file).Msg("found default config file!")
-			return
+func relative(filename string) string {
+	// viper provides an absolute path to the config file, but we want the relative
+	// path to the config file from the current directory to make it easy for woke to ignore it
+	if filepath.IsAbs(filename) {
+		cwd, _ := os.Getwd()
+		if relfilename, err := filepath.Rel(cwd, filename); err == nil {
+			return relfilename
 		}
 	}
-	return
+	return filename
 }

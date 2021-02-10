@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/get-woke/woke/pkg/util"
 )
@@ -39,7 +40,9 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	}
 
 	r.SetRegexp()
-	matches := r.findAllStringSubmatchIndex(text)
+
+	// Remove inline ignores from text to avoid matching against other rules
+	matches := r.findAllStringSubmatchIndex(removeInlineIgnore(text))
 	if matches == nil {
 		return [][]int(nil)
 	}
@@ -162,6 +165,27 @@ func escape(ss []string) []string {
 		ss[i] = regexp.QuoteMeta(s)
 	}
 	return ss
+}
+
+// removeInlineIgnore removes the entire match of the ignoreRuleRegex from the line
+// and replaces it with the unicode replacement character so the rule matcher won't
+// attempt to find violations within
+func removeInlineIgnore(line string) string {
+	inlineIgnoreMatch := ignoreRuleRegex.FindStringIndex(line)
+	if inlineIgnoreMatch == nil || len(inlineIgnoreMatch) < 2 {
+		return line
+	}
+
+	lineWithoutIgnoreRule := []rune(line)
+
+	start := inlineIgnoreMatch[0]
+	end := inlineIgnoreMatch[1]
+
+	for i := start; i < end; i++ {
+		lineWithoutIgnoreRule[i] = unicode.ReplacementChar
+	}
+
+	return string(lineWithoutIgnoreRule)
 }
 
 // Disabled denotes if the rule is disabled

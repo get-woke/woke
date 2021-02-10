@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
@@ -12,9 +13,9 @@ import (
 func TestText_Print(t *testing.T) {
 	p := NewText(true)
 	res := generateFileResult()
-	got := captureOutput(func() {
-		assert.NoError(t, p.Print(res))
-	})
+	buf := new(bytes.Buffer)
+	assert.NoError(t, p.Print(buf, res))
+	got := buf.String()
 	expected := fmt.Sprintf("foo.txt:1:6-15: %s (%s)\n%s\n      ^\n", res.Results[0].Reason(), res.Results[0].GetSeverity(), res.Results[0].GetLine())
 	assert.Equal(t, expected, got)
 }

@@ -31,21 +31,24 @@ import (
 
 	"github.com/get-woke/woke/pkg/config"
 	"github.com/get-woke/woke/pkg/ignore"
+	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
 	// flags
 	exitOneOnFailure bool
-	ruleConfig       string
+	cfgFile          string
 	debug            bool
 	stdin            bool
-	output           string
+	outputName       string
 	noIgnore         bool
 
 	// Version is populated by goreleaser during build
@@ -71,7 +74,7 @@ Provide a list file globs for files you'd like to check.`,
 }
 
 func rootRunE(cmd *cobra.Command, args []string) error {
-	setLogLevel()
+	setDebugLogLevel()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	log.Debug().Msg(getVersion("default"))
@@ -83,11 +86,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 			Msg("woke completed")
 	}()
 
-	if len(args) == 0 {
-		args = parser.DefaultPath
-	}
-
-	cfg, err := config.NewConfig(ruleConfig)
+	cfg, err := config.NewConfig(viper.ConfigFileUsed())
 	if err != nil {
 		return err
 	}
@@ -97,7 +96,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		ignorer = ignore.NewIgnore(cfg.IgnoreFiles)
 	}
 
-	print, err := printer.NewPrinter(output)
+	print, err := printer.NewPrinter(outputName)
 	if err != nil {
 		return err
 	}
@@ -117,7 +116,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if violations == 0 {
-		fmt.Println("No violations found. Stay woke \u270a")
+		fmt.Fprintln(output.Stdout, "No violations found. Stay woke \u270a")
 	}
 
 	return err
@@ -130,19 +129,30 @@ func Execute() error {
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
 	rootCmd.Version = getVersion("short")
 
-	rootCmd.PersistentFlags().StringVarP(&ruleConfig, "config", "c", "", "YAML file with list of rules")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file (default is .woke.yaml in current directory, or $HOME)")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Files matching entries in .gitignore/.wokeignore are parsed")
-	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
+	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
-func setLogLevel() {
-	// Default level for this example is info, unless debug flag is present
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+func parseArgs(args []string) []string {
+	if len(args) == 0 {
+		args = parser.DefaultPath
+	}
+
+	if stdin {
+		args = []string{os.Stdin.Name()}
+	}
+
+	return args
+}
+
+func setDebugLogLevel() {
 	if debug {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
@@ -154,5 +164,30 @@ func getVersion(t string) string {
 		return Version
 	default:
 		return fmt.Sprintf("woke version %s built from %s on %s", Version, Commit, Date)
+	}
+}
+
+func initConfig() {
+	// Require yaml for now, since the unmarshaling of the config only
+	// supports yaml. The config loading will need to be refactored to
+	// support viper unmarshaling.
+	viper.SetConfigType("yaml")
+
+	if cfgFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfgFile)
+	} else {
+		// Search config in working directory, then home directory with name ".woke.[yml|yaml]"
+		viper.SetConfigName(".woke")
+		viper.AddConfigPath(".")
+
+		// Find home directory.
+		if home, err := homedir.Dir(); err == nil {
+			viper.AddConfigPath(home)
+		}
+	}
+
+	if err := viper.ReadInConfig(); err == nil {
+		log.Debug().Msgf("Using config file: %s", viper.ConfigFileUsed())
 	}
 }
