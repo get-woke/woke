@@ -1,5 +1,16 @@
 ## BE SURE TO RUN `go generate` and commit the changes when changing
 rules:
+  - name: pineapple-pizza
+    terms:
+      - pineapple-pizza
+      - pineapplepizza
+      - pineapple/pizza
+      - pizzawithpineapple
+    alternatives:
+      - pizza
+      - pizza-margherita
+      - italian-pizza
+
   # Most of these are based on https://twitter.com/TwitterEng/status/1278733303508418560
   - name: whitelist
     terms:
