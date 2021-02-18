@@ -289,7 +289,7 @@ The idea is, if you run `woke` on PRs, you may not want to block a merge, but yo
 want to inform the author that they can make better word choices.
 
 If you're using `woke` on PRs, you can choose to enforce these rules with a non-zero
-exit code, but running `woke --exit-1-on-failure`.
+exit code by running `woke --exit-1-on-failure`.
 
 ### Parallelism
 
