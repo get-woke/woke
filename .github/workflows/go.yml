@@ -9,7 +9,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.14.x]
+        go-version: [1.15.x]
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     name: Tests
@@ -41,7 +41,7 @@ jobs:
     name: Build
     strategy:
       matrix:
-        go-version: [1.14.x]
+        go-version: [1.15.x]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -80,7 +80,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        go-version: [1.14.x]
+        go-version: [1.15.x]
     name: Lint
     runs-on: ubuntu-latest
     steps:
