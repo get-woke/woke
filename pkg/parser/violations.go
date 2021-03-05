@@ -9,23 +9,22 @@ import (
 	"time"
 
 	"github.com/get-woke/woke/pkg/result"
-	"github.com/get-woke/woke/pkg/rule"
 
 	"github.com/rs/zerolog/log"
 )
 
-func generateFileViolationsFromFilename(filename string, rules []*rule.Rule) (*result.FileResults, error) {
+func (p *Parser) generateFileViolationsFromFilename(filename string) (*result.FileResults, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	return generateFileViolations(file, rules)
+	return p.generateFileViolations(file)
 }
 
 // generateFileViolations reads the file and returns results of places where rules are broken
 // this function will not close the file, that should be handled by the caller
-func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResults, error) {
+func (p *Parser) generateFileViolations(file *os.File) (*result.FileResults, error) {
 	filename := filepath.ToSlash(file.Name())
 	start := time.Now()
 	defer func() {
@@ -40,7 +39,7 @@ func generateFileViolations(file *os.File, rules []*rule.Rule) (*result.FileResu
 	}
 
 	// Check for violations in the filename itself
-	for _, pathResult := range result.MatchPathRules(rules, file.Name()) {
+	for _, pathResult := range result.MatchPathRules(p.Rules, file.Name()) {
 		results.Results = append(results.Results, pathResult)
 	}
 
@@ -54,7 +53,7 @@ Loop:
 		case err == nil || (err == io.EOF && text != ""):
 			text = strings.TrimSuffix(text, "\n")
 
-			for _, r := range rules {
+			for _, r := range p.Rules {
 				lineResults := result.FindResults(r, results.Filename, text, line)
 				results.Results = append(results.Results, lineResults...)
 			}

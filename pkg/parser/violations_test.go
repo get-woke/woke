@@ -30,8 +30,8 @@ func TestGenerateFileViolations(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
-
-			res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+			p := testParser()
+			res, err := p.generateFileViolationsFromFilename(f.Name())
 			assert.NoError(t, err)
 
 			filename := filepath.ToSlash(f.Name())
@@ -60,7 +60,8 @@ func TestGenerateFileViolations(t *testing.T) {
 		})
 	}
 	t.Run("missing file", func(t *testing.T) {
-		_, err := generateFileViolationsFromFilename("missing.file", rule.DefaultRules)
+		p := testParser()
+		_, err := p.generateFileViolationsFromFilename("missing.file")
 		assert.Error(t, err)
 	})
 
@@ -68,7 +69,8 @@ func TestGenerateFileViolations(t *testing.T) {
 		f, err := newFileWithPrefix(t, "whitelist-", "content")
 		assert.NoError(t, err)
 
-		res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+		p := testParser()
+		res, err := p.generateFileViolationsFromFilename(f.Name())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
 		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
@@ -114,7 +116,8 @@ func TestGenerateFileViolationsOverlappingRules(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 
-			res, err := generateFileViolationsFromFilename(f.Name(), rule.DefaultRules)
+			p := testParser()
+			res, err := p.generateFileViolationsFromFilename(f.Name())
 			assert.NoError(t, err)
 			assert.Len(t, res.Results, tc.matches)
 		})
