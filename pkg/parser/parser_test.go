@@ -122,6 +122,33 @@ func parsePathTests(t *testing.T) {
 		assert.Equal(t, len(pr.results), violations)
 	})
 
+	t.Run("ignored inline", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist violation, but am ignored # wokeignore:rule=whitelist\n")
+		assert.NoError(t, err)
+
+		p := testParser()
+		pr := new(testPrinter)
+
+		violations := p.ParsePaths(pr, f.Name())
+		assert.NoError(t, err)
+		assert.Len(t, pr.results, 0)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
+	t.Run("ignored inline with no ignorer", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist violation, but am ignored # wokeignore:rule=whitelist\n")
+		assert.NoError(t, err)
+
+		p := testParser()
+		p.Ignorer = nil
+		pr := new(testPrinter)
+
+		violations := p.ParsePaths(pr, f.Name())
+		assert.NoError(t, err)
+		assert.Len(t, pr.results, 1)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
 	t.Run("default path", func(t *testing.T) {
 		// Test default path (which would run tests against the parser package)
 		p := testParser()
