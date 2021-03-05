@@ -19,8 +19,9 @@ func TestFindResults(t *testing.T) {
 	rs = FindResults(&rule.WhitelistRule, "my/file", "this has no rule violations", 1)
 	assert.Len(t, rs, 0)
 
+	// inline-ignoring is handled in Parser.generateFileViolations, not FindResults
 	rs = FindResults(&rule.WhitelistRule, "my/file", "this has the term whitelist #wokeignore:rule=whitelist", 1)
-	assert.Len(t, rs, 0)
+	assert.Len(t, rs, 1)
 }
 
 func TestLineResult_MarshalJSON(t *testing.T) {

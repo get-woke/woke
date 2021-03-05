@@ -54,6 +54,15 @@ Loop:
 			text = strings.TrimSuffix(text, "\n")
 
 			for _, r := range p.Rules {
+				if p.Ignorer != nil && r.CanIgnoreLine(text) {
+					log.Debug().
+						Str("rule", r.Name).
+						Str("file", filename).
+						Int("line", line).
+						Msg("ignoring via in-line")
+					continue
+				}
+
 				lineResults := result.FindResults(r, results.Filename, text, line)
 				results.Results = append(results.Results, lineResults...)
 			}
