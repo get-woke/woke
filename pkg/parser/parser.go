@@ -20,9 +20,6 @@ import (
 // DefaultPath is the default path if no paths are provided
 var DefaultPath = []string{"."}
 
-// TODO: can this be dynamically determined?
-const numWorkers = 20
-
 // Parser parses files and finds lines that break rules
 type Parser struct {
 	Rules   []*rule.Rule
@@ -104,8 +101,8 @@ func (p *Parser) processViolationInPath(path string, done chan bool) {
 
 	// run parallel, but bounded
 	numWorkerStr := util.GetEnvDefault("WORKER_POOL_COUNT", "0")
-	if numWorker, err := strconv.Atoi(numWorkerStr); err == nil && numWorker > 0 {
-		log.Debug().Str("path", path).Str("type", "bounded").Int("workers", numWorker).Msg("process files")
+	if numWorkers, err := strconv.Atoi(numWorkerStr); err == nil && numWorkers > 0 {
+		log.Debug().Str("path", path).Str("type", "bounded").Int("workers", numWorkers).Msg("process files")
 
 		wg.Add(numWorkers)
 		for i := 0; i < numWorkers; i++ {
