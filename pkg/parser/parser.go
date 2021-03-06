@@ -45,7 +45,7 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	// data provided through stdin
 	if util.InSlice(os.Stdin.Name(), paths) {
-		r, _ := generateFileViolations(os.Stdin, p.Rules)
+		r, _ := p.generateFileViolations(os.Stdin)
 		if r.Len() > 0 {
 			print.Print(output.Stdout, r)
 		}
@@ -88,7 +88,7 @@ func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.Wait
 		go func(f string) {
 			defer wg.Done()
 
-			v, _ := generateFileViolationsFromFilename(f, p.Rules)
+			v, _ := p.generateFileViolationsFromFilename(f)
 			if v == nil || len(v.Results) == 0 {
 				return
 			}

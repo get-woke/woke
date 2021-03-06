@@ -6,8 +6,6 @@ import (
 	"go/token"
 
 	"github.com/get-woke/woke/pkg/rule"
-
-	"github.com/rs/zerolog/log"
 )
 
 // MaxLineLength is the max line length that this printer
@@ -47,15 +45,6 @@ func NewLineResult(r *rule.Rule, violation, filename string, line, startColumn, 
 // FindResults returns the results that match the rule for the given text.
 // filename and line are only used for the Position
 func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
-	if r.CanIgnoreLine(text) {
-		log.Debug().
-			Str("rule", r.Name).
-			Str("file", filename).
-			Int("line", line).
-			Msg("ignoring via in-line")
-		return
-	}
-
 	idxs := r.FindMatchIndexes(text)
 
 	for _, idx := range idxs {
