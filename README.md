@@ -5,7 +5,7 @@
   <h3 align="center">
     Detect non-inclusive language in your source code.
   </h3>
-  <p align="center"><i>I stay woke - Erykah Badu</i></p>
+  <p align="center"><em>I stay woke - Erykah Badu</em></p>
 </p>
 
 ---
