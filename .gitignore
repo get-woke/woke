@@ -5,3 +5,4 @@ dist/*
 # pprof files
 *.test
 *.prof
+.scannerwork
