@@ -22,22 +22,22 @@ func main() {
 	flag.Parse()
 
 	if len(configFile) == 0 || len(outFile) == 0 {
-		_panic(fmt.Errorf("config and outfile both required"))
+		panicIfErr(fmt.Errorf("config and outfile both required"))
 	}
 
 	yamlFile, err := ioutil.ReadFile(configFile)
-	_panic(err)
+	panicIfErr(err)
 	var cfg struct {
 		Rules []rule.Rule `yaml:"rules"`
 	}
-	_panic(yaml.Unmarshal(yamlFile, &cfg))
+	panicIfErr(yaml.Unmarshal(yamlFile, &cfg))
 
 	sort.Slice(cfg.Rules, func(i, j int) bool {
 		return cfg.Rules[i].Name < cfg.Rules[j].Name
 	})
 
 	f, err := os.Create(outFile)
-	_panic(err)
+	panicIfErr(err)
 	defer f.Close()
 
 	err = packageTemplate.Execute(f, struct {
@@ -45,10 +45,11 @@ func main() {
 	}{
 		Rules: cfg.Rules,
 	})
-	_panic(err)
+	panicIfErr(err)
 }
 
-func _panic(err error) {
+// panicIfErr will panic if the error is not nil
+func panicIfErr(err error) {
 	if err != nil {
 		panic(err)
 	}

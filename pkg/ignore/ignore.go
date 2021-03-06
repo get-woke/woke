@@ -44,11 +44,11 @@ func (i *Ignore) Match(f string) bool {
 func readIgnoreFile(file string) []string {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
-		_event := log.Warn()
+		logEvent := log.Warn()
 		if errors.Is(err, os.ErrNotExist) {
-			_event = log.Debug()
+			logEvent = log.Debug()
 		}
-		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
+		logEvent.Err(err).Str("file", file).Msg("skipping ignorefile")
 		return []string{}
 	}
 
