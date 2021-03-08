@@ -44,8 +44,8 @@ github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/get-woke/fastwalk v1.0.0 h1:Ti8z9nf231TUhLzBuJQV/rh/b5qiuyPunYun4FpEshQ=
 github.com/get-woke/fastwalk v1.0.0/go.mod h1:WTDsePalrkZGMzdzn5YabupFqFmU/MjxGM2CSSc9sOo=
-github.com/get-woke/go-gitignore v1.1.1 h1:iPdzLrxru1PsdVnm4qqncVMH+n4ePWEUIwXMDamfQqw=
-github.com/get-woke/go-gitignore v1.1.1/go.mod h1:qbLKpA7cfqI6TqvUDGqE4hsYke8nuiKvmepVBFBwVh4=
+github.com/get-woke/go-gitignore v1.1.2 h1:FgPanYFAZjhXtJM1d19OX/IpXZw7D0Wkj6a//ryOE3M=
+github.com/get-woke/go-gitignore v1.1.2/go.mod h1:qbLKpA7cfqI6TqvUDGqE4hsYke8nuiKvmepVBFBwVh4=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
