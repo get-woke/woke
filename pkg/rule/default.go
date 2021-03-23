@@ -17,7 +17,7 @@ var BlackboxRule = Rule{
 var BlacklistRule = Rule{
 	Name:         "blacklist",
 	Terms:        []string{"blacklist", "black-list", "blacklisted", "black-listed"},
-	Alternatives: []string{"denylist", "blocklist"},
+	Alternatives: []string{"denylist"},
 	Severity:     1,
 	Options: Options{
 		WordBoundary: false,
@@ -48,7 +48,16 @@ var GrandfatheredRule = Rule{
 var GuysRule = Rule{
 	Name:         "guys",
 	Terms:        []string{"guys"},
-	Alternatives: []string{"folks", "people", "you all", "y'all", "yinz"},
+	Alternatives: []string{"everyone", "folks", "people", "you all", "y'all"},
+	Options: Options{
+		WordBoundary: false,
+	},
+}
+
+var HeSheRule = Rule{
+	Name:  "he-she-rule",
+	Terms: []string{"he", "she"},
+	Alternatives: []string{"they", "them", "their"},
 	Options: Options{
 		WordBoundary: false,
 	},
@@ -68,7 +77,7 @@ var ManHoursRule = Rule{
 var MasterSlaveRule = Rule{
 	Name:         "master-slave",
 	Terms:        []string{"master-slave", "master/slave"},
-	Alternatives: []string{"leader/follower", "primary/replica", "primary/standby"},
+	Alternatives: []string{"primary/secondary",},
 	Options: Options{
 		WordBoundary: false,
 	},
@@ -78,7 +87,7 @@ var MasterSlaveRule = Rule{
 var SanityRule = Rule{
 	Name:         "sanity",
 	Terms:        []string{"sanity"},
-	Alternatives: []string{"confidence", "quick check", "coherence check"},
+	Alternatives: []string{"quick check"},
 	Options: Options{
 		WordBoundary: false,
 	},
@@ -122,6 +131,7 @@ var DefaultRules = []*Rule{
 	&DummyRule,
 	&GrandfatheredRule,
 	&GuysRule,
+	&HeSheRule,
 	&ManHoursRule,
 	&MasterSlaveRule,
 	&SanityRule,
