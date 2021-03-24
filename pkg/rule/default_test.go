@@ -26,3 +26,9 @@ func TestDefaultRules(t *testing.T) {
 		}
 	}
 }
+
+func TestGetDefaultRule(t *testing.T) {
+	DefaultRules = []*Rule{}
+	assert.NotNil(t, getDefaultRule("whitelist"))
+	assert.Nil(t, getDefaultRule("none"))
+}
