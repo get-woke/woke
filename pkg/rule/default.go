@@ -13,6 +13,10 @@ import (
 // This will be populated by the embed package on init
 var DefaultRules = []*Rule{}
 
+// WhitelistRule is the default rule for "whitelist" # wokeignore:rule=whitelist
+// FIXME: these are only used by tests right now. The tests need to be refactored so they can be removed
+var WhitelistRule *Rule // wokeignore:rule=whitelist
+
 //go:embed default.yaml
 var defaults []byte
 
@@ -21,7 +25,7 @@ func init() {
 		panic(fmt.Errorf("failed to load default rules: %s", err))
 	}
 
-	WhitelistRule = getDefaultRule("whitelist")
+	WhitelistRule = getDefaultRule("whitelist") // wokeignore:rule=whitelist
 }
 
 func loadDefaultRules() error {
@@ -45,8 +49,3 @@ func getDefaultRule(name string) *Rule {
 	}
 	return nil
 }
-
-// FIXME: these are only used by tests right now. The tests need to be refactored so they can be removed
-
-// WhitelistRule is the default rule for "whitelist"
-var WhitelistRule *Rule
