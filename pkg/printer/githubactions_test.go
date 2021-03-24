@@ -14,7 +14,7 @@ import (
 
 func TestFormatResultForGitHubAction(t *testing.T) {
 	testResult := result.LineResult{
-		Rule:      &rule.WhitelistRule,
+		Rule:      rule.WhitelistRule,
 		Violation: "whitelist",
 		StartPosition: &token.Position{
 			Filename: "my/file",

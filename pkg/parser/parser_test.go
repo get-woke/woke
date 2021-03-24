@@ -46,7 +46,7 @@ func parsePathTests(t *testing.T) {
 			Filename: filename,
 			Results: []result.Result{
 				result.LineResult{
-					Rule:      &rule.WhitelistRule,
+					Rule:      rule.WhitelistRule,
 					Violation: "whitelist",
 					Line:      "i have a whitelist",
 					StartPosition: &token.Position{
@@ -163,7 +163,7 @@ func parsePathTests(t *testing.T) {
 				Filename: filename,
 				Results: []result.Result{
 					result.LineResult{
-						Rule:      &rule.WhitelistRule,
+						Rule:      rule.WhitelistRule,
 						Violation: "whitelist",
 						Line:      "i have a whitelist here",
 						StartPosition: &token.Position{
