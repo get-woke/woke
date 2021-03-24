@@ -64,10 +64,6 @@ jobs:
         run: |
           go mod download
 
-      - name: Check that go generate produced no diff
-        run: |
-          go generate -x ./... && git diff --exit-code
-
       - name: Run Unit tests
         run: |
           go test -race -covermode=atomic -coverprofile=coverage.txt ./...
