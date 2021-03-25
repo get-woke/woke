@@ -40,7 +40,7 @@ func TestGenerateFileViolations(t *testing.T) {
 				Results:  make([]result.Result, 1),
 			}
 			expected.Results[0] = result.LineResult{
-				Rule:      rule.WhitelistRule,
+				Rule:      &rule.TestRule,
 				Violation: "whitelist",
 				Line:      tc.line,
 				StartPosition: &token.Position{

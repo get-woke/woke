@@ -10,18 +10,18 @@ import (
 )
 
 func TestFileResult_String(t *testing.T) {
-	rs := FindResults(rule.WhitelistRule, "my/file", "this has the term whitelist", 1)
+	rs := FindResults(&rule.TestRule, "my/file", "this has the term whitelist", 1)
 	fr := FileResults{Filename: "my/file", Results: rs}
 	assert.Equal(t, "my/file\n    my/file:1:18-my/file:1:27 warning    `whitelist` may be insensitive, use `allowlist` instead", fr.String())
 
-	rs = FindResults(rule.WhitelistRule, "my/file", "this has no rule violations", 1)
+	rs = FindResults(&rule.TestRule, "my/file", "this has no rule violations", 1)
 	fr = FileResults{Filename: "my/file", Results: rs}
 	assert.Equal(t, "my/file", fr.String())
 }
 
 func TestFileResult_Sort(t *testing.T) {
-	rs1 := FindResults(rule.WhitelistRule, "my/file", "this has a few whitelist white-list whitelist", 1)
-	rs2 := FindResults(rule.WhitelistRule, "my/file", "this whitelist has a few white-list whitelist", 2)
+	rs1 := FindResults(&rule.TestRule, "my/file", "this has a few whitelist white-list whitelist", 1)
+	rs2 := FindResults(&rule.TestRule, "my/file", "this whitelist has a few white-list whitelist", 2)
 
 	rs := append(rs2, rs1...)
 

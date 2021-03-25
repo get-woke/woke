@@ -16,7 +16,7 @@ func generateFileResult() *result.FileResults {
 func generateResults(filename string) []result.Result {
 	return []result.Result{
 		result.LineResult{
-			Rule:      rule.WhitelistRule,
+			Rule:      &rule.TestRule,
 			Violation: "whitelist",
 			Line:      "this whitelist must change",
 			StartPosition: &token.Position{
