@@ -2,7 +2,7 @@
 # Then, run `pre-commit install`
 repos:
   - repo: git://github.com/caitlinelfring/pre-commit-golang
-    rev: main
+    rev: v0.4.0
     hooks:
       - id: go-fmt
       - id: go-vet
