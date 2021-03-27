@@ -1,6 +1,5 @@
 pkg/**/*_test.go
-pkg/rule/default.go
-internal/rule/default.yaml
+pkg/rule/default.yaml
 example.yaml
 README.md
 testdata

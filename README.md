@@ -184,7 +184,7 @@ This has whitelist from stdin
 
 ### Rules
 
-A set of default rules is provided in [`pkg/rule/default.go`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.go).
+A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
 
 Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses the following precedence order. Each item takes precedence over the item below it:
 

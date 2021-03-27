@@ -12,7 +12,3 @@ jobs:
     steps:
     - name: Pull new module version
       uses: andrewslotin/go-proxy-pull-action@v1.0.0
-    - name: Pull new module version
-      uses: andrewslotin/go-proxy-pull-action@v1.0.0
-      with:
-        goproxy: https://gocenter.io
