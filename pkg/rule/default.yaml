@@ -37,6 +37,14 @@
     - follower
     - replica
     - standby
+    
+- name: master
+  terms:
+    - master
+  alternatives:
+    - primary
+    - main
+    - default
 
 - name: grandfathered
   terms:
