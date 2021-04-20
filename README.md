@@ -32,7 +32,7 @@ productive culture, and an environment where everyone feels welcome and included
 `woke` is a text file analysis tool that finds places within your source code that contain
 non-inclusive language and suggests replacing them with more inclusive alternatives.
 
-Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are already pushing these changes.
+Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://twitter.com/TwitterEng/status/1278733303508418560), and [Apple](https://developer.apple.com/news/?id=1o9zxsxl) are actively supporting a move to inclusive language.
 
 ![woke.gif](https://raw.githubusercontent.com/get-woke/get-woke.github.io/main/img/woke.gif)
 
