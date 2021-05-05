@@ -8,9 +8,9 @@ import (
 
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
-	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
