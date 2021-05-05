@@ -14,8 +14,9 @@ import (
 
 // Config contains a list of rules
 type Config struct {
-	Rules       []*rule.Rule `yaml:"rules"`
-	IgnoreFiles []string     `yaml:"ignore_files"`
+	Rules              []*rule.Rule `yaml:"rules"`
+	IgnoreFiles        []string     `yaml:"ignore_files"`
+	SuccessExitMessage string       `yaml:"success_exit_message"`
 }
 
 // NewConfig returns a new Config
