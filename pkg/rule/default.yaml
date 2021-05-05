@@ -8,6 +8,7 @@
     - white-listed
   alternatives:
     - allowlist
+    - inclusion list
   severity: warning
 
 - name: blacklist
@@ -19,6 +20,7 @@
   alternatives:
     - denylist
     - blocklist
+    - exclusion list
   severity: warning
 
 - name: master-slave
