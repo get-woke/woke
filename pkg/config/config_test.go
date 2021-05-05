@@ -64,6 +64,9 @@ func TestNewConfig(t *testing.T) {
 		expected.ConfigureRules()
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
+
+		// check default config message
+		assert.Equal(t, "No violations found. Stay woke ✊", c.GetSuccessExitMessage())
 	})
 
 	t.Run("config-empty-missing", func(t *testing.T) {
@@ -83,6 +86,24 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig("testdata/missing.yaml")
 		assert.Error(t, err)
 		assert.Nil(t, c)
+	})
+
+	t.Run("config-empty-success-message", func(t *testing.T) {
+		// Test when no config file is provided
+		c, err := NewConfig("testdata/empty-success-message.yaml")
+		assert.NoError(t, err)
+
+		// check default config message
+		assert.Equal(t, "", c.GetSuccessExitMessage())
+	})
+
+	t.Run("config-custom-success-message", func(t *testing.T) {
+		// Test when no config file is provided
+		c, err := NewConfig("testdata/custom-success-message.yaml")
+		assert.NoError(t, err)
+
+		// check default config message
+		assert.Equal(t, "this is a test", c.GetSuccessExitMessage())
 	})
 }
 
