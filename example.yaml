@@ -19,3 +19,6 @@ rules:
       - denylist
       - blocklist
     severity: warning
+
+# optional if you want to have a custom success message
+# success_exit_message: No violations found
