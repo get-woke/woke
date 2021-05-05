@@ -27,7 +27,7 @@ func (p *testPrinter) Print(_ io.Writer, r *result.FileResults) error {
 }
 
 func testParser() *Parser {
-	return NewParser(rule.DefaultRules, ignore.NewIgnore([]string{}))
+	return NewParser([]*rule.Rule{&rule.TestRule}, ignore.NewIgnore([]string{}))
 }
 
 func parsePathTests(t *testing.T) {
