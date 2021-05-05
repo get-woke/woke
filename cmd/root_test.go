@@ -10,6 +10,7 @@ import (
 	"github.com/get-woke/woke/pkg/parser"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,11 +57,13 @@ func TestParseArgs(t *testing.T) {
 
 func TestRunE(t *testing.T) {
 	origStdout := output.Stdout
+	origConfigFile := viper.ConfigFileUsed()
 	t.Cleanup(func() {
 		exitOneOnFailure = false
 		noIgnore = false
 		// Reset back to original
 		output.Stdout = origStdout
+		viper.SetConfigName(origConfigFile)
 	})
 
 	t.Run("no violations found", func(t *testing.T) {
@@ -74,6 +77,20 @@ func TestRunE(t *testing.T) {
 		expected := "No violations found. Stay woke \u270a\n"
 		assert.Equal(t, expected, got)
 	})
+
+	t.Run("no violations found with custom message", func(t *testing.T) {
+		buf := new(bytes.Buffer)
+		output.Stdout = buf
+
+		viper.SetConfigFile("../testdata/.woke-custom-exit-success.yaml")
+		err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
+		assert.NoError(t, err)
+
+		got := buf.String()
+		expected := "this is a test\n"
+		assert.Equal(t, expected, got)
+	})
+
 	t.Run("violations w error", func(t *testing.T) {
 		exitOneOnFailure = true
 

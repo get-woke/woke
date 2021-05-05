@@ -112,7 +112,9 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if violations == 0 {
-		fmt.Fprintln(output.Stdout, "No violations found. Stay woke \u270a")
+		if cfg.GetSuccessExitMessage() != "" {
+			fmt.Fprintln(output.Stdout, cfg.GetSuccessExitMessage())
+		}
 	}
 
 	return err

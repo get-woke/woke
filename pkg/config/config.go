@@ -14,8 +14,9 @@ import (
 
 // Config contains a list of rules
 type Config struct {
-	Rules       []*rule.Rule `yaml:"rules"`
-	IgnoreFiles []string     `yaml:"ignore_files"`
+	Rules              []*rule.Rule `yaml:"rules"`
+	IgnoreFiles        []string     `yaml:"ignore_files"`
+	SuccessExitMessage *string      `yaml:"success_exit_message"`
 }
 
 // NewConfig returns a new Config
@@ -46,6 +47,13 @@ func NewConfig(filename string) (*Config, error) {
 	}
 
 	return &c, nil
+}
+
+func (c *Config) GetSuccessExitMessage() string {
+	if c.SuccessExitMessage == nil {
+		return "No violations found. Stay woke ✊"
+	}
+	return *c.SuccessExitMessage
 }
 
 func (c *Config) inExistingRules(r *rule.Rule) bool {

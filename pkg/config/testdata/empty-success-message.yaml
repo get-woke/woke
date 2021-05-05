@@ -1,0 +1,13 @@
+ignore_files:
+  - README.md
+  - pkg/rule/default.go
+
+rules:
+  - name: rule1
+    terms:
+      - rule1
+    alternatives:
+      - alt-rule1
+    severity: warning
+
+success_exit_message: ""
