@@ -23,9 +23,7 @@ func TestFileResult_Sort(t *testing.T) {
 	rs1 := FindResults(&rule.TestRule, "my/file", "this has a few whitelist white-list whitelist", 1)
 	rs2 := FindResults(&rule.TestRule, "my/file", "this whitelist has a few white-list whitelist", 2)
 
-	rs := append(rs2, rs1...)
-
-	fr := FileResults{Filename: "my/file", Results: rs}
+	fr := FileResults{Filename: "my/file", Results: append(rs2, rs1...)}
 
 	assert.False(t, sort.IsSorted(fr))
 	sort.Sort(fr)
