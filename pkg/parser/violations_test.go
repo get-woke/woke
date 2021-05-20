@@ -75,6 +75,17 @@ func TestGenerateFileViolations(t *testing.T) {
 		assert.Len(t, res.Results, 1)
 		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
 	})
+
+	t.Run("filename violation for empty file", func(t *testing.T) {
+		f, err := newFileWithPrefix(t, "empty-whitelist-", "")
+		assert.NoError(t, err)
+
+		p := testParser()
+		res, err := p.generateFileViolationsFromFilename(f.Name())
+		assert.NoError(t, err)
+		assert.Len(t, res.Results, 1)
+		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
+	})
 }
 
 // newFile creates a new file for testing. The file, and the directory that the file

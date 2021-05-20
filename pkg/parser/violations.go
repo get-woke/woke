@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/util"
 
 	"github.com/rs/zerolog/log"
 )
@@ -41,6 +42,12 @@ func (p *Parser) generateFileViolations(file *os.File) (*result.FileResults, err
 	// Check for violations in the filename itself
 	for _, pathResult := range result.MatchPathRules(p.Rules, file.Name()) {
 		results.Results = append(results.Results, pathResult)
+	}
+
+	// Don't check file content if it's not a text file or file is empty
+	if err := util.IsTextFileFromFilename(filename); err != nil {
+		log.Debug().Str("file", filename).Str("reason", err.Error()).Msg("skipping content")
+		return results, nil
 	}
 
 	reader := bufio.NewReader(file)
