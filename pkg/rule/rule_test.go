@@ -49,6 +49,7 @@ func TestRule_ReasonWithNote(t *testing.T) {
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead", r.ReasonWithNote("rule-1"))
 
 	r.Note = "rule note here"
+	r.SetAddNoteToMessage(true)
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead (rule note here)", r.ReasonWithNote("rule-1"))
 }
 

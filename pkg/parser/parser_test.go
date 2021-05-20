@@ -185,6 +185,18 @@ func parsePathTests(t *testing.T) {
 		})
 		assert.NoError(t, err)
 	})
+
+	t.Run("note in output message", func(t *testing.T) {
+		const TestNote = "TEST NOTE"
+		addNoteToMessage := true
+		p := testParser()
+		p.Rules[0].Note = TestNote
+		p.Rules[0].Options.AddNoteToMessage = &addNoteToMessage
+		pr := new(testPrinter)
+		p.ParsePaths(pr)
+
+		assert.Contains(t, pr.results[0].Results[0].Reason(), TestNote)
+	})
 }
 
 func TestParser_ParsePaths(t *testing.T) {

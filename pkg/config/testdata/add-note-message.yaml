@@ -1,0 +1,20 @@
+rules:
+  - name: rule1
+    terms:
+      - rule1
+    alternatives:
+      - alt-rule1
+    severity: warning
+    options:
+      add_note_to_message: false
+  - name: rule2
+    terms:
+      - rule2
+    alternatives:
+      - alt-rule2
+    severity: warning
+
+
+
+success_exit_message: this is a test
+add_note_to_message: true

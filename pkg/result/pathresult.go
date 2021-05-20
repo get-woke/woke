@@ -16,7 +16,7 @@ type PathResult struct {
 // It is similar to Result.Reason, but makes it clear that the violation is
 // with the file path and not a line in the file
 func (r PathResult) Reason() string {
-	return "Filename violation: " + r.Rule.Reason(r.LineResult.Violation)
+	return "Filename violation: " + r.Rule.ReasonWithNote(r.LineResult.Violation)
 }
 
 // MatchPathRules will match the path against all the rules provided

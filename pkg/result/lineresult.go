@@ -63,7 +63,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 
 // Reason outputs the suggested alternatives for this rule
 func (r LineResult) Reason() string {
-	return r.Rule.Reason(r.Violation)
+	return r.Rule.ReasonWithNote(r.Violation)
 }
 
 func (r LineResult) String() string {

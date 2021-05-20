@@ -122,10 +122,17 @@ func (r *Rule) Reason(violation string) string {
 	return reason.String()
 }
 
+func (r *Rule) addNoteToMessage() bool {
+	if r.Options.AddNoteToMessage != nil {
+		return *r.Options.AddNoteToMessage
+	}
+	return false
+}
+
 // ReasonWithNote returns a human-readable reason for the rule violation
 // with an additional note, if defined.
 func (r *Rule) ReasonWithNote(violation string) string {
-	if len(r.Note) == 0 {
+	if len(r.Note) == 0 || !r.addNoteToMessage() {
 		return r.Reason(violation)
 	}
 	return fmt.Sprintf("%s (%s)", r.Reason(violation), r.Note)
@@ -190,4 +197,15 @@ func removeInlineIgnore(line string) string {
 // way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
 func (r *Rule) Disabled() bool {
 	return len(r.Terms) == 0
+}
+
+// SetAddNoteToMessage populates AddNoteToMessage attributte in Options
+// Options.AddNoteToMessage is ussed in ReasonWithNote
+// If "add_note_to_message" is already defined for the rule in yaml, it will not be overridden
+func (r *Rule) SetAddNoteToMessage(addNoteToMessage bool) {
+	if r.Options.AddNoteToMessage != nil {
+		return
+	}
+
+	r.Options.AddNoteToMessage = &addNoteToMessage
 }
