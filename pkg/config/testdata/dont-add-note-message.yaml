@@ -6,7 +6,7 @@ rules:
       - alt-rule1
     severity: warning
     options:
-      add_note_to_message: true
+      include_note: true
   - name: rule2
     terms:
       - rule2

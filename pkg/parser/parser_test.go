@@ -188,10 +188,10 @@ func parsePathTests(t *testing.T) {
 
 	t.Run("note in output message", func(t *testing.T) {
 		const TestNote = "TEST NOTE"
-		addNoteToMessage := true
+		includeNote := true
 		p := testParser()
 		p.Rules[0].Note = TestNote
-		p.Rules[0].Options.AddNoteToMessage = &addNoteToMessage
+		p.Rules[0].Options.IncludeNote = &includeNote
 		pr := new(testPrinter)
 		p.ParsePaths(pr)
 

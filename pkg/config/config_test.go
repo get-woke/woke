@@ -111,14 +111,14 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig("testdata/add-note-message.yaml")
 		assert.NoError(t, err)
 
-		// check global AddNoteToMessage
-		assert.Equal(t, true, c.AddNoteToMessage)
+		// check global IncludeNote
+		assert.Equal(t, true, c.IncludeNote)
 
-		// check AddNoteToMessage is set for rule2
-		assert.Equal(t, true, *c.Rules[1].Options.AddNoteToMessage)
+		// check IncludeNote is set for rule2
+		assert.Equal(t, true, *c.Rules[1].Options.IncludeNote)
 
-		// check AddNoteToMessage is not overridden for rule1
-		assert.Equal(t, false, *c.Rules[0].Options.AddNoteToMessage)
+		// check IncludeNote is not overridden for rule1
+		assert.Equal(t, false, *c.Rules[0].Options.IncludeNote)
 	})
 
 	t.Run("config-dont-add-note-messaage", func(t *testing.T) {
@@ -126,14 +126,14 @@ func TestNewConfig(t *testing.T) {
 		c, err := NewConfig("testdata/dont-add-note-message.yaml")
 		assert.NoError(t, err)
 
-		// check global AddNoteToMessage
-		assert.Equal(t, false, c.AddNoteToMessage)
+		// check global IncludeNote
+		assert.Equal(t, false, c.IncludeNote)
 
-		// check AddNoteToMessage is not set for rule2
-		assert.Equal(t, false, *c.Rules[1].Options.AddNoteToMessage)
+		// check IncludeNote is not set for rule2
+		assert.Equal(t, false, *c.Rules[1].Options.IncludeNote)
 
-		// check AddNoteToMessage is not overridden for rule1
-		assert.Equal(t, true, *c.Rules[0].Options.AddNoteToMessage)
+		// check IncludeNote is not overridden for rule1
+		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
 	})
 }
 

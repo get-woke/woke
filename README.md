@@ -210,7 +210,7 @@ rules:
     note: An optional description why these terms are not inclusive. It can be optionally included in the output message. 
     # options:
     #   word_boundary: false
-    #   add_note_to_message: false
+    #   include_note: false
 ```
 
 #### Options
@@ -222,10 +222,10 @@ Current options include:
 - `word_boundary` (default: `false`)
   - If `true`, terms will trigger violations when they are surrounded by ASCII word boundaries.
   - If `false`, will trigger violations if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
-- `add_note_to_message` (default: `not set`)
+- `include_note` (default: `not set`)
   - If `true`, the rule note will be included in the output message explaining why this violation is not inclusive
   - If `false`, the rule note will not be included in the output message
-  - If `not set`, `add_note_to_message` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`). 
+  - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`). 
 
 #### Disabling Default Rules
 

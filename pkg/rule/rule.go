@@ -122,9 +122,9 @@ func (r *Rule) Reason(violation string) string {
 	return reason.String()
 }
 
-func (r *Rule) addNoteToMessage() bool {
-	if r.Options.AddNoteToMessage != nil {
-		return *r.Options.AddNoteToMessage
+func (r *Rule) includeNote() bool {
+	if r.Options.IncludeNote != nil {
+		return *r.Options.IncludeNote
 	}
 	return false
 }
@@ -132,7 +132,7 @@ func (r *Rule) addNoteToMessage() bool {
 // ReasonWithNote returns a human-readable reason for the rule violation
 // with an additional note, if defined.
 func (r *Rule) ReasonWithNote(violation string) string {
-	if len(r.Note) == 0 || !r.addNoteToMessage() {
+	if len(r.Note) == 0 || !r.includeNote() {
 		return r.Reason(violation)
 	}
 	return fmt.Sprintf("%s (%s)", r.Reason(violation), r.Note)
@@ -199,13 +199,13 @@ func (r *Rule) Disabled() bool {
 	return len(r.Terms) == 0
 }
 
-// SetAddNoteToMessage populates AddNoteToMessage attributte in Options
-// Options.AddNoteToMessage is ussed in ReasonWithNote
-// If "add_note_to_message" is already defined for the rule in yaml, it will not be overridden
-func (r *Rule) SetAddNoteToMessage(addNoteToMessage bool) {
-	if r.Options.AddNoteToMessage != nil {
+// SetIncludeNote populates IncludeNote attributte in Options
+// Options.IncludeNote is ussed in ReasonWithNote
+// If "include_note" is already defined for the rule in yaml, it will not be overridden
+func (r *Rule) SetIncludeNote(includeNote bool) {
+	if r.Options.IncludeNote != nil {
 		return
 	}
 
-	r.Options.AddNoteToMessage = &addNoteToMessage
+	r.Options.IncludeNote = &includeNote
 }
