@@ -135,11 +135,6 @@ func (p *Parser) walkDir(dirname string, done chan bool) <-chan string {
 				return nil
 			}
 
-			if err := util.IsTextFileFromFilename(path); err != nil {
-				log.Debug().Str("file", path).Str("reason", err.Error()).Msg("skipping")
-				return nil
-			}
-
 			paths <- path
 			return nil
 		})
