@@ -155,3 +155,15 @@ func Test_removeInlineIgnore(t *testing.T) {
 		})
 	}
 }
+
+func TestRule_IncludeNote(t *testing.T) {
+	r := testRule()
+	includeNote := true
+
+	assert.Equal(t, false, r.includeNote())
+
+	// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
+	r.Options.IncludeNote = &includeNote
+	r.SetIncludeNote(false)
+	assert.Equal(t, true, r.includeNote())
+}

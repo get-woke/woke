@@ -186,12 +186,25 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("note in output message", func(t *testing.T) {
+	t.Run("note is not included in output message", func(t *testing.T) {
+		const TestNote = "TEST NOTE"
+		p := testParser()
+		p.Rules[0].Note = TestNote
+		p.Rules[0].Options.IncludeNote = nil
+		pr := new(testPrinter)
+		p.ParsePaths(pr)
+
+		assert.NotContains(t, pr.results[0].Results[0].Reason(), TestNote)
+	})
+
+	t.Run("note is included in output message", func(t *testing.T) {
 		const TestNote = "TEST NOTE"
 		includeNote := true
 		p := testParser()
 		p.Rules[0].Note = TestNote
 		p.Rules[0].Options.IncludeNote = &includeNote
+		// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
+		p.Rules[0].SetIncludeNote(false)
 		pr := new(testPrinter)
 		p.ParsePaths(pr)
 
