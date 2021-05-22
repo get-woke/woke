@@ -105,6 +105,36 @@ func TestNewConfig(t *testing.T) {
 		// check default config message
 		assert.Equal(t, "this is a test", c.GetSuccessExitMessage())
 	})
+
+	t.Run("config-add-note-messaage", func(t *testing.T) {
+		// Test when it is configured to add a note to the output message
+		c, err := NewConfig("testdata/add-note-message.yaml")
+		assert.NoError(t, err)
+
+		// check global IncludeNote
+		assert.Equal(t, true, c.IncludeNote)
+
+		// check IncludeNote is set for rule2
+		assert.Equal(t, true, *c.Rules[1].Options.IncludeNote)
+
+		// check IncludeNote is not overridden for rule1
+		assert.Equal(t, false, *c.Rules[0].Options.IncludeNote)
+	})
+
+	t.Run("config-dont-add-note-messaage", func(t *testing.T) {
+		// Test when it is nott configured to add a note to the output message
+		c, err := NewConfig("testdata/dont-add-note-message.yaml")
+		assert.NoError(t, err)
+
+		// check global IncludeNote
+		assert.Equal(t, false, c.IncludeNote)
+
+		// check IncludeNote is not set for rule2
+		assert.Equal(t, false, *c.Rules[1].Options.IncludeNote)
+
+		// check IncludeNote is not overridden for rule1
+		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
+	})
 }
 
 func Test_relative(t *testing.T) {

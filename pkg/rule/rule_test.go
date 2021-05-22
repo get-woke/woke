@@ -49,6 +49,7 @@ func TestRule_ReasonWithNote(t *testing.T) {
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead", r.ReasonWithNote("rule-1"))
 
 	r.Note = "rule note here"
+	r.SetIncludeNote(true)
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead (rule note here)", r.ReasonWithNote("rule-1"))
 }
 
@@ -153,4 +154,16 @@ func Test_removeInlineIgnore(t *testing.T) {
 			assert.Equal(t, tt.expected, removeInlineIgnore(tt.line))
 		})
 	}
+}
+
+func TestRule_IncludeNote(t *testing.T) {
+	r := testRule()
+	includeNote := true
+
+	assert.Equal(t, false, r.includeNote())
+
+	// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
+	r.Options.IncludeNote = &includeNote
+	r.SetIncludeNote(false)
+	assert.Equal(t, true, r.includeNote())
 }

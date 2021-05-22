@@ -17,6 +17,7 @@ type Config struct {
 	Rules              []*rule.Rule `yaml:"rules"`
 	IgnoreFiles        []string     `yaml:"ignore_files"`
 	SuccessExitMessage *string      `yaml:"success_exit_message"`
+	IncludeNote        bool         `yaml:"include_note"`
 }
 
 // NewConfig returns a new Config
@@ -66,6 +67,8 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 }
 
 // ConfigureRules adds the config Rules to DefaultRules
+// Configure RegExps for all rules
+// Configure IncludeNote for all rules
 func (c *Config) ConfigureRules() {
 	for _, r := range rule.DefaultRules {
 		if !c.inExistingRules(r) {
@@ -75,6 +78,7 @@ func (c *Config) ConfigureRules() {
 
 	for _, r := range c.Rules {
 		r.SetRegexp()
+		r.SetIncludeNote(c.IncludeNote)
 	}
 }
 
