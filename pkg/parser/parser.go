@@ -3,7 +3,6 @@ package parser
 import (
 	"os"
 	"sort"
-	"strconv"
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
@@ -14,6 +13,7 @@ import (
 	"github.com/get-woke/woke/pkg/util"
 	"github.com/get-woke/woke/pkg/walker"
 
+	env "github.com/caitlinelfring/go-env-default"
 	"github.com/rs/zerolog/log"
 )
 
@@ -103,8 +103,8 @@ func (p *Parser) processViolationInPath(path string, done chan bool) {
 	files := p.walkDir(path, done)
 
 	// run parallel, but bounded
-	numWorkerStr := util.GetEnvDefault("WORKER_POOL_COUNT", "0")
-	if numWorker, err := strconv.Atoi(numWorkerStr); err == nil && numWorker > 0 {
+	numWorker := env.GetIntDefault("WORKER_POOL_COUNT", 0)
+	if numWorker > 0 {
 		log.Debug().Str("path", path).Str("type", "bounded").Int("workers", numWorker).Msg("process files")
 
 		wg.Add(numWorkers)
