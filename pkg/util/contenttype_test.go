@@ -93,4 +93,9 @@ func TestIsTextFileFromFilename(t *testing.T) {
 		err := IsTextFileFromFilename("testdata")
 		assert.EqualError(t, err, ErrIsDir.Error())
 	})
+
+	t.Run("stdin", func(t *testing.T) {
+		err := IsTextFileFromFilename(os.Stdin.Name())
+		assert.NoError(t, err)
+	})
 }
