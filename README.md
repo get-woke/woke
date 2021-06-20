@@ -88,9 +88,18 @@ scoop install get-woke/woke
 
 ### Simple installation
 
+To install the latest version:
+
 ```bash
 curl -sSfL https://git.io/getwoke | \
   bash -s -- -b /usr/local/bin
+```
+
+Or install a specific version (omit the minor or patch portion to install the latest major/minor version)
+
+```bash
+curl -sSfL https://git.io/getwoke | \
+  bash -s -- -b /usr/local/bin v0.9.0
 ```
 
 Feel free to change the path from `/usr/local/bin`, just make sure `woke`
@@ -207,7 +216,7 @@ rules:
       - white-list
     alternatives:
       - allowlist
-    note: An optional description why these terms are not inclusive. It can be optionally included in the output message. 
+    note: An optional description why these terms are not inclusive. It can be optionally included in the output message.
     # options:
     #   word_boundary: false
     #   include_note: false
@@ -225,7 +234,7 @@ Current options include:
 - `include_note` (default: `not set`)
   - If `true`, the rule note will be included in the output message explaining why this violation is not inclusive
   - If `false`, the rule note will not be included in the output message
-  - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`). 
+  - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`).
 
 #### Disabling Default Rules
 
