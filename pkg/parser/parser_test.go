@@ -27,7 +27,8 @@ func (p *testPrinter) Print(_ io.Writer, r *result.FileResults) error {
 }
 
 func testParser() *Parser {
-	return NewParser([]*rule.Rule{&rule.TestRule}, ignore.NewIgnore([]string{}))
+	r := rule.TestRule
+	return NewParser([]*rule.Rule{&r}, ignore.NewIgnore([]string{}))
 }
 
 func parsePathTests(t *testing.T) {
@@ -77,6 +78,18 @@ func parsePathTests(t *testing.T) {
 		assert.Len(t, pr.results, 0)
 		assert.Equal(t, len(pr.results), violations)
 	})
+
+	t.Run("violation in filename - empty file", func(t *testing.T) {
+		f, err := newFileWithPrefix(t, "whitelist", "")
+		assert.NoError(t, err)
+
+		p := testParser()
+		pr := new(testPrinter)
+		violations := p.ParsePaths(pr, f.Name())
+		assert.Len(t, pr.results, 1)
+		assert.Equal(t, len(pr.results), violations)
+	})
+
 	t.Run("IsTextFileFromFilename failure", func(t *testing.T) {
 		f, err := newFile(t, "")
 		assert.NoError(t, err)

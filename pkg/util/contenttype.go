@@ -33,6 +33,11 @@ func isTextFile(file *os.File) bool {
 
 // IsTextFileFromFilename returns an error if the filename is not of content-type 'text/*'
 func IsTextFileFromFilename(filename string) error {
+	// Don't check stdin to avoid closing it prematurely
+	if filename == os.Stdin.Name() {
+		return nil
+	}
+
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
