@@ -96,3 +96,16 @@
     - black box
   alternatives:
     - closed-box
+
+- name: nigger
+  terms:
+    - nigger
+    - nigga
+  alternatives:
+    - poc
+    - african
+    - african-american
+    - brother
+    - king
+  severity: warning
+  note: "Absolutely unacceptable."
