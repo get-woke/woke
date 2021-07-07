@@ -36,7 +36,7 @@ func MatchPath(r *rule.Rule, path string) (rs []PathResult) {
 
 	for _, p := range dirParts {
 		p = filepath.ToSlash(p)
-		if r.MatchString(p, false) {
+		if len(r.FindMatchIndexes(p)) > 0 {
 			rs = append(rs, PathResult{LineResult: NewLineResult(r, p, path, 1, 1, 1)})
 		}
 	}
