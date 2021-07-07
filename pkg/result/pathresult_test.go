@@ -24,7 +24,7 @@ func TestMatchPathRules(t *testing.T) {
 			pr := MatchPathRules(rule.DefaultRules, test.path)
 			assert.Len(t, pr, test.matches)
 			for _, p := range pr {
-				assert.Equal(t, "Filename violation: "+p.Rule.Reason(p.LineResult.Violation), p.Reason())
+				assert.Equal(t, "Filename finding: "+p.Rule.Reason(p.LineResult.Finding), p.Reason())
 			}
 		})
 	}
@@ -54,7 +54,7 @@ func TestMatchPathRulesBoundary(t *testing.T) {
 			pr := MatchPathRules(defaultRules, test.path)
 			assert.Len(t, pr, test.matches)
 			for _, p := range pr {
-				assert.Equal(t, "Filename violation: "+p.Rule.Reason(p.LineResult.Violation), p.Reason())
+				assert.Equal(t, "Filename finding: "+p.Rule.Reason(p.LineResult.Finding), p.Reason())
 			}
 		})
 	}

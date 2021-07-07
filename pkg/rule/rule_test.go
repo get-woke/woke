@@ -16,8 +16,8 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 	}{
 		{"this string has rule-1 and rule1 included", [][]int{{16, 22}, {27, 32}}, [][]int{{16, 22}, {27, 32}}},
 		{"this string has rule-2 and rule1 included", [][]int{{27, 32}}, [][]int{{27, 32}}},
-		{"this string does not have any violations", [][]int(nil), [][]int(nil)},
-		{"this string has violation with word boundary rule1rule-1", [][]int{{45, 50}, {50, 56}}, [][]int(nil)},
+		{"this string does not have any findings", [][]int(nil), [][]int(nil)},
+		{"this string has finding with word boundary rule1rule-1", [][]int{{43, 48}, {48, 54}}, [][]int(nil)},
 	}
 	for _, test := range tests {
 		got := r.FindMatchIndexes(test.text)
@@ -70,16 +70,16 @@ func TestRule_CanIgnoreLine(t *testing.T) {
 		line      string
 		assertion assert.BoolAssertionFunc
 	}{
-		{"violation without comment", "rule1", assert.False},
-		{"violation with correct comment", "rule1 #wokeignore:rule=rule1", assert.True},
-		{"violation with space as rule", "rule1 #wokeignore:rule= ", assert.False},
-		{"violation with invalid comment", "rule1 #wokeignore:rule", assert.False},
-		{"violation with tab as rule", "rule1 #wokeignore:rule=\t", assert.False},
-		{"violation with multiple rules", "rule1 #wokeignore:rule=rule1,rule2", assert.True},
-		{"violation with incorrect comment", "rule1 #wokeignore:rule=rule2", assert.False},
-		{"no violation with correct comment", "rule2 #wokeignore:rule=rule1", assert.True},
-		{"violation with text after ignore", "rule1 #wokeignore:rule=rule1 something else", assert.True},
-		{"violation with multiple ignores", "rule1 #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.True},
+		{"finding without comment", "rule1", assert.False},
+		{"finding with correct comment", "rule1 #wokeignore:rule=rule1", assert.True},
+		{"finding with space as rule", "rule1 #wokeignore:rule= ", assert.False},
+		{"finding with invalid comment", "rule1 #wokeignore:rule", assert.False},
+		{"finding with tab as rule", "rule1 #wokeignore:rule=\t", assert.False},
+		{"finding with multiple rules", "rule1 #wokeignore:rule=rule1,rule2", assert.True},
+		{"finding with incorrect comment", "rule1 #wokeignore:rule=rule2", assert.False},
+		{"no finding with correct comment", "rule2 #wokeignore:rule=rule1", assert.True},
+		{"finding with text after ignore", "rule1 #wokeignore:rule=rule1 something else", assert.True},
+		{"finding with multiple ignores", "rule1 #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.True},
 	}
 
 	for _, tt := range tests {

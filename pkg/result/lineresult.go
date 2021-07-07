@@ -9,14 +9,14 @@ import (
 )
 
 // MaxLineLength is the max line length that this printer
-// will show the source of the violation and the location within the line of the violation.
-// Helps avoid consuming the console when minified files contain violations.
+// will show the source of the finding and the location within the line of the finding.
+// Helps avoid consuming the console when minified files contain findings.
 const MaxLineLength = 200
 
 // LineResult contains data about the result of a broken rule
 type LineResult struct {
-	Rule      *rule.Rule
-	Violation string
+	Rule    *rule.Rule
+	Finding string
 	// Line is the full string of the line, unless it's over MaxLintLength,
 	// where Line will be an empty string
 	Line          string
@@ -24,11 +24,11 @@ type LineResult struct {
 	EndPosition   *token.Position
 }
 
-// NewLineResult returns a LineResult based on the metadata from a violation
-func NewLineResult(r *rule.Rule, violation, filename string, line, startColumn, endColumn int) LineResult {
+// NewLineResult returns a LineResult based on the metadata from a finding
+func NewLineResult(r *rule.Rule, finding, filename string, line, startColumn, endColumn int) LineResult {
 	return LineResult{
-		Rule:      r,
-		Violation: violation,
+		Rule:    r,
+		Finding: finding,
 		StartPosition: &token.Position{
 			Filename: filename,
 			Line:     line,
@@ -63,7 +63,7 @@ func FindResults(r *rule.Rule, filename, text string, line int) (rs []Result) {
 
 // Reason outputs the suggested alternatives for this rule
 func (r LineResult) Reason() string {
-	return r.Rule.ReasonWithNote(r.Violation)
+	return r.Rule.ReasonWithNote(r.Finding)
 }
 
 func (r LineResult) String() string {

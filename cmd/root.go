@@ -103,15 +103,15 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	violations := p.ParsePaths(print, parseArgs(args)...)
+	findings := p.ParsePaths(print, parseArgs(args)...)
 
-	if exitOneOnFailure && violations > 0 {
+	if exitOneOnFailure && findings > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
 		cmd.SilenceUsage = true
-		err = fmt.Errorf("files with violations: %d", violations)
+		err = fmt.Errorf("files with findings: %d", findings)
 	}
 
-	if violations == 0 {
+	if findings == 0 {
 		if cfg.GetSuccessExitMessage() != "" {
 			fmt.Fprintln(output.Stdout, cfg.GetSuccessExitMessage())
 		}

@@ -16,10 +16,10 @@ func TestFindResults(t *testing.T) {
 	assert.Equal(t, rule.TestRule.Reason("whitelist"), rs[0].Reason())
 	assert.Equal(t, fmt.Sprintf("    my/file:1:18-my/file:1:27 warning    %s", rs[0].Reason()), rs[0].String())
 
-	rs = FindResults(&rule.TestRule, "my/file", "this has no rule violations", 1)
+	rs = FindResults(&rule.TestRule, "my/file", "this has no rule findings", 1)
 	assert.Len(t, rs, 0)
 
-	// inline-ignoring is handled in Parser.generateFileViolations, not FindResults
+	// inline-ignoring is handled in Parser.generateFileFindings, not FindResults
 	rs = FindResults(&rule.TestRule, "my/file", "this has the term whitelist #wokeignore:rule=whitelist", 1)
 	assert.Len(t, rs, 1)
 }
@@ -54,7 +54,7 @@ func TestLineResult_GetLine(t *testing.T) {
 func testLineResult() LineResult {
 	return LineResult{
 		Rule:          &rule.TestRule,
-		Violation:     "whitelist",
+		Finding:       "whitelist",
 		Line:          "whitelist",
 		StartPosition: &token.Position{Line: 1, Offset: 0},
 		EndPosition:   &token.Position{Line: 1, Offset: 8},
