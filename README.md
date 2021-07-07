@@ -193,8 +193,6 @@ This has whitelist from stdin
 
 ### Rules
 
-A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
-
 Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses the following precedence order. Each item takes precedence over the item below it:
 
 - `current working directory`
@@ -221,6 +219,10 @@ rules:
     #   word_boundary: false
     #   include_note: false
 ```
+
+A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
+
+**NOTE: if you copy these rules into your config file, be sure to put them under the `rules:` key.**
 
 #### Options
 
