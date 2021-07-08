@@ -31,7 +31,7 @@ func (r *Rule) findAllStringSubmatchIndex(text string) [][]int {
 	return r.re.FindAllStringSubmatchIndex(text, -1)
 }
 
-// FindMatchIndexes returns the start and end indexes for all rule violations for the text supplied.
+// FindMatchIndexes returns the start and end indexes for all rule findings for the text supplied.
 func (r *Rule) FindMatchIndexes(text string) [][]int {
 	if r.Disabled() {
 		return [][]int(nil)
@@ -98,16 +98,16 @@ func (r *Rule) SetRegexp() {
 	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)(%s)`, group))
 }
 
-// Reason returns a human-readable reason for the rule violation
-func (r *Rule) Reason(violation string) string {
-	// fall back to the rule name if no violation was found
-	// violation is mostly used for informational purposes
-	if len(violation) == 0 {
-		violation = r.Name
+// Reason returns a human-readable reason for the rule finding
+func (r *Rule) Reason(finding string) string {
+	// fall back to the rule name if no finding was found
+	// finding is mostly used for informational purposes
+	if len(finding) == 0 {
+		finding = r.Name
 	}
 
 	reason := new(strings.Builder)
-	reason.WriteString(util.MarkdownCodify(violation) + " may be insensitive, ")
+	reason.WriteString(util.MarkdownCodify(finding) + " may be insensitive, ")
 
 	if len(r.Alternatives) > 0 {
 		alt := make([]string, len(r.Alternatives))
@@ -129,19 +129,19 @@ func (r *Rule) includeNote() bool {
 	return false
 }
 
-// ReasonWithNote returns a human-readable reason for the rule violation
+// ReasonWithNote returns a human-readable reason for the rule finding
 // with an additional note, if defined.
-func (r *Rule) ReasonWithNote(violation string) string {
+func (r *Rule) ReasonWithNote(finding string) string {
 	if len(r.Note) == 0 || !r.includeNote() {
-		return r.Reason(violation)
+		return r.Reason(finding)
 	}
-	return fmt.Sprintf("%s (%s)", r.Reason(violation), r.Note)
+	return fmt.Sprintf("%s (%s)", r.Reason(finding), r.Note)
 }
 
 // CanIgnoreLine returns a boolean value if the line contains the ignore directive.
 // For example, if a line has anywhere, wokeignore:rule=whitelist
 // (should be commented out via whatever the language comment syntax is)
-// it will not report that line in violation with the Rule with the name `whitelist` wokeignore:rule=whitelist
+// it will not report that line in finding with the Rule with the name `whitelist` wokeignore:rule=whitelist
 func (r *Rule) CanIgnoreLine(line string) bool {
 	matches := ignoreRuleRegex.FindAllStringSubmatch(line, -1)
 	if matches == nil {
@@ -172,7 +172,7 @@ func escape(ss []string) []string {
 
 // removeInlineIgnore removes the entire match of the ignoreRuleRegex from the line
 // and replaces it with the unicode replacement character so the rule matcher won't
-// attempt to find violations within
+// attempt to find findings within
 func removeInlineIgnore(line string) string {
 	inlineIgnoreMatch := ignoreRuleRegex.FindStringIndex(line)
 	if inlineIgnoreMatch == nil || len(inlineIgnoreMatch) < 2 {

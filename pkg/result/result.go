@@ -6,7 +6,7 @@ import (
 	"github.com/get-woke/woke/pkg/rule"
 )
 
-// Result is an interface for a violation of a rule
+// Result is an interface for a finding of a rule
 type Result interface {
 	GetSeverity() rule.Severity
 	GetStartPosition() *token.Position

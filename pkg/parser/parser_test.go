@@ -32,24 +32,24 @@ func testParser() *Parser {
 }
 
 func parsePathTests(t *testing.T) {
-	t.Run("violation", func(t *testing.T) {
+	t.Run("finding", func(t *testing.T) {
 		f, err := newFile(t, "i have a whitelist")
 		assert.NoError(t, err)
 
 		pr := new(testPrinter)
 		p := testParser()
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 
 		filename := filepath.ToSlash(f.Name())
 		expected := result.FileResults{
 			Filename: filename,
 			Results: []result.Result{
 				result.LineResult{
-					Rule:      &rule.TestRule,
-					Violation: "whitelist",
-					Line:      "i have a whitelist",
+					Rule:    &rule.TestRule,
+					Finding: "whitelist",
+					Line:    "i have a whitelist",
 					StartPosition: &token.Position{
 						Filename: filename,
 						Offset:   0,
@@ -68,26 +68,26 @@ func parsePathTests(t *testing.T) {
 		assert.EqualValues(t, &expected, pr.results[0])
 	})
 
-	t.Run("no violations", func(t *testing.T) {
-		f, err := newFile(t, "i have a no violations\n")
+	t.Run("no findings", func(t *testing.T) {
+		f, err := newFile(t, "i have a no findings\n")
 		assert.NoError(t, err)
 
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
-	t.Run("violation in filename - empty file", func(t *testing.T) {
+	t.Run("finding in filename - empty file", func(t *testing.T) {
 		f, err := newFileWithPrefix(t, "whitelist", "")
 		assert.NoError(t, err)
 
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("IsTextFileFromFilename failure", func(t *testing.T) {
@@ -96,70 +96,70 @@ func parsePathTests(t *testing.T) {
 
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("multiple paths", func(t *testing.T) {
 		f1, err := newFile(t, "i have a whitelist\n")
 		assert.NoError(t, err)
-		f2, err := newFile(t, "i have a no violations\n")
+		f2, err := newFile(t, "i have a no findings\n")
 		assert.NoError(t, err)
 
 		// Test with multiple paths supplied
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, f1.Name(), f2.Name())
+		findings := p.ParsePaths(pr, f1.Name(), f2.Name())
 		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("ignored", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist violation, but am ignored\n")
+		f, err := newFile(t, "i have a whitelist finding, but am ignored\n")
 		assert.NoError(t, err)
 
 		p := testParser()
 		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())})
 		pr := new(testPrinter)
 
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("ignored inline", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist violation, but am ignored # wokeignore:rule=whitelist\n")
+		f, err := newFile(t, "i have a whitelist finding, but am ignored # wokeignore:rule=whitelist\n")
 		assert.NoError(t, err)
 
 		p := testParser()
 		pr := new(testPrinter)
 
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 0)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("ignored inline with no ignorer", func(t *testing.T) {
-		f, err := newFile(t, "i have a whitelist violation, but am ignored # wokeignore:rule=whitelist\n")
+		f, err := newFile(t, "i have a whitelist finding, but am ignored # wokeignore:rule=whitelist\n")
 		assert.NoError(t, err)
 
 		p := testParser()
 		p.Ignorer = nil
 		pr := new(testPrinter)
 
-		violations := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, f.Name())
 		assert.Len(t, pr.results, 1)
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 	})
 
 	t.Run("default path", func(t *testing.T) {
 		// Test default path (which would run tests against the parser package)
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr)
+		findings := p.ParsePaths(pr)
 
-		assert.Equal(t, len(pr.results), violations)
+		assert.Equal(t, len(pr.results), findings)
 		assert.Greater(t, len(pr.results), 0)
 	})
 
@@ -167,18 +167,18 @@ func parsePathTests(t *testing.T) {
 		err := writeToStdin(t, "i have a whitelist here\n", func() {
 			p := testParser()
 			pr := new(testPrinter)
-			violations := p.ParsePaths(pr, os.Stdin.Name())
+			findings := p.ParsePaths(pr, os.Stdin.Name())
 			assert.Len(t, pr.results, 1)
-			assert.Equal(t, len(pr.results), violations)
+			assert.Equal(t, len(pr.results), findings)
 
 			filename := filepath.ToSlash(os.Stdin.Name())
 			expected := result.FileResults{
 				Filename: filename,
 				Results: []result.Result{
 					result.LineResult{
-						Rule:      &rule.TestRule,
-						Violation: "whitelist",
-						Line:      "i have a whitelist here",
+						Rule:    &rule.TestRule,
+						Finding: "whitelist",
+						Line:    "i have a whitelist here",
 						StartPosition: &token.Position{
 							Filename: filename,
 							Offset:   0,
@@ -281,8 +281,8 @@ func BenchmarkParsePaths(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		p := testParser()
 		pr := new(testPrinter)
-		violations := p.ParsePaths(pr, tmpFile.Name())
-		assert.Equal(b, 1, violations)
+		findings := p.ParsePaths(pr, tmpFile.Name())
+		assert.Equal(b, 1, findings)
 	}
 }
 
@@ -293,7 +293,7 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 		assert.NotPanics(b, func() {
 			p := testParser()
 			pr := new(testPrinter)
-			// Unknown how many violations this will return since it's parsing the whole repo
+			// Unknown how many findings this will return since it's parsing the whole repo
 			// there's no way to know for sure at any given time, so just check that it doesn't panic
 			_ = p.ParsePaths(pr, "../..")
 		})
