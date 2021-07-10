@@ -74,7 +74,7 @@ func TestRunE(t *testing.T) {
 		assert.NoError(t, err)
 
 		got := buf.String()
-		expected := "No findings found. Stay woke \u270a\n"
+		expected := "No findings found.\n"
 		assert.Equal(t, expected, got)
 	})
 

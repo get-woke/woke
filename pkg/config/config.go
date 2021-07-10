@@ -52,7 +52,7 @@ func NewConfig(filename string) (*Config, error) {
 
 func (c *Config) GetSuccessExitMessage() string {
 	if c.SuccessExitMessage == nil {
-		return "No findings found. Stay woke ✊"
+		return "No findings found."
 	}
 	return *c.SuccessExitMessage
 }
