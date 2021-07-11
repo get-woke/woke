@@ -49,7 +49,7 @@ func TestMatchPathRulesBoundary(t *testing.T) {
 		t.Run(test.path, func(t *testing.T) {
 			defaultRules := rule.DefaultRules
 			for i := range defaultRules {
-				defaultRules[i].Options.WordBoundary = true
+				defaultRules[i].SetOptions(rule.Options{WordBoundary: true})
 			}
 			pr := MatchPathRules(defaultRules, test.path)
 			assert.Len(t, pr, test.matches)

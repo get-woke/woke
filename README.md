@@ -233,6 +233,13 @@ Current options include:
 - `word_boundary` (default: `false`)
   - If `true`, terms will trigger findings when they are surrounded by ASCII word boundaries.
   - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
+  - **NOTE** setting this to true will always win out over `word_boundary_start` and `word_boundary_end`
+- `word_boundary_start` (default: `false`)
+  - If `true`, terms will trigger findings when they begin with an ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it begins with an ASCII word boundary.
+- `word_boundary_end` (default: `false`)
+  - If `true`, terms will trigger findings when they end with an ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it ends with an ASCII word boundary.
 - `include_note` (default: `not set`)
   - If `true`, the rule note will be included in the output message explaining why this finding is not inclusive
   - If `false`, the rule note will not be included in the output message
