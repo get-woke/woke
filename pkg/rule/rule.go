@@ -72,22 +72,6 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	return idx
 }
 
-// MatchString reports whether the string s
-// contains any match of the regular expression re.
-func (r *Rule) MatchString(s string, wordBoundary bool) bool {
-	if r.Disabled() {
-		return false
-	}
-
-	r.SetRegexp()
-
-	if wordBoundary {
-		return r.reWordBoundary.MatchString(s)
-	}
-
-	return r.re.MatchString(s)
-}
-
 // SetRegexp populates the regex for matching this rule
 func (r *Rule) SetRegexp() {
 	if r.re != nil && r.reWordBoundary != nil {
