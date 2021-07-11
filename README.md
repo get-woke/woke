@@ -193,8 +193,6 @@ This has whitelist from stdin
 
 ### Rules
 
-A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
-
 Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses the following precedence order. Each item takes precedence over the item below it:
 
 - `current working directory`
@@ -222,6 +220,10 @@ rules:
     #   include_note: false
 ```
 
+A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
+
+**NOTE: if you copy these rules into your config file, be sure to put them under the `rules:` key.**
+
 #### Options
 
 You can configure options for each rule. Add an `options` key to your rule definition to customize.
@@ -229,10 +231,10 @@ You can configure options for each rule. Add an `options` key to your rule defin
 Current options include:
 
 - `word_boundary` (default: `false`)
-  - If `true`, terms will trigger violations when they are surrounded by ASCII word boundaries.
-  - If `false`, will trigger violations if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
+  - If `true`, terms will trigger findings when they are surrounded by ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
 - `include_note` (default: `not set`)
-  - If `true`, the rule note will be included in the output message explaining why this violation is not inclusive
+  - If `true`, the rule note will be included in the output message explaining why this finding is not inclusive
   - If `false`, the rule note will not be included in the output message
   - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`).
 

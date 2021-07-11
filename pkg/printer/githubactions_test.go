@@ -14,8 +14,8 @@ import (
 
 func TestFormatResultForGitHubAction(t *testing.T) {
 	testResult := result.LineResult{
-		Rule:      &rule.TestRule,
-		Violation: "whitelist",
+		Rule:    &rule.TestRule,
+		Finding: "whitelist",
 		StartPosition: &token.Position{
 			Filename: "my/file",
 			Offset:   0,
@@ -30,7 +30,7 @@ func TestFormatResultForGitHubAction(t *testing.T) {
 		},
 	}
 	got := formatResultForGitHubAction(&testResult)
-	assert.Equal(t, "::warning file=my/file,line=5,col=3::"+testResult.Rule.Reason(testResult.Violation), got)
+	assert.Equal(t, "::warning file=my/file,line=5,col=3::"+testResult.Rule.Reason(testResult.Finding), got)
 }
 
 func TestTranslateSeverityForAction(t *testing.T) {
