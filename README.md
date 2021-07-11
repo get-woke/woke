@@ -217,6 +217,8 @@ rules:
     note: An optional description why these terms are not inclusive. It can be optionally included in the output message.
     # options:
     #   word_boundary: false
+    #   word_boundary_start: false
+    #   word_boundary_end: false
     #   include_note: false
 ```
 
