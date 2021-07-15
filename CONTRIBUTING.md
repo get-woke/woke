@@ -25,19 +25,22 @@ A few rules for when contributing to this project:
 
         git clone git@github.com:your-username/woke.git
 
-2. Setup
+1. Setup ([Dev Container](https://code.visualstudio.com/docs/remote/containers))
+   1. Add VS Code [Remote Container Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   1. Remote-Containers: Open Folder in Container... command from the Command Palette (`F1`) or quick actions Status bar item on the bottom left of VS Code
+1. Or Setup (Manual)
    1. [Install go](https://golang.org/doc/install)
-   2. [Install pre-commit](https://pre-commit.com/#install) and run `pre-commit install`
-   3. Install required packages for pre-commit (there might be more, here are a few... see [`pre-commit-config.yaml`](.pre-commit-config.yaml))
+   1. [Install pre-commit](https://pre-commit.com/#install) and run `pre-commit install`
+   1. Install required packages for pre-commit (there might be more, here are a few... see [`pre-commit-config.yaml`](.pre-commit-config.yaml))
       1. `go install github.com/fzipp/gocyclo`
-      2. `go install golang.org/x/tools/cmd/goimports`
-      3. [`golangci-lint`](https://golangci-lint.run/usage/install/#local-installation)
+      1. `go install golang.org/x/tools/cmd/goimports`
+      1. [`golangci-lint`](https://golangci-lint.run/usage/install/#local-installation)
 
-3. Make your changes and add tests for your change. Make sure tests pass
+1. Make your changes and add tests for your change. Make sure tests pass
 
         go test ./...
 
-4. Push to your fork and submit a pull request. Fill out the Pull Request template thoroughly. I expect contributions to be thoughtful, have tests that are meaningful, and to be considerate of others who use this tool.
+1. Push to your fork and submit a pull request. Fill out the Pull Request template thoroughly. I expect contributions to be thoughtful, have tests that are meaningful, and to be considerate of others who use this tool.
 
 At this point you're waiting on the maintainers. Since this is a personal project, I make no guarantees
 on response time, but I will do my absolute best because I care about this tool.
