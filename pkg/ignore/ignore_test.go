@@ -2,7 +2,7 @@ package ignore
 
 import (
 	"os"
-	"runtime"
+	"path/filepath"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -17,15 +17,9 @@ func TestIgnore_Match(t *testing.T) {
 	i := NewIgnore([]string{"my/files/*"})
 	assert.NotNil(t, i)
 
-	assert.False(t, i.Match("not/foo"))
-	assert.True(t, i.Match("my/files/file1"))
-	assert.False(t, i.Match("my/files"))
-
-	if runtime.GOOS == "windows" {
-		assert.False(t, i.Match(`not\foo`))
-		assert.True(t, i.Match(`my\files\file1`))
-		assert.False(t, i.Match(`my\files`))
-	}
+	assert.False(t, i.Match(filepath.Join("not", "foo")))
+	assert.True(t, i.Match(filepath.Join("my", "files", "file1")))
+	assert.False(t, i.Match(filepath.Join("my", "files")))
 }
 
 // Test all default ignore files, except for .git/info/exclude, since
