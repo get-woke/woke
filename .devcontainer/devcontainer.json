@@ -10,6 +10,7 @@
 			"NODE_VERSION": "lts/*"
 		}
 	},
+	"overrideCommand": false,
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind",
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh-copy,type=bind,consistency=cached"
@@ -19,6 +20,7 @@
 		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
 	},
 	"runArgs": [
+		"--init",
 		"--cap-add=SYS_PTRACE",
 		"--security-opt",
 		"seccomp=unconfined"
