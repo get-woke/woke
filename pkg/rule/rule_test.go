@@ -1,14 +1,27 @@
 package rule
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRule_FindMatchIndexes(t *testing.T) {
+func testRuleWithOptions(o Options) Rule {
 	r := testRule()
+	r.SetOptions(o)
+	return r
+}
+
+func testRule() Rule {
+	return Rule{
+		Name:         "rule1",
+		Terms:        []string{"rule1", "rule-1"},
+		Alternatives: []string{"alt-rule1", "alt-rule-1"},
+		Severity:     SevWarn,
+	}
+}
+
+func TestRule_FindMatchIndexes(t *testing.T) {
 	tests := []struct {
 		text       string
 		expected   [][]int
@@ -20,12 +33,13 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 		{"this string has finding with word boundary rule1rule-1", [][]int{{43, 48}, {48, 54}}, [][]int(nil)},
 	}
 	for _, test := range tests {
+		r := testRule()
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expected, got)
 	}
 
-	r.Options.WordBoundary = true
 	for _, test := range tests {
+		r := testRuleWithOptions(Options{WordBoundary: true})
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expectedWb, got)
 	}
@@ -51,15 +65,6 @@ func TestRule_ReasonWithNote(t *testing.T) {
 	r.Note = "rule note here"
 	r.SetIncludeNote(true)
 	assert.Equal(t, "`rule-1` may be insensitive, use `alt-rule1`, `alt-rule-1` instead (rule note here)", r.ReasonWithNote("rule-1"))
-}
-
-func testRule() Rule {
-	return Rule{
-		Name:         "rule1",
-		Terms:        []string{"rule1", "rule-1"},
-		Alternatives: []string{"alt-rule1", "alt-rule-1"},
-		Severity:     SevWarn,
-	}
 }
 
 func TestRule_CanIgnoreLine(t *testing.T) {
@@ -89,27 +94,6 @@ func TestRule_CanIgnoreLine(t *testing.T) {
 	}
 }
 
-func TestRule_MatchString(t *testing.T) {
-	r := testRule()
-	tests := []struct {
-		s         string
-		wb        bool
-		assertion assert.BoolAssertionFunc
-	}{
-		{s: "this has rule1 in the middle with word boundaries", wb: true, assertion: assert.True},
-		{s: "this has rule1 in the middle", wb: false, assertion: assert.True},
-		{s: "rule1shouldn't match with word boundaries", wb: true, assertion: assert.False},
-		{s: "rule1should match without word boundaries", wb: false, assertion: assert.True},
-		{s: "thisrule1should match without word boundaries", wb: false, assertion: assert.True},
-	}
-	for _, tt := range tests {
-		t.Run(tt.s, func(t *testing.T) {
-			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
-			tt.assertion(t, r.MatchString(tt.s, tt.wb))
-		})
-	}
-}
-
 func TestRule_EmptyTerms(t *testing.T) {
 	r := Rule{
 		Name:         "rule1",
@@ -126,8 +110,53 @@ func TestRule_EmptyTerms(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.s, func(t *testing.T) {
-			fmt.Println(r.MatchString(tt.s, tt.wb), tt.s)
-			tt.assertion(t, r.MatchString(tt.s, tt.wb))
+			r.SetOptions(Options{WordBoundary: tt.wb})
+			tt.assertion(t, len(r.FindMatchIndexes(tt.s)) > 0)
+		})
+	}
+}
+
+func TestRule_regexString(t *testing.T) {
+	tests := []struct {
+		desc     string
+		rule     Rule
+		expected string
+	}{
+		{
+			desc:     "default",
+			rule:     testRule(),
+			expected: `(%s)`,
+		},
+		{
+			desc:     "word boundary",
+			rule:     testRuleWithOptions(Options{WordBoundary: true}),
+			expected: `\b(%s)\b`,
+		},
+		{
+			desc:     "word boundary start",
+			rule:     testRuleWithOptions(Options{WordBoundaryStart: true}),
+			expected: `\b(%s)`,
+		},
+		{
+			desc:     "word boundary end",
+			rule:     testRuleWithOptions(Options{WordBoundaryEnd: true}),
+			expected: `(%s)\b`,
+		},
+		{
+			desc:     "word boundary start and end",
+			rule:     testRuleWithOptions(Options{WordBoundaryStart: true, WordBoundaryEnd: true}),
+			expected: `\b(%s)\b`,
+		},
+		{
+			// To show that enabling WordBoundary will win over other options
+			desc:     "word boundary and word boundary start/end false",
+			rule:     testRuleWithOptions(Options{WordBoundary: true, WordBoundaryStart: false, WordBoundaryEnd: false}),
+			expected: `\b(%s)\b`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.rule.regexString())
 		})
 	}
 }

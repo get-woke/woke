@@ -11,6 +11,8 @@ import (
 
 var ignoreRuleRegex = regexp.MustCompile(`wokeignore:rule=(\S+)`)
 
+const wordBoundary = `\b`
+
 // Rule is a linter rule
 type Rule struct {
 	Name         string   `yaml:"name"`
@@ -20,15 +22,7 @@ type Rule struct {
 	Severity     Severity `yaml:"severity"`
 	Options      Options  `yaml:"options"`
 
-	reWordBoundary *regexp.Regexp
-	re             *regexp.Regexp
-}
-
-func (r *Rule) findAllStringSubmatchIndex(text string) [][]int {
-	if r.Options.WordBoundary {
-		return r.reWordBoundary.FindAllStringSubmatchIndex(text, -1)
-	}
-	return r.re.FindAllStringSubmatchIndex(text, -1)
+	re *regexp.Regexp
 }
 
 // FindMatchIndexes returns the start and end indexes for all rule findings for the text supplied.
@@ -40,7 +34,7 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	r.SetRegexp()
 
 	// Remove inline ignores from text to avoid matching against other rules
-	matches := r.findAllStringSubmatchIndex(removeInlineIgnore(text))
+	matches := r.re.FindAllStringSubmatchIndex(removeInlineIgnore(text), -1)
 	if matches == nil {
 		return [][]int(nil)
 	}
@@ -72,30 +66,48 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	return idx
 }
 
-// MatchString reports whether the string s
-// contains any match of the regular expression re.
-func (r *Rule) MatchString(s string, wordBoundary bool) bool {
-	if r.Disabled() {
-		return false
-	}
-
-	r.SetRegexp()
-
-	if wordBoundary {
-		return r.reWordBoundary.MatchString(s)
-	}
-
-	return r.re.MatchString(s)
-}
-
-// SetRegexp populates the regex for matching this rule
+// SetRegexp populates the regex for matching this rule.
+// This is meant to be idempotent, so calling it multiple times won't update the regex
 func (r *Rule) SetRegexp() {
-	if r.re != nil && r.reWordBoundary != nil {
+	if r.re != nil {
 		return
 	}
+	r.setRegex()
+}
+
+// SetOptions sets new Options for the Rule and updates the regex.
+func (r *Rule) SetOptions(o Options) {
+	r.Options = o
+	r.setRegex()
+}
+
+func (r *Rule) setRegex() {
 	group := strings.Join(escape(r.Terms), "|")
-	r.reWordBoundary = regexp.MustCompile(fmt.Sprintf(`(?i)\b(%s)\b`, group))
-	r.re = regexp.MustCompile(fmt.Sprintf(`(?i)(%s)`, group))
+	r.re = regexp.MustCompile(fmt.Sprintf(r.regexString(), group))
+}
+
+func (r *Rule) regexString() string {
+	regex := func(start, end string) string {
+		s := strings.Builder{}
+		s.WriteString(start)
+		s.WriteString("(%s)")
+		s.WriteString(end)
+		return s.String()
+	}
+
+	if r.Options.WordBoundary {
+		return regex(wordBoundary, wordBoundary)
+	}
+
+	start := ""
+	end := ""
+	if r.Options.WordBoundaryStart {
+		start = wordBoundary
+	}
+	if r.Options.WordBoundaryEnd {
+		end = wordBoundary
+	}
+	return regex(start, end)
 }
 
 // Reason returns a human-readable reason for the rule finding
