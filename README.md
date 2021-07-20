@@ -271,7 +271,7 @@ ignore_files:
   - globs/too/*
 ```
 
-`woke` will also automatically ignore anything listed in `.gitignore`.
+`woke` will also automatically ignore anything listed in `.gitignore` and `.git/info/exclude`.
 
 #### `.wokeignore`
 
