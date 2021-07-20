@@ -16,7 +16,13 @@ type Ignore struct {
 	matcher *gitignore.GitIgnore
 }
 
-// NewIgnore produces an Ignore object, with compiled lines from .gitignore and DefaultIgnores
+var defaultIgnoreFiles = []string{
+	".gitignore",
+	".wokeignore",
+	".git/info/exclude",
+}
+
+// NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
 // which you can match files against
 func NewIgnore(lines []string) *Ignore {
 	start := time.Now()
@@ -26,8 +32,9 @@ func NewIgnore(lines []string) *Ignore {
 			Msg("finished compiling ignores")
 	}()
 
-	lines = append(lines, readIgnoreFile(".gitignore")...)
-	lines = append(lines, readIgnoreFile(".wokeignore")...)
+	for _, filename := range defaultIgnoreFiles {
+		lines = append(lines, readIgnoreFile(filename)...)
+	}
 
 	ignorer := Ignore{
 		matcher: gitignore.CompileIgnoreLines(lines...),
