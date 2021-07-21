@@ -162,7 +162,7 @@ func TestRule_regexString(t *testing.T) {
 	}
 }
 
-func Test_removeInlineIgnore(t *testing.T) {
+func Test_maskInlineIgnore(t *testing.T) {
 	tests := []struct {
 		desc     string
 		line     string
@@ -181,7 +181,7 @@ func Test_removeInlineIgnore(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			assert.Equal(t, tt.expected, removeInlineIgnore(tt.line))
+			assert.Equal(t, tt.expected, maskInlineIgnore(tt.line))
 		})
 	}
 }
