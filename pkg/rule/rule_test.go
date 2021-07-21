@@ -126,33 +126,33 @@ func TestRule_regexString(t *testing.T) {
 		{
 			desc:     "default",
 			rule:     testRule(),
-			expected: `(%s)`,
+			expected: `(?i)(%s)`,
 		},
 		{
 			desc:     "word boundary",
 			rule:     testRuleWithOptions(Options{WordBoundary: true}),
-			expected: `\b(%s)\b`,
+			expected: `(?i)\b(%s)\b`,
 		},
 		{
 			desc:     "word boundary start",
 			rule:     testRuleWithOptions(Options{WordBoundaryStart: true}),
-			expected: `\b(%s)`,
+			expected: `(?i)\b(%s)`,
 		},
 		{
 			desc:     "word boundary end",
 			rule:     testRuleWithOptions(Options{WordBoundaryEnd: true}),
-			expected: `(%s)\b`,
+			expected: `(?i)(%s)\b`,
 		},
 		{
 			desc:     "word boundary start and end",
 			rule:     testRuleWithOptions(Options{WordBoundaryStart: true, WordBoundaryEnd: true}),
-			expected: `\b(%s)\b`,
+			expected: `(?i)\b(%s)\b`,
 		},
 		{
 			// To show that enabling WordBoundary will win over other options
 			desc:     "word boundary and word boundary start/end false",
 			rule:     testRuleWithOptions(Options{WordBoundary: true, WordBoundaryStart: false, WordBoundaryEnd: false}),
-			expected: `\b(%s)\b`,
+			expected: `(?i)\b(%s)\b`,
 		},
 	}
 	for _, tt := range tests {
