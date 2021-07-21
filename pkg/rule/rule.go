@@ -89,6 +89,7 @@ func (r *Rule) setRegex() {
 func (r *Rule) regexString() string {
 	regex := func(start, end string) string {
 		s := strings.Builder{}
+		s.WriteString("(?i)")
 		s.WriteString(start)
 		s.WriteString("(%s)")
 		s.WriteString(end)
