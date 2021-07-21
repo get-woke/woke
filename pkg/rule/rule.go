@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/get-woke/woke/pkg/util"
 )
@@ -198,7 +197,8 @@ func removeInlineIgnore(line string) string {
 	end := inlineIgnoreMatch[1]
 
 	for i := start; i < end; i++ {
-		lineWithoutIgnoreRule[i] = unicode.ReplacementChar
+		// use null terminator to indicate a masked character
+		lineWithoutIgnoreRule[i] = rune(0)
 	}
 
 	return string(lineWithoutIgnoreRule)

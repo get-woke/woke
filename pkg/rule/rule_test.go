@@ -171,7 +171,7 @@ func Test_removeInlineIgnore(t *testing.T) {
 		{
 			desc:     "replace wokeignore:rule",
 			line:     "wokeignore:rule=master-slave",
-			expected: "����������������������������",
+			expected: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
 		},
 		{
 			desc:     "not replace wokeignore:rule",
