@@ -269,7 +269,7 @@ ignore_files:
 You may also specify a `.wokeignore` file at the root of the directory to add additional ignore files.
 This also follows the [gitignore](https://git-scm.com/docs/gitignore) convention.
 
-See [.wokeignore.example](.wokeignore.example) for a collection of common files and directories that may contain generated [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) and [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s.
+See [.wokeignore.example](.wokeignore.example) for a collection of common files and directories that may contain generated [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) and [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s. Dependency directories are also shown in the example as the linter will parse dependency source code and possibly find errors.
 
 #### In-line ignoring
 
