@@ -15,8 +15,6 @@ Package.resolved
 # Test and debug output #
 #########################
 fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
 fastlane/test_output
 hs_err_pid*
 htmlcov/
