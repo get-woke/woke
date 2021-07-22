@@ -1,7 +1,10 @@
 package config
 
 import (
+	"io"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -83,12 +86,55 @@ func (c *Config) ConfigureRules() {
 }
 
 func loadConfig(filename string) (c Config, err error) {
+	if isValidUrl(filename) {
+		// if fileName is a valid URL, we will download and set it to the config
+		downloadedFile := "downloadedRules.yaml"
+		DownloadFile(downloadedFile, filename)
+		filename = downloadedFile
+		log.Debug().Str("Update filename for URL", filename).Msg("downloaded file from url")
+	}
+
 	yamlFile, err := ioutil.ReadFile(filename)
+	log.Debug().Str("filename=", filename).Msg("thank you")
 	if err != nil {
 		return c, err
 	}
 
 	return c, yaml.Unmarshal(yamlFile, &c)
+}
+
+// isValidUrl tests a string to determine if it is a valid URL or not
+func isValidUrl(toTest string) bool {
+	_, err := url.ParseRequestURI(toTest)
+	if err != nil {
+		return false
+	}
+
+	u, err := url.Parse(toTest)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return false
+	}
+	return true
+}
+
+func DownloadFile(filepath string, url string) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
 
 func relative(filename string) string {
