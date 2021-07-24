@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -31,21 +32,16 @@ func NewConfig(filename string) (*Config, error) {
 		}
 
 		log.Debug().Str("config", filename).Msg("loaded config file")
+		logRuleset("config", c.Rules)
 
 		// Ignore the config filename, it will always match on its own rules
 		c.IgnoreFiles = append(c.IgnoreFiles, relative(filename))
+	} else {
+		log.Debug().Msg("no config file loaded, using only default rules")
 	}
 
 	c.ConfigureRules()
-
-	// For debugging/informational purposes
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		enabledRules := make([]string, len(c.Rules))
-		for i := range c.Rules {
-			enabledRules[i] = c.Rules[i].Name
-		}
-		log.Debug().Strs("rules", enabledRules).Msg("rules enabled")
-	}
+	logRuleset("all", c.Rules)
 
 	return &c, nil
 }
@@ -76,6 +72,8 @@ func (c *Config) ConfigureRules() {
 		}
 	}
 
+	logRuleset("default", rule.DefaultRules)
+
 	for _, r := range c.Rules {
 		r.SetRegexp()
 		r.SetIncludeNote(c.IncludeNote)
@@ -101,4 +99,15 @@ func relative(filename string) string {
 		}
 	}
 	return filename
+}
+
+// For debugging/informational purposes
+func logRuleset(name string, rules []*rule.Rule) {
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		enabledRules := make([]string, len(rules))
+		for i := range rules {
+			enabledRules[i] = rules[i].Name
+		}
+		log.Debug().Strs("rules", enabledRules).Msg(fmt.Sprintf("%s rules enabled", name))
+	}
 }
