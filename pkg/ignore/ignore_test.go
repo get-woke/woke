@@ -31,7 +31,6 @@ func TestIgnore_Match(t *testing.T) {
 // Test all default ignore files, except for .git/info/exclude, since
 // that uses a .git directory that we cannot check in.
 func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
-
 	// Change into testdata directory for this test
 	// since paths are relative
 	err := os.Chdir("testdata")
