@@ -31,12 +31,14 @@ func TestIgnore_Match(t *testing.T) {
 // Test all default ignore files, except for .git/info/exclude, since
 // that uses a .git directory that we cannot check in.
 func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
-	// Change into testdata directory for this test
+	// Temporarily change into testdata directojry for this test
 	// since paths are relative
 	err := os.Chdir("testdata")
-	if err != nil {
-		panic(err)
-	}
+	assert.Equal(t, nil, err)
+	t.Cleanup(func() {
+		err = os.Chdir("..")
+		assert.Equal(t, nil, err)
+	})
 
 	i := NewIgnore([]string{"*.FROMARGUMENT"})
 	assert.NotNil(t, i)
@@ -48,11 +50,6 @@ func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
 	assert.True(t, i.Match("test.WOKEIGNORE"))   // From .wokeignore
 	assert.False(t, i.Match("test.NOTIGNORED"))  // From .notincluded - making sure only default are included
 
-	// Change directory back to original directory
-	err = os.Chdir("..")
-	if err != nil {
-		panic(err)
-	}
 }
 
 func TestReadIgnoreFile(t *testing.T) {
