@@ -24,7 +24,7 @@ func InSlice(s string, slice []string) bool {
 }
 
 // ContainsAlphanumeric returns true if alphanumeric chars are found in the string
-func ContainsAlphanums(s string) bool {
+func ContainsAlphanumeric(s string) bool {
 	if len(s) == 0 {
 		return false
 	}

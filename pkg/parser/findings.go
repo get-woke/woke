@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/rule"
 	"github.com/get-woke/woke/pkg/util"
 
 	"github.com/rs/zerolog/log"
@@ -54,26 +55,47 @@ func (p *Parser) generateFileFindings(file *os.File) (*result.FileResults, error
 
 	line := 1
 
+	// Ignore directive text for next-line ignoring
+	var nextLineIgnore string
+
 Loop:
 	for {
 		switch text, err := reader.ReadString('\n'); {
 		case err == nil || (err == io.EOF && text != ""):
 			text = strings.TrimSuffix(text, "\n")
 
+			// Keep current line's wokeignore text if ignoring next line
+			if rule.IsDirectiveOnlyLine(text) {
+				nextLineIgnore = text
+				line++
+				continue
+			}
+
 			for _, r := range p.Rules {
-				if p.Ignorer != nil && r.CanIgnoreLine(text) {
-					log.Debug().
-						Str("rule", r.Name).
-						Str("file", filename).
-						Int("line", line).
-						Msg("ignoring via in-line")
-					continue
+				if p.Ignorer != nil {
+					if nextLineIgnore == "" && r.CanIgnoreLine(text) {
+						log.Debug().
+							Str("rule", r.Name).
+							Str("file", filename).
+							Int("line", line).
+							Msg("ignoring via in-line")
+						continue
+					} else if r.CanIgnoreLine(nextLineIgnore) {
+						// Check using last line's wokeignore text (if applicable)
+						log.Debug().
+							Str("rule", r.Name).
+							Str("file", filename).
+							Int("line", line).
+							Msg("ignoring via next-line")
+						continue
+					}
 				}
 
 				lineResults := result.FindResults(r, results.Filename, text, line)
 				results.Results = append(results.Results, lineResults...)
 			}
 
+			nextLineIgnore = ""
 			line++
 		case err == io.EOF:
 			break Loop

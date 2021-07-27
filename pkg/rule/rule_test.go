@@ -196,3 +196,32 @@ func TestRule_IncludeNote(t *testing.T) {
 	r.SetIncludeNote(false)
 	assert.Equal(t, true, r.includeNote())
 }
+
+func Test_IsDirectiveOnlyLine(t *testing.T) {
+	tests := []struct {
+		name      string
+		line      string
+		assertion assert.BoolAssertionFunc
+	}{
+		{"text without directive", "some text", assert.False},
+		{"text with directive", "some text #wokeignore:rule=rule1", assert.False},
+		{"text with invalid directive", "some text #wokeignore:rule", assert.False},
+		{"text with multiple rules in directive", "some text #wokeignore:rule=rule1,rule2", assert.False},
+		{"text with incorrect directive", "some text #wokeignore:rule=rule2", assert.False},
+		{"text with text after ignore", "some text #wokeignore:rule=rule1 something else", assert.False},
+		{"text with multiple ignores", "some text #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.False},
+		{"no text with no directive", "", assert.False},
+		{"no text with directive", "#wokeignore:rule=rule1", assert.True},
+		{"no text with text after ignore", "#wokeignore:rule=rule1 something else", assert.True},
+		{"non-alphanumeric text before and after directive", "<!-- wokeignore:rule=rule1 -->", assert.True},
+		{"spaces before directive", "     #wokeignore:rule=rule1", assert.True},
+		{"tabs before directive", "\t\t\t#wokeignore:rule=rule1", assert.True},
+		{"tabs and spaces before directive", " \t \t \t #wokeignore:rule=rule1", assert.True},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.assertion(t, IsDirectiveOnlyLine(tt.line))
+		})
+	}
+}

@@ -156,11 +156,12 @@ func parsePathTests(t *testing.T) {
 	t.Run("default path", func(t *testing.T) {
 		// Test default path (which would run tests against the parser package)
 		p := testParser()
+		p.Ignorer = ignore.NewIgnore([]string{"*_test.go"})
 		pr := new(testPrinter)
 		findings := p.ParsePaths(pr)
 
 		assert.Equal(t, len(pr.results), findings)
-		assert.Greater(t, len(pr.results), 0)
+		assert.Equal(t, len(pr.results), 0)
 	})
 
 	t.Run("stdin", func(t *testing.T) {
@@ -200,17 +201,21 @@ func parsePathTests(t *testing.T) {
 	})
 
 	t.Run("note is not included in output message", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist")
+		assert.NoError(t, err)
 		const TestNote = "TEST NOTE"
 		p := testParser()
 		p.Rules[0].Note = TestNote
 		p.Rules[0].Options.IncludeNote = nil
 		pr := new(testPrinter)
-		p.ParsePaths(pr)
+		p.ParsePaths(pr, f.Name())
 
 		assert.NotContains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})
 
 	t.Run("note is included in output message", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist")
+		assert.NoError(t, err)
 		const TestNote = "TEST NOTE"
 		includeNote := true
 		p := testParser()
@@ -219,7 +224,7 @@ func parsePathTests(t *testing.T) {
 		// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
 		p.Rules[0].SetIncludeNote(false)
 		pr := new(testPrinter)
-		p.ParsePaths(pr)
+		p.ParsePaths(pr, f.Name())
 
 		assert.Contains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})

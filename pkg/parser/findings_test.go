@@ -134,3 +134,25 @@ func TestGenerateFileFindingsOverlappingRules(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateFileFindingsNewLineIgnores(t *testing.T) {
+	tests := []struct {
+		desc    string
+		content string
+		matches int
+	}{
+		{"matching newline ignore", "#wokeignore:rule=master-slave\n this has master\n", 0},
+		{"wrong rule newline ignore", "#wokeignore:rule=master-slave\n this has whitelist\n", 1},
+	}
+	for _, tc := range tests {
+		t.Run(tc.desc, func(t *testing.T) {
+			f, err := newFile(t, tc.content)
+			assert.NoError(t, err)
+
+			p := testParser()
+			res, err := p.generateFileFindingsFromFilename(f.Name())
+			assert.NoError(t, err)
+			assert.Len(t, res.Results, tc.matches)
+		})
+	}
+}
