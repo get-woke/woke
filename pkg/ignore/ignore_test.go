@@ -34,10 +34,10 @@ func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
 	// Temporarily change into testdata directojry for this test
 	// since paths are relative
 	err := os.Chdir("testdata")
-	assert.Equal(t, nil, err)
+	assert.NoError(t, err)
 	t.Cleanup(func() {
 		err = os.Chdir("..")
-		assert.Equal(t, nil, err)
+		assert.NoError(t, err)
 	})
 
 	i := NewIgnore([]string{"*.FROMARGUMENT"})
