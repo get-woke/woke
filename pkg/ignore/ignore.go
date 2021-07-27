@@ -18,6 +18,7 @@ type Ignore struct {
 
 var defaultIgnoreFiles = []string{
 	".gitignore",
+	".ignore",
 	".wokeignore",
 	".git/info/exclude",
 }
