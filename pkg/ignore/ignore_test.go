@@ -49,7 +49,6 @@ func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
 	assert.True(t, i.Match("test.IGNORE"))       // From .ignore
 	assert.True(t, i.Match("test.WOKEIGNORE"))   // From .wokeignore
 	assert.False(t, i.Match("test.NOTIGNORED"))  // From .notincluded - making sure only default are included
-
 }
 
 func TestReadIgnoreFile(t *testing.T) {
