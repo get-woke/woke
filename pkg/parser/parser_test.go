@@ -28,7 +28,7 @@ func (p *testPrinter) Print(_ io.Writer, r *result.FileResults) error {
 
 func testParser() *Parser {
 	r := rule.TestRule
-	return NewParser([]*rule.Rule{&r}, ignore.NewIgnore([]string{}))
+	return NewParser([]*rule.Rule{&r}, ignore.NewIgnore([]string{}, false))
 }
 
 func parsePathTests(t *testing.T) {
@@ -120,7 +120,7 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 
 		p := testParser()
-		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())})
+		p.Ignorer = ignore.NewIgnore([]string{filepath.ToSlash(f.Name())}, false)
 		pr := new(testPrinter)
 
 		findings := p.ParsePaths(pr, f.Name())

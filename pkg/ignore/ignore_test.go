@@ -14,7 +14,7 @@ func init() {
 }
 
 func TestIgnore_Match(t *testing.T) {
-	i := NewIgnore([]string{"my/files/*"})
+	i := NewIgnore([]string{"my/files/*"}, false)
 	assert.NotNil(t, i)
 
 	// Test if rules with backslashes match on windows
