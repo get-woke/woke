@@ -143,6 +143,7 @@ func TestGenerateFileFindingsNewLineIgnores(t *testing.T) {
 	}{
 		{"matching newline ignore", "#wokeignore:rule=master-slave\n this has master\n", 0},
 		{"wrong rule newline ignore", "#wokeignore:rule=master-slave\n this has whitelist\n", 1},
+		{"newline ignore with potential match two lines down", "#wokeignore:rule=whitelist\n this line is fine\n this has whitelist\n", 1},
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {

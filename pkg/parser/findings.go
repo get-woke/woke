@@ -53,10 +53,8 @@ func (p *Parser) generateFileFindings(file *os.File) (*result.FileResults, error
 
 	reader := bufio.NewReader(file)
 
-	line := 1
-
-	// Ignore directive text for next-line ignoring
 	var nextLineIgnore string
+	line := 1
 
 Loop:
 	for {

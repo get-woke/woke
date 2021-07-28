@@ -175,7 +175,7 @@ func (r *Rule) CanIgnoreLine(line string) bool {
 	return false
 }
 
-// IsDirectiveOnlyLine returns a boolean value if the line contains ONLY the ignore directive.
+// IsDirectiveOnlyLine returns a boolean value if the line contains only the ignore directive.
 // For example, if a line is only a single-line comment containing wokeignore:rule=xyz with no other
 // alphanumeric characters before the directive, it will return true that this is a directive-only line
 func IsDirectiveOnlyLine(line string) bool {
