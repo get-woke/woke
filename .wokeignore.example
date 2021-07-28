@@ -1,0 +1,27 @@
+# Dependencies and locks #
+##########################
+vendor/
+node_modules/
+.node_modules/
+yarn.lock
+package-lock.json
+Pipfile.lock
+Cargo.lock
+Gemfile.lock
+Packages/
+Package.pins
+Package.resolved
+
+# Test and debug output #
+#########################
+fastlane/report.xml
+fastlane/test_output
+hs_err_pid*
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+.hypothesis/
+.pytest_cache/
