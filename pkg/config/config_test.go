@@ -29,7 +29,7 @@ func TestNewConfig(t *testing.T) {
 		}
 
 		assert.Equal(t,
-			fmt.Sprintf(`{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`+"\n"+`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
+			fmt.Sprintf(`{"level":"debug","filename":"testdata/good.yaml","message":"Adding custom ruleset from"}`+"\n"+`{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`+"\n"+`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
 			out.String())
 	})
 
@@ -135,6 +135,18 @@ func TestNewConfig(t *testing.T) {
 		// check IncludeNote is not overridden for rule1
 		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
 	})
+}
+
+func Test_LoadConfig(t *testing.T) {
+	t.Run("valid-url", func(t *testing.T) {
+		c, err := loadConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
+	t.Run("invalid-url", func(t *testing.T) {})
+	_, err := loadConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+	assert.Error(t, err)
 }
 
 func Test_relative(t *testing.T) {
