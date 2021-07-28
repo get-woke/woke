@@ -217,6 +217,8 @@ rules:
     note: An optional description why these terms are not inclusive. It can be optionally included in the output message.
     # options:
     #   word_boundary: false
+    #   word_boundary_start: false
+    #   word_boundary_end: false
     #   include_note: false
 ```
 
@@ -231,10 +233,17 @@ You can configure options for each rule. Add an `options` key to your rule defin
 Current options include:
 
 - `word_boundary` (default: `false`)
-  - If `true`, terms will trigger violations when they are surrounded by ASCII word boundaries.
-  - If `false`, will trigger violations if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
+  - If `true`, terms will trigger findings when they are surrounded by ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
+  - **NOTE** setting this to true will always win out over `word_boundary_start` and `word_boundary_end`
+- `word_boundary_start` (default: `false`)
+  - If `true`, terms will trigger findings when they begin with an ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it begins with an ASCII word boundary.
+- `word_boundary_end` (default: `false`)
+  - If `true`, terms will trigger findings when they end with an ASCII word boundaries.
+  - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it ends with an ASCII word boundary.
 - `include_note` (default: `not set`)
-  - If `true`, the rule note will be included in the output message explaining why this violation is not inclusive
+  - If `true`, the rule note will be included in the output message explaining why this finding is not inclusive
   - If `false`, the rule note will not be included in the output message
   - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`).
 
@@ -262,12 +271,14 @@ ignore_files:
   - globs/too/*
 ```
 
-`woke` will also automatically ignore anything listed in `.gitignore`.
+`woke` will also automatically ignore anything listed in `.gitignore` and `.git/info/exclude`.
 
 #### `.wokeignore`
 
 You may also specify a `.wokeignore` file at the root of the directory to add additional ignore files.
 This also follows the [gitignore](https://git-scm.com/docs/gitignore) convention.
+
+See [.wokeignore.example](.wokeignore.example) for a collection of common files and directories that may contain generated [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) and [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s. Dependency directories are also shown in the example as the linter will parse dependency source code and possibly find errors.
 
 #### In-line ignoring
 

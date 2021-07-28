@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenerateFileViolations(t *testing.T) {
+func TestGenerateFileFindings(t *testing.T) {
 	tests := []struct {
 		desc    string
 		content string
@@ -31,7 +31,7 @@ func TestGenerateFileViolations(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 			p := testParser()
-			res, err := p.generateFileViolationsFromFilename(f.Name())
+			res, err := p.generateFileFindingsFromFilename(f.Name())
 			assert.NoError(t, err)
 
 			filename := filepath.ToSlash(f.Name())
@@ -40,9 +40,9 @@ func TestGenerateFileViolations(t *testing.T) {
 				Results:  make([]result.Result, 1),
 			}
 			expected.Results[0] = result.LineResult{
-				Rule:      &rule.TestRule,
-				Violation: "whitelist",
-				Line:      tc.line,
+				Rule:    &rule.TestRule,
+				Finding: "whitelist",
+				Line:    tc.line,
 				StartPosition: &token.Position{
 					Filename: filename,
 					Offset:   0,
@@ -61,30 +61,30 @@ func TestGenerateFileViolations(t *testing.T) {
 	}
 	t.Run("missing file", func(t *testing.T) {
 		p := testParser()
-		_, err := p.generateFileViolationsFromFilename("missing.file")
+		_, err := p.generateFileFindingsFromFilename("missing.file")
 		assert.Error(t, err)
 	})
 
-	t.Run("filename violation", func(t *testing.T) {
+	t.Run("filename finding", func(t *testing.T) {
 		f, err := newFileWithPrefix(t, "whitelist-", "content")
 		assert.NoError(t, err)
 
 		p := testParser()
-		res, err := p.generateFileViolationsFromFilename(f.Name())
+		res, err := p.generateFileFindingsFromFilename(f.Name())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
-		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
+		assert.Regexp(t, "^Filename finding: ", res.Results[0].Reason())
 	})
 
-	t.Run("filename violation for empty file", func(t *testing.T) {
+	t.Run("filename finding for empty file", func(t *testing.T) {
 		f, err := newFileWithPrefix(t, "empty-whitelist-", "")
 		assert.NoError(t, err)
 
 		p := testParser()
-		res, err := p.generateFileViolationsFromFilename(f.Name())
+		res, err := p.generateFileFindingsFromFilename(f.Name())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
-		assert.Regexp(t, "^Filename violation: ", res.Results[0].Reason())
+		assert.Regexp(t, "^Filename finding: ", res.Results[0].Reason())
 	})
 }
 
@@ -112,7 +112,7 @@ func newFileWithPrefix(t *testing.T, prefix, text string) (*os.File, error) {
 }
 
 // Tests for when a rule name is used with inline wokeignore, when that rule name matches another rule
-func TestGenerateFileViolationsOverlappingRules(t *testing.T) {
+func TestGenerateFileFindingsOverlappingRules(t *testing.T) {
 	tests := []struct {
 		desc    string
 		content string
@@ -128,7 +128,7 @@ func TestGenerateFileViolationsOverlappingRules(t *testing.T) {
 			assert.NoError(t, err)
 
 			p := testParser()
-			res, err := p.generateFileViolationsFromFilename(f.Name())
+			res, err := p.generateFileFindingsFromFilename(f.Name())
 			assert.NoError(t, err)
 			assert.Len(t, res.Results, tc.matches)
 		})

@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/get-woke/woke/pkg/result"
-	"github.com/get-woke/woke/pkg/util"
 
+	env "github.com/caitlinelfring/go-env-default"
 	"github.com/rs/zerolog/log"
 )
 
@@ -45,7 +45,7 @@ func NewPrinter(f string) (Printer, error) {
 	var p Printer
 	switch f {
 	case OutFormatText:
-		p = NewText(util.GetEnvBoolDefault("DISABLE_COLORS", false))
+		p = NewText(env.GetBoolDefault("DISABLE_COLORS", false))
 	case OutFormatSimple:
 		p = NewSimple()
 	case OutFormatGitHubActions:

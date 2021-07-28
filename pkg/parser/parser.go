@@ -3,7 +3,6 @@ package parser
 import (
 	"os"
 	"sort"
-	"strconv"
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
@@ -14,6 +13,7 @@ import (
 	"github.com/get-woke/woke/pkg/util"
 	"github.com/get-woke/woke/pkg/walker"
 
+	env "github.com/caitlinelfring/go-env-default"
 	"github.com/rs/zerolog/log"
 )
 
@@ -31,7 +31,7 @@ type Parser struct {
 	rchan chan result.FileResults
 }
 
-// NewParser returns a pointer to a Parser that is used to check for violations
+// NewParser returns a pointer to a Parser that is used to check for findings
 // based on the rules provided, ignoring files based on the ignorer provided
 func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	return &Parser{
@@ -41,11 +41,11 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 	}
 }
 
-// ParsePaths parses all files provided and returns the number of files with violations
+// ParsePaths parses all files provided and returns the number of files with findings
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	// data provided through stdin
 	if util.InSlice(os.Stdin.Name(), paths) {
-		r, _ := p.generateFileViolations(os.Stdin)
+		r, _ := p.generateFileFindings(os.Stdin)
 		if r.Len() > 0 {
 			print.Print(output.Stdout, r)
 		}
@@ -64,7 +64,7 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 		wg.Add(1)
 		go func(path string) {
 			defer wg.Done()
-			p.processViolationInPath(path, done)
+			p.processFindingInPath(path, done)
 		}(path)
 	}
 
@@ -73,13 +73,13 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 		close(p.rchan)
 	}()
 
-	violations := 0
+	findings := 0
 	for r := range p.rchan {
 		sort.Sort(r)
 		print.Print(output.Stdout, &r)
-		violations++
+		findings++
 	}
-	return violations
+	return findings
 }
 
 func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.WaitGroup) {
@@ -88,7 +88,7 @@ func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.Wait
 		go func(f string) {
 			defer wg.Done()
 
-			v, _ := p.generateFileViolationsFromFilename(f)
+			v, _ := p.generateFileFindingsFromFilename(f)
 			if v == nil || len(v.Results) == 0 {
 				return
 			}
@@ -97,14 +97,14 @@ func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.Wait
 	}
 }
 
-func (p *Parser) processViolationInPath(path string, done chan bool) {
+func (p *Parser) processFindingInPath(path string, done chan bool) {
 	var wg sync.WaitGroup
 
 	files := p.walkDir(path, done)
 
 	// run parallel, but bounded
-	numWorkerStr := util.GetEnvDefault("WORKER_POOL_COUNT", "0")
-	if numWorker, err := strconv.Atoi(numWorkerStr); err == nil && numWorker > 0 {
+	numWorker := env.GetIntDefault("WORKER_POOL_COUNT", 0)
+	if numWorker > 0 {
 		log.Debug().Str("path", path).Str("type", "bounded").Int("workers", numWorker).Msg("process files")
 
 		wg.Add(numWorkers)

@@ -66,7 +66,7 @@ func TestRunE(t *testing.T) {
 		viper.SetConfigName(origConfigFile)
 	})
 
-	t.Run("no violations found", func(t *testing.T) {
+	t.Run("no findings found", func(t *testing.T) {
 		buf := new(bytes.Buffer)
 		output.Stdout = buf
 
@@ -74,11 +74,11 @@ func TestRunE(t *testing.T) {
 		assert.NoError(t, err)
 
 		got := buf.String()
-		expected := "No violations found. Stay woke \u270a\n"
+		expected := "No findings found.\n"
 		assert.Equal(t, expected, got)
 	})
 
-	t.Run("no violations found with custom message", func(t *testing.T) {
+	t.Run("no findings found with custom message", func(t *testing.T) {
 		buf := new(bytes.Buffer)
 		output.Stdout = buf
 
@@ -91,11 +91,11 @@ func TestRunE(t *testing.T) {
 		assert.Equal(t, expected, got)
 	})
 
-	t.Run("violations w error", func(t *testing.T) {
+	t.Run("findings w error", func(t *testing.T) {
 		exitOneOnFailure = true
 
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
-		assert.Regexp(t, regexp.MustCompile(`^files with violations: \d`), err.Error())
+		assert.Regexp(t, regexp.MustCompile(`^files with findings: \d`), err.Error())
 	})
 }

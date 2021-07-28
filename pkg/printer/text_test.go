@@ -24,21 +24,21 @@ func TestText_arrowUnderLine(t *testing.T) {
 	p := NewText(true)
 
 	r := result.LineResult{
-		Line:          "this line has black-list as a violation",
+		Line:          "this line has black-list as a finding",
 		StartPosition: newPosition("foo.txt", 4, 14),
 		EndPosition:   newPosition("foo.txt", 4, 24),
 	}
 	assert.Equal(t, "              ^", p.arrowUnderLine(&r))
 
 	r = result.LineResult{
-		Line:          "    this line has black-list as a violation",
+		Line:          "    this line has black-list as a finding",
 		StartPosition: newPosition("foo.txt", 4, 18),
 		EndPosition:   newPosition("foo.txt", 4, 28),
 	}
 	assert.Equal(t, "                  ^", p.arrowUnderLine(&r))
 
 	r = result.LineResult{
-		Line:          "\tthis line has black-list as a violation",
+		Line:          "\tthis line has black-list as a finding",
 		StartPosition: newPosition("foo.txt", 4, 15),
 		EndPosition:   newPosition("foo.txt", 4, 25),
 	}

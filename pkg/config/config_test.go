@@ -66,7 +66,7 @@ func TestNewConfig(t *testing.T) {
 		assert.EqualValues(t, expected.Rules, c.Rules)
 
 		// check default config message
-		assert.Equal(t, "No violations found. Stay woke ✊", c.GetSuccessExitMessage())
+		assert.Equal(t, "No findings found.", c.GetSuccessExitMessage())
 	})
 
 	t.Run("config-empty-missing", func(t *testing.T) {

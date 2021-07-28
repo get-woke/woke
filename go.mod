@@ -3,6 +3,7 @@ module github.com/get-woke/woke
 go 1.16
 
 require (
+	github.com/caitlinelfring/go-env-default v1.0.0
 	github.com/fatih/color v1.12.0
 	github.com/get-woke/fastwalk v1.0.0
 	github.com/get-woke/go-gitignore v1.1.2

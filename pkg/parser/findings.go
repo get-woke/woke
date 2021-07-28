@@ -14,32 +14,32 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (p *Parser) generateFileViolationsFromFilename(filename string) (*result.FileResults, error) {
+func (p *Parser) generateFileFindingsFromFilename(filename string) (*result.FileResults, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	return p.generateFileViolations(file)
+	return p.generateFileFindings(file)
 }
 
-// generateFileViolations reads the file and returns results of places where rules are broken
+// generateFileFindings reads the file and returns results of places where rules are broken
 // this function will not close the file, that should be handled by the caller
-func (p *Parser) generateFileViolations(file *os.File) (*result.FileResults, error) {
+func (p *Parser) generateFileFindings(file *os.File) (*result.FileResults, error) {
 	filename := filepath.ToSlash(file.Name())
 	start := time.Now()
 	defer func() {
 		log.Debug().
 			TimeDiff("durationMS", time.Now(), start).
 			Str("file", filename).
-			Msg("finished processing violations")
+			Msg("finished processing findings")
 	}()
 
 	results := &result.FileResults{
 		Filename: filename,
 	}
 
-	// Check for violations in the filename itself
+	// Check for findings in the filename itself
 	for _, pathResult := range result.MatchPathRules(p.Rules, file.Name()) {
 		results.Results = append(results.Results, pathResult)
 	}

@@ -22,4 +22,4 @@ rules:
 
 # optional if you want to have a custom success message
 # you can also set this to an empty string `""` to output no message at all
-# success_exit_message: No violations found
+# success_exit_message: No findings found
