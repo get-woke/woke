@@ -118,9 +118,9 @@ func isValidUrl(toTest string) bool {
 
 	u, err := url.Parse(toTest)
 	if err != nil || u.Scheme == "" || u.Host == "" {
-		log.Error().Str("url", toTest).Msg("Invalid URL for remote config.")
 		return false
 	}
+	log.Debug().Str("remoteConfig", toTest).Msg("Valid URL for remote config.")
 	return true
 }
 
