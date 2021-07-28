@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -88,18 +89,23 @@ func (c *Config) ConfigureRules() {
 func loadConfig(filename string) (c Config, err error) {
 	if isValidUrl(filename) {
 		// if fileName is a valid URL, we will download and set it to the config
+		log.Debug().Str("url", filename).Msg("Downloading file from")
+		//hardcoding this file and saving to root directory
 		downloadedFile := "downloadedRules.yaml"
-		DownloadFile(downloadedFile, filename)
+		err := DownloadFile(downloadedFile, filename)
+		if err != nil {
+			return c, err
+		}
 		filename = downloadedFile
-		log.Debug().Str("Update filename for URL", filename).Msg("downloaded file from url")
+		log.Debug().Str("filename", filename).Msg("Saved remote config to local file.")
 	}
 
+	// TO DO = Need to add more error handling on reading/validating yamlFile file - issue # 16
 	yamlFile, err := ioutil.ReadFile(filename)
-	log.Debug().Str("filename=", filename).Msg("thank you")
+	log.Debug().Str("filename", filename).Msg("Adding custom ruleset from")
 	if err != nil {
 		return c, err
 	}
-
 	return c, yaml.Unmarshal(yamlFile, &c)
 }
 
@@ -112,29 +118,37 @@ func isValidUrl(toTest string) bool {
 
 	u, err := url.Parse(toTest)
 	if err != nil || u.Scheme == "" || u.Host == "" {
+		log.Error().Str("url", toTest).Msg("Invalid URL for remote config.")
 		return false
 	}
 	return true
 }
 
+//downloads file from url to set filepath
 func DownloadFile(filepath string, url string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	// only parse response body if it is in the response is in the 2xx range
+	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
+		log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
+		defer resp.Body.Close()
 
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
+		// Create the file
+		out, err := os.Create(filepath)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+
+		// Write the body to file
+		_, err = io.Copy(out, resp.Body)
 		return err
+	} else {
+		return fmt.Errorf("unable to download remote config from url - http response code: %v", resp.StatusCode)
 	}
-	defer out.Close()
-
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	return err
 }
 
 func relative(filename string) string {
