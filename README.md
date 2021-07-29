@@ -151,7 +151,7 @@ Flags:
       --debug               Enable debug logging
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
-      --no-ignore           Ignored files in .gitignore/.wokeignore and inline ignores are processed
+      --no-ignore           Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed
   -o, --output string       Output type [text,simple,github-actions,json] (default "text")
       --stdin               Read from stdin
   -v, --version             version for woke
@@ -271,7 +271,7 @@ ignore_files:
   - globs/too/*
 ```
 
-`woke` will also automatically ignore anything listed in `.gitignore` and `.git/info/exclude`.
+`woke` will also automatically ignore anything listed in `.gitignore`, `.ignore`, and `.git/info/exclude`.
 
 #### `.wokeignore`
 
@@ -360,6 +360,7 @@ Are you using `woke` in your org? We'd love to know! Please send a PR and add yo
 
 - [Rent the Runway](https://www.renttherunway.com) ([blog post](https://dresscode.renttherunway.com/blog/woke))
 - [Veue](https://veuelive.com)
+- [Cisco](https://ciscotechblog.com/blog/inclusive-infrastructure/)
 
 ## Resources
 
