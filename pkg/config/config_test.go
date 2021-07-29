@@ -21,6 +21,20 @@ func TestNewConfig(t *testing.T) {
 		log.Logger = zerolog.New(out)
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
+		// isolate config rules
+		loaded, err := loadConfig("testdata/good.yaml")
+		assert.NoError(t, err)
+		configRules := make([]string, len(loaded.Rules))
+		for i := range loaded.Rules {
+			configRules[i] = fmt.Sprintf("%q", loaded.Rules[i].Name)
+		}
+
+		// isolate default rules
+		defaultRules := make([]string, len(rule.DefaultRules))
+		for i := range defaultRules {
+			defaultRules[i] = fmt.Sprintf("%q", rule.DefaultRules[i].Name)
+		}
+
 		c, err := NewConfig("testdata/good.yaml")
 		assert.NoError(t, err)
 		enabledRules := make([]string, len(c.Rules))
@@ -28,8 +42,12 @@ func TestNewConfig(t *testing.T) {
 			enabledRules[i] = fmt.Sprintf("%q", c.Rules[i].Name)
 		}
 
+		loadedConfigMsg := `{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`
+		configRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"config rules enabled"}`, strings.Join(configRules, ","))
+		defaultRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"default rules enabled"}`, strings.Join(defaultRules, ","))
+		allRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"all rules enabled"}`, strings.Join(enabledRules, ","))
 		assert.Equal(t,
-			fmt.Sprintf(`{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`+"\n"+`{"level":"debug","rules":[%s],"message":"rules enabled"}`, strings.Join(enabledRules, ","))+"\n",
+			loadedConfigMsg+"\n"+configRulesMsg+"\n"+defaultRulesMsg+"\n"+allRulesMsg+"\n",
 			out.String())
 	})
 
