@@ -135,15 +135,17 @@ func TestGenerateFileFindingsOverlappingRules(t *testing.T) {
 	}
 }
 
+// Tests for next-line wokeignore
 func TestGenerateFileFindingsNewLineIgnores(t *testing.T) {
 	tests := []struct {
 		desc    string
 		content string
 		matches int
 	}{
-		{"matching newline ignore", "#wokeignore:rule=master-slave\n this has master\n", 0},
-		{"wrong rule newline ignore", "#wokeignore:rule=master-slave\n this has whitelist\n", 1},
-		{"newline ignore with potential match two lines down", "#wokeignore:rule=whitelist\n this line is fine\n this has whitelist\n", 1},
+		{"not matching newline ignore", "#wokeignore:rule=master-slave\n this has whitelist", 1},
+		{"matching newline ignore", "#wokeignore:rule=whitelist\n this has whitelist", 0},
+		{"matching newline ignore", "#wokeignore:rule=whitelist whitelist\n this has whitelist", 0},
+		{"newline ignore with potential match two lines down", "#wokeignore:rule=whitelist\n this line is fine\n this has whitelist", 1},
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {

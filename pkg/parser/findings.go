@@ -53,7 +53,7 @@ func (p *Parser) generateFileFindings(file *os.File) (*result.FileResults, error
 
 	reader := bufio.NewReader(file)
 
-	var nextLineIgnore string
+	var ignoreNextLineText string
 	line := 1
 
 Loop:
@@ -62,24 +62,24 @@ Loop:
 		case err == nil || (err == io.EOF && text != ""):
 			text = strings.TrimSuffix(text, "\n")
 
-			// Keep current line's wokeignore text if ignoring next line
+			// Store current line's wokeignore text if ignoring next line
 			if rule.IsDirectiveOnlyLine(text) {
-				nextLineIgnore = text
+				ignoreNextLineText = text
 				line++
 				continue
 			}
 
 			for _, r := range p.Rules {
 				if p.Ignorer != nil {
-					if nextLineIgnore == "" && r.CanIgnoreLine(text) {
+					if ignoreNextLineText == "" && r.CanIgnoreLine(text) {
 						log.Debug().
 							Str("rule", r.Name).
 							Str("file", filename).
 							Int("line", line).
 							Msg("ignoring via in-line")
 						continue
-					} else if r.CanIgnoreLine(nextLineIgnore) {
-						// Check using last line's wokeignore text (if applicable)
+					} else if r.CanIgnoreLine(ignoreNextLineText) {
+						// Check current rule against prev line's next-line wokeignore text (if applicable)
 						log.Debug().
 							Str("rule", r.Name).
 							Str("file", filename).
@@ -93,7 +93,7 @@ Loop:
 				results.Results = append(results.Results, lineResults...)
 			}
 
-			nextLineIgnore = ""
+			ignoreNextLineText = ""
 			line++
 		case err == io.EOF:
 			break Loop

@@ -203,20 +203,20 @@ func Test_IsDirectiveOnlyLine(t *testing.T) {
 		line      string
 		assertion assert.BoolAssertionFunc
 	}{
-		{"text without directive", "some text", assert.False},
-		{"text with directive", "some text #wokeignore:rule=rule1", assert.False},
-		{"text with invalid directive", "some text #wokeignore:rule", assert.False},
-		{"text with multiple rules in directive", "some text #wokeignore:rule=rule1,rule2", assert.False},
-		{"text with incorrect directive", "some text #wokeignore:rule=rule2", assert.False},
-		{"text with text after ignore", "some text #wokeignore:rule=rule1 something else", assert.False},
-		{"text with multiple ignores", "some text #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.False},
-		{"no text with no directive", "", assert.False},
-		{"no text with directive", "#wokeignore:rule=rule1", assert.True},
-		{"no text with text after ignore", "#wokeignore:rule=rule1 something else", assert.True},
-		{"non-alphanumeric text before and after directive", "<!-- wokeignore:rule=rule1 -->", assert.True},
-		{"spaces before directive", "     #wokeignore:rule=rule1", assert.True},
-		{"tabs before directive", "\t\t\t#wokeignore:rule=rule1", assert.True},
-		{"tabs and spaces before directive", " \t \t \t #wokeignore:rule=rule1", assert.True},
+		{"text and no wokeignore", "some text", assert.False},
+		{"text, then wokeignore", "some text #wokeignore:rule=rule1", assert.False},
+		{"text, then invalid wokeignore", "some text #wokeignore:rule", assert.False},
+		{"text, then multiple rules in wokeignore", "some text #wokeignore:rule=rule1,rule2", assert.False},
+		{"text, then text after ignore", "some text #wokeignore:rule=rule1 something else", assert.False},
+		{"text, then multiple ignores", "some text #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.False},
+		{"empty line", "", assert.False},
+		{"only wokeignore", "#wokeignore:rule=rule1", assert.True},
+		// any text to the right of wokeignore when line starts with wokeignore will not be considered by woke for findings
+		{"wokeignore, then text", "#wokeignore:rule=rule1 something else", assert.True},
+		{"non-alphanumeric text before and after wokeignore", "<!-- wokeignore:rule=rule1 -->", assert.True},
+		{"spaces before wokeignore", "     #wokeignore:rule=rule1", assert.True},
+		{"tabs before wokeignore", "\t\t\t#wokeignore:rule=rule1", assert.True},
+		{"tabs and spaces before wokeignore", " \t \t \t #wokeignore:rule=rule1", assert.True},
 	}
 
 	for _, tt := range tests {
