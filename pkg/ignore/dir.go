@@ -1,5 +1,8 @@
 package ignore
 
+// These functions are loosely modified from https://github.com/go-git/go-git/blob/master/plumbing/format/gitignore/dir.go
+// in order to support .wokeignore files as well as .gitignore files
+
 import (
 	"bufio"
 	"errors"
