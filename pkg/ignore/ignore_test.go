@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,21 +41,24 @@ func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	i := NewIgnore([]string{"*.FROMARGUMENT"})
+	i := NewIgnore([]string{"*.FROMARGUMENT"}, false)
 	assert.NotNil(t, i)
 
-	assert.False(t, i.Match("notfoo"))
-	assert.True(t, i.Match("test.FROMARGUMENT")) // From .gitignore
-	assert.True(t, i.Match("test.DS_Store"))     // From .gitignore
-	assert.True(t, i.Match("test.IGNORE"))       // From .ignore
-	assert.True(t, i.Match("test.WOKEIGNORE"))   // From .wokeignore
-	assert.False(t, i.Match("test.NOTIGNORED"))  // From .notincluded - making sure only default are included
+	assert.False(t, i.Match("notfoo", false))
+	assert.True(t, i.Match("test.FROMARGUMENT", false)) // From .gitignore
+	assert.True(t, i.Match("test.DS_Store", false))     // From .gitignore
+	assert.True(t, i.Match("test.IGNORE", false))       // From .ignore
+	assert.True(t, i.Match("test.WOKEIGNORE", false))   // From .wokeignore
+	assert.False(t, i.Match("test.NOTIGNORED", false))  // From .notincluded - making sure only default are included
 }
 
 func TestReadIgnoreFile(t *testing.T) {
-	ignoreLines := readIgnoreFile("testdata/.gitignore")
-	assert.Equal(t, []string{"*.DS_Store"}, ignoreLines)
+	rootFs := osfs.New(".")
+	ignoreFilePath := []string{"testdata"}
+	ignoreLines, _ := readIgnoreFile(rootFs, ignoreFilePath, ".gitignore")
+	patterns := []gitignore.Pattern{gitignore.ParsePattern("*.DS_Store", []string{"testdata"})}
+	assert.Equal(t, patterns, ignoreLines)
 
-	noIgnoreLines := readIgnoreFile(".gitignore")
-	assert.Equal(t, []string{}, noIgnoreLines)
+	noIgnoreLines, _ := readIgnoreFile(rootFs, []string{}, ".gitignore")
+	assert.Equal(t, []gitignore.Pattern{}, noIgnoreLines)
 }

@@ -28,7 +28,9 @@ const (
 
 var defaultIgnoreFiles = []string{
 	".gitignore",
+	".ignore",
 	".wokeignore",
+	".git/info/exclude",
 }
 
 // readIgnoreFile reads a specific git ignore file.
@@ -111,7 +113,7 @@ func NewIgnore(lines []string, findRootDir bool) *Ignore {
 		return nil
 	}
 	rootFs := osfs.New(rootDir)
-	currentPath := []string{"."}
+	currentPath := []string{}
 	ps, err := readPatterns(rootFs, currentPath)
 	if err != nil {
 		fmt.Println(err)
