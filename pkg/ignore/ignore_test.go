@@ -20,13 +20,13 @@ func TestIgnore_Match(t *testing.T) {
 	assert.NotNil(t, i)
 
 	// Test if rules with backslashes match on windows
-	assert.False(t, i.Match("not/foo"))
-	assert.True(t, i.Match("my/files/file1"))
-	assert.False(t, i.Match("my/files"))
+	assert.False(t, i.Match("not/foo", false))
+	assert.True(t, i.Match("my/files/file1", false))
+	assert.False(t, i.Match("my/files", false))
 
-	assert.False(t, i.Match(filepath.Join("not", "foo")))
-	assert.True(t, i.Match(filepath.Join("my", "files", "file1")))
-	assert.False(t, i.Match(filepath.Join("my", "files")))
+	assert.False(t, i.Match(filepath.Join("not", "foo"), false))
+	assert.True(t, i.Match(filepath.Join("my", "files", "file1"), false))
+	assert.False(t, i.Match(filepath.Join("my", "files"), false))
 }
 
 // Test all default ignore files, except for .git/info/exclude, since
