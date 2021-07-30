@@ -271,11 +271,11 @@ ignore_files:
   - globs/too/*
 ```
 
-`woke` will also automatically ignore anything listed in `.gitignore`, `.ignore`, and `.git/info/exclude`.
+`woke` will also automatically ignore anything listed in any `.gitignore`, `.ignore`, or `.git/info/exclude` file.
 
 #### `.wokeignore`
 
-You may also specify a `.wokeignore` file at the root of the directory to add additional ignore files.
+You may also specify a `.wokeignore` file at at any level of the directory to add additional ignore files (rules will only apply to files in the same directory or children directories).
 This also follows the [gitignore](https://git-scm.com/docs/gitignore) convention.
 
 See [.wokeignore.example](.wokeignore.example) for a collection of common files and directories that may contain generated [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) and [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s. Dependency directories are also shown in the example as the linter will parse dependency source code and possibly find errors.
