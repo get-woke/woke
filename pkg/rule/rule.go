@@ -222,3 +222,13 @@ func (r *Rule) SetIncludeNote(includeNote bool) {
 
 	r.Options.IncludeNote = &includeNote
 }
+
+//
+func (r *Rule) ContainsCategory(cat string) bool {
+	for _, ruleCat := range r.Options.Categories {
+		if ruleCat == cat {
+			return true
+		}
+	}
+	return false
+}
