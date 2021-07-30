@@ -1,8 +1,6 @@
 package ignore
 
 import (
-	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -10,6 +8,7 @@ import (
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
+	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/rs/zerolog/log"
 
@@ -21,80 +20,20 @@ type Ignore struct {
 	matcher gitignore.Matcher
 }
 
-const (
-	commentPrefix = "#"
-	gitDir        = ".git"
-)
-
-var defaultIgnoreFiles = []string{
-	".gitignore",
-	".ignore",
-	".wokeignore",
-	".git/info/exclude",
-}
-
-// readIgnoreFile reads a specific git ignore file.
-func readIgnoreFile(fs billy.Filesystem, path []string, ignoreFile string) (ps []gitignore.Pattern, err error) {
-	f, err := fs.Open(fs.Join(append(path, ignoreFile)...))
-	if err != nil {
-		_event := log.Warn()
-		if errors.Is(err, os.ErrNotExist) {
-			_event = log.Debug()
-			err = nil
-		}
-		_event.Err(err).Str("file", fs.Join(append(path, ignoreFile)...)).Msg("skipping ignorefile")
-		return []gitignore.Pattern{}, err
+// given a absolute path (example: /runner/folder/root/data/effx.yaml)
+// and given a workingDir (example: root)
+// it will return data/effx.yaml
+func getDomainFromWorkingDir(absPath, workingDir string) []string {
+	// if working directory does not end with a slash, add it
+	if strings.LastIndex(workingDir, string(os.PathSeparator)) != len(workingDir)-1 {
+		workingDir += string(os.PathSeparator)
 	}
 
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		s := scanner.Text()
-		if !strings.HasPrefix(s, commentPrefix) && len(strings.TrimSpace(s)) > 0 {
-			ps = append(ps, gitignore.ParsePattern(s, path))
-		}
+	res := strings.Split(absPath, workingDir)
+	if len(res) > 1 {
+		return util.FilterEmptyStrings(strings.Split(res[1], string(os.PathSeparator)))
 	}
-
-	return
-}
-
-// readPatterns reads gitignore patterns recursively traversing through the directory
-// structure. The result is in the ascending order of priority (last higher).
-func readPatterns(fs billy.Filesystem, path []string) (ps []gitignore.Pattern, err error) {
-	ps = []gitignore.Pattern{}
-	for _, filename := range defaultIgnoreFiles {
-		var subps []gitignore.Pattern
-		subps, err = readIgnoreFile(fs, path, filename)
-		if err != nil {
-			return ps, err
-		}
-		if len(subps) > 0 {
-			ps = append(ps, subps...)
-		}
-	}
-
-	var fis []os.FileInfo
-	fis, err = fs.ReadDir(fs.Join(path...))
-	if err != nil {
-		return ps, err
-	}
-
-	for _, fi := range fis {
-		if fi.IsDir() && fi.Name() != gitDir {
-			var subps []gitignore.Pattern
-			subps, err = readPatterns(fs, append(path, fi.Name()))
-			if err != nil {
-				return ps, err
-			}
-
-			if len(subps) > 0 {
-				ps = append(ps, subps...)
-			}
-		}
-	}
-
-	return ps, nil
+	return []string{}
 }
 
 // NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
@@ -107,18 +46,41 @@ func NewIgnore(lines []string, findRootDir bool) *Ignore {
 			Msg("finished compiling ignores")
 	}()
 
-	rootDir, domain, err := getRootFileSystem(findRootDir)
+	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
-	rootFs := osfs.New(rootDir)
-	currentPath := []string{}
-	ps, err := readPatterns(rootFs, currentPath)
+
+	// DetectDotGit will traverse parent directories until it finds the root git dir if true
+	opt := &git.PlainOpenOptions{DetectDotGit: findRootDir}
+	repo, err := git.PlainOpenWithOptions("", opt)
+	var filesystem billy.Filesystem
+	if err != nil {
+		if err == git.ErrRepositoryNotExists {
+			log.Debug().Str("reason", err.Error()).Msg("Could Not Find Root Git Folder")
+			filesystem = osfs.New(cwd)
+		} else {
+			fmt.Println(err)
+			return nil
+		}
+	}
+	if repo != nil {
+		worktree, err := repo.Worktree()
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		filesystem = worktree.Filesystem
+	}
+
+	ps, err := readPatterns(filesystem, nil)
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
+
+	domain := getDomainFromWorkingDir(cwd, filesystem.Root())
 
 	for _, line := range lines {
 		pattern := gitignore.ParsePattern(line, domain)

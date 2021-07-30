@@ -1,85 +1,88 @@
 package ignore
 
 import (
-	"fmt"
+	"bufio"
+	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 
-	"github.com/get-woke/woke/pkg/util"
+	"github.com/go-git/go-billy/v5"
+	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
+	"github.com/rs/zerolog/log"
 )
 
-func getRootFileSystem(findRootDir bool) (string, []string, error) {
-	var domain []string
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Println(err)
-		return "", domain, err
-	}
-	if findRootDir {
-		rootDir, err := detectGitPath(".")
-		if err != nil {
-			fmt.Println(err)
-			return "", domain, err
-		}
-		domain = strings.Split(util.ParseRelativePathFromAbsolutePath(cwd, rootDir), string(os.PathSeparator))
-		return rootDir, domain, nil
-	}
-	return cwd, domain, nil
+const (
+	commentPrefix = "#"
+	gitDir        = ".git"
+)
+
+var defaultIgnoreFiles = []string{
+	".gitignore",
+	".ignore",
+	".wokeignore",
+	".git/info/exclude",
 }
 
-func detectGitPath(path string) (string, error) {
-	// normalize the path
-	path, err := filepath.Abs(path)
+// readIgnoreFile reads a specific git ignore file.
+func readIgnoreFile(fs billy.Filesystem, path []string, ignoreFile string) (ps []gitignore.Pattern, err error) {
+	f, err := fs.Open(fs.Join(append(path, ignoreFile)...))
 	if err != nil {
-		return "", err
+		_event := log.Warn()
+		if errors.Is(err, os.ErrNotExist) {
+			_event = log.Debug()
+			err = nil
+		}
+		_event.Err(err).Str("file", fs.Join(append(path, ignoreFile)...)).Msg("skipping ignorefile")
+		return []gitignore.Pattern{}, err
 	}
 
-	for {
-		fi, err := os.Stat(filepath.Join(path, gitDir))
-		if err == nil {
-			if !fi.IsDir() {
-				return "", fmt.Errorf("%v exist but is not a directory", gitDir)
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		s := scanner.Text()
+		if !strings.HasPrefix(s, commentPrefix) && len(strings.TrimSpace(s)) > 0 {
+			ps = append(ps, gitignore.ParsePattern(s, path))
+		}
+	}
+
+	return
+}
+
+// readPatterns reads gitignore patterns recursively traversing through the directory
+// structure. The result is in the ascending order of priority (last higher).
+func readPatterns(fs billy.Filesystem, path []string) (ps []gitignore.Pattern, err error) {
+	ps = []gitignore.Pattern{}
+	for _, filename := range defaultIgnoreFiles {
+		var subps []gitignore.Pattern
+		subps, err = readIgnoreFile(fs, path, filename)
+		if err != nil {
+			return ps, err
+		}
+		if len(subps) > 0 {
+			ps = append(ps, subps...)
+		}
+	}
+
+	var fis []os.FileInfo
+	fis, err = fs.ReadDir(fs.Join(path...))
+	if err != nil {
+		return ps, err
+	}
+
+	for _, fi := range fis {
+		if fi.IsDir() && fi.Name() != gitDir {
+			var subps []gitignore.Pattern
+			subps, err = readPatterns(fs, append(path, fi.Name()))
+			if err != nil {
+				return ps, err
 			}
-			return path, nil
-		}
-		if !os.IsNotExist(err) {
-			// unknown error
-			return "", err
-		}
 
-		// detect bare repo
-		ok, err := isGitDir(path)
-		if err != nil {
-			return "", err
-		}
-		if ok {
-			return path, nil
-		}
-
-		if parent := filepath.Dir(path); parent == path {
-			return "", fmt.Errorf(".git not found")
-		} else {
-			path = parent
-		}
-	}
-}
-
-func isGitDir(path string) (bool, error) {
-	markers := []string{"HEAD", "objects", "refs"}
-
-	for _, marker := range markers {
-		_, err := os.Stat(filepath.Join(path, marker))
-		if err == nil {
-			continue
-		}
-		if !os.IsNotExist(err) {
-			// unknown error
-			return false, err
-		} else {
-			return false, nil
+			if len(subps) > 0 {
+				ps = append(ps, subps...)
+			}
 		}
 	}
 
-	return true, nil
+	return ps, nil
 }

@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"strings"
 )
 
 // MarkdownCodify returns a markdown code string
@@ -32,20 +31,4 @@ func FilterEmptyStrings(s []string) []string {
 		}
 	}
 	return r
-}
-
-// given a absolute path (example: /runner/folder/root/data/effx.yaml)
-// and given a workingDir (example: root)
-// it will return data/effx.yaml
-func ParseRelativePathFromAbsolutePath(absoluteDir, workingDir string) string {
-	// if working directory does not end with a slash, add it
-	if strings.LastIndex(workingDir, "/") != len(workingDir)-1 {
-		workingDir += "/"
-	}
-
-	res := strings.Split(absoluteDir, workingDir)
-	if len(res) > 1 {
-		return res[1]
-	}
-	return ""
 }

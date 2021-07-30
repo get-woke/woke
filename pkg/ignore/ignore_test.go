@@ -1,64 +1,60 @@
 package ignore
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 func init() {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 }
 
-func TestIgnore_Match(t *testing.T) {
+type IgnoreTestSuite struct {
+	suite.Suite
+}
+
+func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
+	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "b/c/d"))
+	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "a/b/c/d"))
+	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "c"))
+	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "b/c"))
+	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir("a/b/c/d", "a"))
+	suite.Equal([]string{"c", "d"}, getDomainFromWorkingDir("a/b/c/d", "b/"))
+}
+
+func (suite *IgnoreTestSuite) TestIgnore_Match() {
 	i := NewIgnore([]string{"my/files/*"}, false)
-	assert.NotNil(t, i)
+	suite.NotNil(i)
 
 	// Test if rules with backslashes match on windows
-	assert.False(t, i.Match("not/foo", false))
-	assert.True(t, i.Match("my/files/file1", false))
-	assert.False(t, i.Match("my/files", false))
+	suite.False(i.Match("not/foo", false))
+	suite.True(i.Match("my/files/file1", false))
+	suite.False(i.Match("my/files", false))
 
-	assert.False(t, i.Match(filepath.Join("not", "foo"), false))
-	assert.True(t, i.Match(filepath.Join("my", "files", "file1"), false))
-	assert.False(t, i.Match(filepath.Join("my", "files"), false))
+	suite.False(i.Match(filepath.Join("not", "foo"), false))
+	suite.True(i.Match(filepath.Join("my", "files", "file1"), false))
+	suite.False(i.Match(filepath.Join("my", "files"), false))
 }
 
 // Test all default ignore files, except for .git/info/exclude, since
 // that uses a .git directory that we cannot check in.
-func TestIgnoreDefaultIgoreFiles_Match(t *testing.T) {
-	// Temporarily change into testdata directojry for this test
-	// since paths are relative
-	err := os.Chdir("testdata")
-	assert.NoError(t, err)
-	t.Cleanup(func() {
-		err = os.Chdir("..")
-		assert.NoError(t, err)
-	})
-
+func (suite *IgnoreTestSuite) TestIgnoreDefaultIgoreFiles_Match() {
 	i := NewIgnore([]string{"*.FROMARGUMENT"}, false)
-	assert.NotNil(t, i)
+	suite.NotNil(i)
 
-	assert.False(t, i.Match("notfoo", false))
-	assert.True(t, i.Match("test.FROMARGUMENT", false)) // From .gitignore
-	assert.True(t, i.Match("test.DS_Store", false))     // From .gitignore
-	assert.True(t, i.Match("test.IGNORE", false))       // From .ignore
-	assert.True(t, i.Match("test.WOKEIGNORE", false))   // From .wokeignore
-	assert.False(t, i.Match("test.NOTIGNORED", false))  // From .notincluded - making sure only default are included
+	suite.False(i.Match(filepath.Join("testdata", "notfoo"), false))
+	suite.True(i.Match(filepath.Join("testdata", "test.FROMARGUMENT"), false)) // From .gitignore
+	suite.True(i.Match(filepath.Join("testdata", "test.DS_Store"), false))     // From .gitignore
+	suite.True(i.Match(filepath.Join("testdata", "test.IGNORE"), false))       // From .ignore
+	suite.True(i.Match(filepath.Join("testdata", "test.WOKEIGNORE"), false))   // From .wokeignore
+	suite.False(i.Match(filepath.Join("testdata", "test.NOTIGNORED"), false))  // From .notincluded - making sure only default are included
 }
 
-func TestReadIgnoreFile(t *testing.T) {
-	rootFs := osfs.New(".")
-	ignoreFilePath := []string{"testdata"}
-	ignoreLines, _ := readIgnoreFile(rootFs, ignoreFilePath, ".gitignore")
-	patterns := []gitignore.Pattern{gitignore.ParsePattern("*.DS_Store", []string{"testdata"})}
-	assert.Equal(t, patterns, ignoreLines)
-
-	noIgnoreLines, _ := readIgnoreFile(rootFs, []string{}, ".gitignore")
-	assert.Equal(t, []gitignore.Pattern{}, noIgnoreLines)
+// In order for 'go test' to run this suite, we need to create
+// a normal test function and pass our suite to suite.Run
+func TestIgnoreTestSuite(t *testing.T) {
+	suite.Run(t, new(IgnoreTestSuite))
 }
