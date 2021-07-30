@@ -31,7 +31,6 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 		{"this string has rule-2 and rule1 included", [][]int{{27, 32}}, [][]int{{27, 32}}},
 		{"this string does not have any findings", [][]int(nil), [][]int(nil)},
 		{"this string has finding with word boundary rule1rule-1", [][]int{{43, 48}, {48, 54}}, [][]int(nil)},
-		{"this string has finding with word boundary Rule1rule-1", [][]int{{43, 48}, {48, 54}}, [][]int(nil)},
 	}
 	for _, test := range tests {
 		r := testRule()
@@ -126,33 +125,33 @@ func TestRule_regexString(t *testing.T) {
 		{
 			desc:     "default",
 			rule:     testRule(),
-			expected: `(?i)(%s)`,
+			expected: `(%s)`,
 		},
 		{
 			desc:     "word boundary",
 			rule:     testRuleWithOptions(Options{WordBoundary: true}),
-			expected: `(?i)\b(%s)\b`,
+			expected: `\b(%s)\b`,
 		},
 		{
 			desc:     "word boundary start",
 			rule:     testRuleWithOptions(Options{WordBoundaryStart: true}),
-			expected: `(?i)\b(%s)`,
+			expected: `\b(%s)`,
 		},
 		{
 			desc:     "word boundary end",
 			rule:     testRuleWithOptions(Options{WordBoundaryEnd: true}),
-			expected: `(?i)(%s)\b`,
+			expected: `(%s)\b`,
 		},
 		{
 			desc:     "word boundary start and end",
 			rule:     testRuleWithOptions(Options{WordBoundaryStart: true, WordBoundaryEnd: true}),
-			expected: `(?i)\b(%s)\b`,
+			expected: `\b(%s)\b`,
 		},
 		{
 			// To show that enabling WordBoundary will win over other options
 			desc:     "word boundary and word boundary start/end false",
 			rule:     testRuleWithOptions(Options{WordBoundary: true, WordBoundaryStart: false, WordBoundaryEnd: false}),
-			expected: `(?i)\b(%s)\b`,
+			expected: `\b(%s)\b`,
 		},
 	}
 	for _, tt := range tests {
@@ -162,7 +161,7 @@ func TestRule_regexString(t *testing.T) {
 	}
 }
 
-func Test_maskInlineIgnore(t *testing.T) {
+func Test_removeInlineIgnore(t *testing.T) {
 	tests := []struct {
 		desc     string
 		line     string
@@ -171,7 +170,7 @@ func Test_maskInlineIgnore(t *testing.T) {
 		{
 			desc:     "replace wokeignore:rule",
 			line:     "wokeignore:rule=master-slave",
-			expected: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+			expected: "����������������������������",
 		},
 		{
 			desc:     "not replace wokeignore:rule",
@@ -181,7 +180,7 @@ func Test_maskInlineIgnore(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			assert.Equal(t, tt.expected, maskInlineIgnore(tt.line))
+			assert.Equal(t, tt.expected, removeInlineIgnore(tt.line))
 		})
 	}
 }

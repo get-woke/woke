@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/get-woke/woke/pkg/util"
 )
@@ -33,7 +34,7 @@ func (r *Rule) FindMatchIndexes(text string) [][]int {
 	r.SetRegexp()
 
 	// Remove inline ignores from text to avoid matching against other rules
-	matches := r.re.FindAllStringSubmatchIndex(maskInlineIgnore(text), -1)
+	matches := r.re.FindAllStringSubmatchIndex(removeInlineIgnore(text), -1)
 	if matches == nil {
 		return [][]int(nil)
 	}
@@ -88,7 +89,6 @@ func (r *Rule) setRegex() {
 func (r *Rule) regexString() string {
 	regex := func(start, end string) string {
 		s := strings.Builder{}
-		s.WriteString("(?i)")
 		s.WriteString(start)
 		s.WriteString("(%s)")
 		s.WriteString(end)
@@ -182,10 +182,10 @@ func escape(ss []string) []string {
 	return ss
 }
 
-// maskInlineIgnore removes the entire match of the ignoreRuleRegex from the line
-// and replaces it with the null terminator (\x00) character so the rule matcher won't
-// attempt to find findings within the inline ignore
-func maskInlineIgnore(line string) string {
+// removeInlineIgnore removes the entire match of the ignoreRuleRegex from the line
+// and replaces it with the unicode replacement character so the rule matcher won't
+// attempt to find findings within
+func removeInlineIgnore(line string) string {
 	inlineIgnoreMatch := ignoreRuleRegex.FindStringIndex(line)
 	if inlineIgnoreMatch == nil || len(inlineIgnoreMatch) < 2 {
 		return line
@@ -197,8 +197,7 @@ func maskInlineIgnore(line string) string {
 	end := inlineIgnoreMatch[1]
 
 	for i := start; i < end; i++ {
-		// use null terminator to indicate a masked character
-		lineWithoutIgnoreRule[i] = rune(0)
+		lineWithoutIgnoreRule[i] = unicode.ReplacementChar
 	}
 
 	return string(lineWithoutIgnoreRule)
