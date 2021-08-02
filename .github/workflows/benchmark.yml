@@ -1,0 +1,55 @@
+name: Benchmark Regression
+on:
+  pull_request:
+    paths:
+      - "**.go"
+      - .github/workflows/benchmark.yml
+jobs:
+  docs:
+    name: benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Install cob
+        run: curl -sfL https://raw.githubusercontent.com/knqyf263/cob/master/install.sh | sudo sh -s -- -b /usr/local/bin
+
+      # POC -- should not be blocking yet until benchmarks are stable and can be used to block PRs
+      - name: Run Benchmark
+        id: cob
+        run: |
+          out=$(mktemp -q)
+          (
+            # set -o pipefail # uncommit to enable failing checks for making benchmarks worse
+            cob --base origin/main | tee $out
+          )
+          echo "::set-output name=result::$(cat $out)"
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v1
+        id: comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: <!-- cob-output -->
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ steps.comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <!-- cob-output -->
+            ### Benchmark comparison from [`cob`](https://github.com/knqyf263/cob)
+
+            ```
+            ${{ steps.cob.outputs.result }}
+            ```
+          edit-mode: replace
