@@ -1,0 +1,34 @@
+exclude_categories:
+  - cat1
+  - cat2
+
+rules:
+  - name: rule1
+    terms:
+      - rule1
+    alternatives:
+      - alt-rule1
+    severity: warning
+    options:
+      categories:
+        - cat1
+
+  - name: rule2
+    terms:
+      - rule2
+      - rule-2
+    alternatives:
+      - alt-rule2
+      - alt-rule-2
+    options:
+      categories:
+        - cat1
+        - cat2
+
+  - name: rule3
+    terms:
+      - rule3
+      - rule-3
+    alternatives:
+      - alt-rule3
+      - alt-rule-3

@@ -66,6 +66,7 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 // ConfigureRules adds the config Rules to DefaultRules
 // Configure RegExps for all rules
 // Configure IncludeNote for all rules
+// Filter out any rules that fall under ExcludedCategories
 func (c *Config) ConfigureRules() {
 	for _, r := range rule.DefaultRules {
 		if !c.inExistingRules(r) {
@@ -78,8 +79,8 @@ func (c *Config) ConfigureRules() {
 
 RuleLoop:
 	for i, r := range c.Rules {
-		// If any of a rule's categories are in ExcludedCategories, remove the rule
 		for _, ex := range c.ExcludeCategories {
+			// append and continue to next rule if category match found
 			if r.ContainsCategory(ex) {
 				excludedIndices = append(excludedIndices, i)
 				continue RuleLoop
@@ -94,13 +95,15 @@ RuleLoop:
 	if len(c.ExcludeCategories) > 0 {
 		log.Debug().Strs("categories", c.ExcludeCategories).Msg("excluding categories")
 	}
-	for _, exIdx := range excludedIndices {
-		log.Debug().Strs("categories", c.Rules[exIdx].Options.Categories).Msg(fmt.Sprintf("rule \"%s\" excluded with categories", c.Rules[exIdx].Name))
-		c.RemoveRule(exIdx)
+	for i, exIdx := range excludedIndices {
+		// every time a rule is removed, index of rules that come after it must be reduced by one
+		adjustedIdx := exIdx - i
+		log.Debug().Strs("categories", c.Rules[adjustedIdx].Options.Categories).Msg(fmt.Sprintf("rule \"%s\" excluded with categories", c.Rules[adjustedIdx].Name))
+		c.RemoveRule(adjustedIdx)
 	}
 }
 
-// Remove a rule at index i while maintaining order
+// Remove rule at index i in c.Rules while maintaining order
 func (c *Config) RemoveRule(i int) {
 	if i >= len(c.Rules) || i < 0 {
 		return
