@@ -15,6 +15,7 @@ func TestCreatePrinter(t *testing.T) {
 		{OutFormatText, &Text{}},
 		{OutFormatGitHubActions, &GitHubActions{}},
 		{OutFormatJSON, &JSON{}},
+		{OutFormatSonarQube, &SonarQube{}},
 	}
 
 	for _, test := range tests {

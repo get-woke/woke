@@ -27,6 +27,10 @@ const (
 
 	// OutFormatJSON outputs in json
 	OutFormatJSON = "json"
+
+	// OutFormatSonarQube is an output format supported by SonarQube
+	// https://docs.sonarqube.org/latest/analysis/generic-issue/
+	OutFormatSonarQube = "sonar-qube"
 )
 
 // OutFormats are all the available output formats. The first one should be the default
@@ -35,6 +39,7 @@ var OutFormats = []string{
 	OutFormatSimple,
 	OutFormatGitHubActions,
 	OutFormatJSON,
+	OutFormatSonarQube,
 }
 
 // OutFormatsString is all OutFormats, as a comma-separated string
@@ -52,6 +57,8 @@ func NewPrinter(f string) (Printer, error) {
 		p = NewGitHubActions()
 	case OutFormatJSON:
 		p = NewJSON()
+	case OutFormatSonarQube:
+		p = NewSonarQube()
 	default:
 		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}
