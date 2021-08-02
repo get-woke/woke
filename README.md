@@ -308,6 +308,7 @@ whitelist # wokeignore:rule=whitelist
 whitelist
 
 # a couple of examples doing the same for multiple rules
+# rule names must be comma-separated with no spaces
 whitelist and blacklist # wokeignore:rule=whitelist,blacklist
 
 # wokeignore:rule=whitelist,blacklist
