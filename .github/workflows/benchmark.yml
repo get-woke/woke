@@ -54,9 +54,10 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             <!-- cob-output -->
-            ### Benchmark comparison from [`cob`](https://github.com/knqyf263/cob)
+            ### Benchmark comparison to `origin/main`
 
-            ```
-            ${{ steps.cob.outputs.result }}
+            _This is currently only informational_
+
+            ```${{ steps.cob.outputs.result }}
             ```
           edit-mode: replace
