@@ -175,6 +175,20 @@ func (r *Rule) CanIgnoreLine(line string) bool {
 	return false
 }
 
+// IsDirectiveOnlyLine returns a boolean value if the line contains only the wokeignore directive.
+// For example, if a line is only a single-line comment containing wokeignore:rule=xyz with no other
+// alphanumeric characters to the left of the directive, it will return true that it is a directive-only line.
+// Any text to the right of the wokeignore directive will not be considered by woke for findings.
+func IsDirectiveOnlyLine(line string) bool {
+	indices := ignoreRuleRegex.FindStringIndex(line)
+	if indices == nil {
+		return false
+	}
+	// in a one-line comment, left-text should be all that is considered to be "outside" of the ignore directive
+	leftText := line[0:indices[0]]
+	return !util.ContainsAlphanumeric(leftText)
+}
+
 func escape(ss []string) []string {
 	for i, s := range ss {
 		ss[i] = regexp.QuoteMeta(s)
