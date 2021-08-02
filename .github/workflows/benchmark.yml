@@ -31,7 +31,8 @@ jobs:
             cob --base origin/main | tee $out
           )
           # https://github.community/t/set-output-truncates-multiline-strings/16852/3
-          result="$(cat $out)"
+          # also remove colors, which don't translate in the github comment
+          result="$(cat $out | sed -e 's/\x1B\[1;91m/-/g' -e 's/\x1B\[0m\s//g' -e 's/\x1B\[1;34m/\+/g')"
           result="${result//'%'/'%25'}"
           result="${result//$'\n'/'%0A'}"
           result="${result//$'\r'/'%0D'}"
