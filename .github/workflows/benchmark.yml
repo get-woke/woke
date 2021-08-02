@@ -28,7 +28,7 @@ jobs:
           out=$(mktemp -q)
           (
             # set -o pipefail # uncommit to enable failing checks for making benchmarks worse
-            cob --base origin/main | tee $out
+            cob --base origin/main 2>&1 | tee $out
           )
           # https://github.community/t/set-output-truncates-multiline-strings/16852/3
           # also remove colors, which don't translate in the github comment
@@ -58,6 +58,7 @@ jobs:
 
             _This is currently only informational_
 
-            ```${{ steps.cob.outputs.result }}
+            ```
+            ${{ steps.cob.outputs.result }}
             ```
           edit-mode: replace
