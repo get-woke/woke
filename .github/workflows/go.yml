@@ -3,7 +3,13 @@ name: Go tests
 on:
   push:
     branches: [ main ]
+    paths:
+      - "**.go"
+      - .github/workflows/go.yml
   pull_request:
+    paths:
+      - "**.go"
+      - .github/workflows/go.yml
 
 jobs:
   test:
