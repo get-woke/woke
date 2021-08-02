@@ -30,7 +30,12 @@ jobs:
             # set -o pipefail # uncommit to enable failing checks for making benchmarks worse
             cob --base origin/main | tee $out
           )
-          echo "::set-output name=result::$(cat $out)"
+          # https://github.community/t/set-output-truncates-multiline-strings/16852/3
+          result="$(cat $out)"
+          result="${result//'%'/'%25'}"
+          result="${result//$'\n'/'%0A'}"
+          result="${result//$'\r'/'%0D'}"
+          echo "::set-output name=result::$result"
 
       - name: Find Comment
         uses: peter-evans/find-comment@v1
