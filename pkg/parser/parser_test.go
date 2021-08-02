@@ -268,21 +268,15 @@ func writeToStdin(t *testing.T, text string, f func()) error {
 
 func BenchmarkParsePaths(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
-	// TODO: Use b.TempDir() instead of os.TempDir()
-	// Fix in go 1.16: https://github.com/golang/go/issues/41062
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "")
+	tmpFile, err := ioutil.TempFile(b.TempDir(), "")
 	assert.NoError(b, err)
 
-	// Remember to clean up the file afterwards
-	// TODO: Can be removed once b.TempDir() is used above, since the testing package
-	// cleans up directories for us
-	defer os.Remove(tmpFile.Name())
-
-	for i := 0; i < b.N; i++ {
+	for i := 0; i < 100; i++ {
 		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n")
 	}
 	tmpFile.Close()
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		p := testParser()
 		pr := new(testPrinter)
