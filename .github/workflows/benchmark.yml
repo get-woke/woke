@@ -47,7 +47,7 @@ jobs:
 
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v1
-        if: ${{ steps.cob.outputs.result != "" }}
+        if: ${{ steps.cob.outputs.result != '' }}
         with:
           comment-id: ${{ steps.comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
