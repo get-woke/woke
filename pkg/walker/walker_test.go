@@ -38,6 +38,35 @@ func TestWalker_Walk(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func BenchmarkWalker_Walk(b *testing.B) {
+	dir := b.TempDir()
+	assert.DirExists(b, dir)
+
+	for i := 0; i < 10; i++ {
+		var newDir string
+		if i%2 == 0 {
+			newDir = filepath.Join(dir, strconv.Itoa(i))
+		} else {
+			newDir = filepath.Join(dir, ".git")
+		}
+		assert.NoError(b, os.MkdirAll(newDir, 0777))
+
+		filename := filepath.Join(newDir, ".foo")
+		file, err := os.Create(filename)
+		assert.NoError(b, err)
+		assert.NoError(b, file.Close())
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := Walk(dir, func(p string, typ os.FileMode) error {
+			assert.False(b, isDotGit(p), "path should not be returned in walk: %s", p)
+			return nil
+		})
+		assert.NoError(b, err)
+	}
+}
+
 func TestInSlice(t *testing.T) {
 	tests := []struct {
 		path      string
