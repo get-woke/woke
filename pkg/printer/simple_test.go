@@ -39,10 +39,10 @@ func TestSimple_positionString(t *testing.T) {
 }
 
 func TestSimple_Print(t *testing.T) {
-	p := NewSimple()
-	res := generateFileResult()
 	buf := new(bytes.Buffer)
-	assert.NoError(t, p.Print(buf, res))
+	p := NewSimple(buf)
+	res := generateFileResult()
+	assert.NoError(t, p.Print(res))
 	got := buf.String()
 	expected := fmt.Sprintf("foo.txt:1:6: [warning] %s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)

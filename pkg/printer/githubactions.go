@@ -9,19 +9,27 @@ import (
 )
 
 // GitHubActions is a GitHubActions printer meant for use by a GitHub Action annotation
-type GitHubActions struct{}
+type GitHubActions struct{ writer io.Writer }
 
 // NewGitHubActions returns a new GitHubActions printer
-func NewGitHubActions() *GitHubActions {
-	return &GitHubActions{}
+func NewGitHubActions(w io.Writer) *GitHubActions {
+	return &GitHubActions{writer: w}
 }
 
 // Print prints in the format for GitHub actions
 // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
-func (p *GitHubActions) Print(w io.Writer, fs *result.FileResults) error {
+func (p *GitHubActions) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Fprintln(w, formatResultForGitHubAction(r))
+		fmt.Fprintln(p.writer, formatResultForGitHubAction(r))
 	}
+	return nil
+}
+
+func (p *GitHubActions) Start() error {
+	return nil
+}
+
+func (p *GitHubActions) End() error {
 	return nil
 }
 

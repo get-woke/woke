@@ -40,10 +40,10 @@ func TestTranslateSeverityForAction(t *testing.T) {
 }
 
 func TestGitHubActions_Print(t *testing.T) {
-	p := NewGitHubActions()
-	res := generateFileResult()
 	buf := new(bytes.Buffer)
-	assert.NoError(t, p.Print(buf, res))
+	p := NewGitHubActions(buf)
+	res := generateFileResult()
+	assert.NoError(t, p.Print(res))
 	got := buf.String()
 	expected := fmt.Sprintf("::warning file=foo.txt,line=1,col=6::%s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)

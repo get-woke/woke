@@ -11,18 +11,20 @@ import (
 
 // Text is a text printer meant for humans to read
 type Text struct {
+	writer       io.Writer
 	disableColor bool
 }
 
 // NewText returns a text Printer with color optionally disabled
-func NewText(disableColor bool) *Text {
+func NewText(w io.Writer, disableColor bool) *Text {
 	return &Text{
+		writer:       w,
 		disableColor: disableColor,
 	}
 }
 
 // Print prints the file results
-func (t *Text) Print(w io.Writer, fs *result.FileResults) error {
+func (t *Text) Print(fs *result.FileResults) error {
 	if t.disableColor {
 		color.NoColor = true
 	}
@@ -35,7 +37,7 @@ func (t *Text) Print(w io.Writer, fs *result.FileResults) error {
 
 		sev := r.GetSeverity()
 
-		fmt.Fprintf(w, "%s:%s: %s (%s)\n",
+		fmt.Fprintf(t.writer, "%s:%s: %s (%s)\n",
 			color.New(color.Bold, color.FgHiCyan).Sprint(fs.Filename),
 			color.New(color.Bold).Sprint(pos),
 			color.New(color.FgHiMagenta).Sprint(r.Reason()),
@@ -44,11 +46,19 @@ func (t *Text) Print(w io.Writer, fs *result.FileResults) error {
 		// If the line empty, skip showing the source code
 		// This could happen if the line is too long to be worth showing
 		if len(r.GetLine()) > 0 {
-			fmt.Fprintln(w, r.GetLine())
-			fmt.Fprintln(w, t.arrowUnderLine(r))
+			fmt.Fprintln(t.writer, r.GetLine())
+			fmt.Fprintln(t.writer, t.arrowUnderLine(r))
 		}
 	}
 
+	return nil
+}
+
+func (t *Text) Start() error {
+	return nil
+}
+
+func (t *Text) End() error {
 	return nil
 }
 

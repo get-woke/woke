@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/get-woke/woke/pkg/ignore"
-	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/printer"
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
@@ -43,11 +42,15 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 
 // ParsePaths parses all files provided and returns the number of files with findings
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
+
+	print.Start()
+	defer print.End()
+
 	// data provided through stdin
 	if util.InSlice(os.Stdin.Name(), paths) {
 		r, _ := p.generateFileFindings(os.Stdin)
 		if r.Len() > 0 {
-			print.Print(output.Stdout, r)
+			print.Print(r)
 		}
 		return r.Len()
 	}
@@ -76,7 +79,7 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	findings := 0
 	for r := range p.rchan {
 		sort.Sort(r)
-		print.Print(output.Stdout, &r)
+		print.Print(&r)
 		findings++
 	}
 	return findings
