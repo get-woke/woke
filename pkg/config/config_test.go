@@ -162,7 +162,7 @@ func Test_LoadConfig(t *testing.T) {
 		c, err := loadConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.NoError(t, err)
 		assert.NotNil(t, c)
-		//delete downloaded file after successful test
+		// delete downloaded file after successful test
 		os.Remove("downloadedRules.yaml")
 	})
 
@@ -186,14 +186,13 @@ func Test_isValidURL(t *testing.T) {
 		boolResponse := isValidURL("/Users/Document/test.yaml")
 		assert.False(t, boolResponse)
 	})
-
 }
 
 func Test_DownloadFile(t *testing.T) {
 	t.Run("valid-url", func(t *testing.T) {
 		err := DownloadFile("DownloadedFile.yaml", "https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.NoError(t, err)
-		//delete downloaded file after successful test
+		// delete downloaded file after successful test
 		os.Remove("DownloadedFile.yaml")
 	})
 
@@ -201,7 +200,6 @@ func Test_DownloadFile(t *testing.T) {
 		err := DownloadFile("DownloadedFile.yaml", "https://raw.githubusercontent.com/get-woke/woke/main/example")
 		assert.Error(t, err)
 	})
-
 }
 
 func Test_relative(t *testing.T) {
