@@ -206,3 +206,32 @@ func TestRule_ContainsCategory(t *testing.T) {
 	assert.True(t, r.ContainsCategory(testCategories[1]))
 	assert.False(t, r.ContainsCategory(testCategories[2]))
 }
+
+func Test_IsDirectiveOnlyLine(t *testing.T) {
+	tests := []struct {
+		name      string
+		line      string
+		assertion assert.BoolAssertionFunc
+	}{
+		{"text and no wokeignore", "some text", assert.False},
+		{"text, then wokeignore", "some text #wokeignore:rule=rule1", assert.False},
+		{"text, then invalid wokeignore", "some text #wokeignore:rule", assert.False},
+		{"text, then multiple rules in wokeignore", "some text #wokeignore:rule=rule1,rule2", assert.False},
+		{"text, then text after ignore", "some text #wokeignore:rule=rule1 something else", assert.False},
+		{"text, then multiple ignores", "some text #wokeignore:rule=rule1 wokeignore:rule=rule2", assert.False},
+		{"empty line", "", assert.False},
+		{"only wokeignore", "#wokeignore:rule=rule1", assert.True},
+		// any text to the right of wokeignore when line starts with wokeignore will not be considered by woke for findings
+		{"wokeignore, then text", "#wokeignore:rule=rule1 something else", assert.True},
+		{"non-alphanumeric text before and after wokeignore", "<!-- wokeignore:rule=rule1 -->", assert.True},
+		{"spaces before wokeignore", "     #wokeignore:rule=rule1", assert.True},
+		{"tabs before wokeignore", "\t\t\t#wokeignore:rule=rule1", assert.True},
+		{"tabs and spaces before wokeignore", " \t \t \t #wokeignore:rule=rule1", assert.True},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.assertion(t, IsDirectiveOnlyLine(tt.line))
+		})
+	}
+}

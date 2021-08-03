@@ -1,6 +1,8 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // MarkdownCodify returns a markdown code string
 // https://www.markdownguide.org/basic-syntax/#code
@@ -15,6 +17,22 @@ func InSlice(s string, slice []string) bool {
 	}
 	for _, el := range slice {
 		if el == s {
+			return true
+		}
+	}
+	return false
+}
+
+// ContainsAlphanumeric returns true if alphanumeric chars are found in the string
+func ContainsAlphanumeric(s string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		char := s[i]
+		if ('a' <= char && char <= 'z') ||
+			('A' <= char && char <= 'Z') ||
+			('0' <= char && char <= '9') {
 			return true
 		}
 	}
