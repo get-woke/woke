@@ -173,17 +173,17 @@ func Test_LoadConfig(t *testing.T) {
 
 func Test_isValidURL(t *testing.T) {
 	t.Run("valid-url", func(t *testing.T) {
-		boolResponse := isValidUrl("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		boolResponse := isValidURL("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.True(t, boolResponse)
 	})
 
 	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidUrl("Users/Document/test.yaml")
+		boolResponse := isValidURL("Users/Document/test.yaml")
 		assert.False(t, boolResponse)
 	})
 
 	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidUrl("/Users/Document/test.yaml")
+		boolResponse := isValidURL("/Users/Document/test.yaml")
 		assert.False(t, boolResponse)
 	})
 
