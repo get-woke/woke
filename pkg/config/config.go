@@ -84,7 +84,7 @@ func (c *Config) ConfigureRules() {
 }
 
 func loadConfig(filename string) (c Config, err error) {
-	if isValidUrl(filename) {
+	if isValidURL(filename) {
 		// if fileName is a valid URL, we will download and set it to the config
 		log.Debug().Str("url", filename).Msg("Downloading file from")
 		//hardcoding this file and saving to root directory
@@ -107,7 +107,7 @@ func loadConfig(filename string) (c Config, err error) {
 }
 
 // isValidUrl tests a string to determine if it is a valid URL or not
-func isValidUrl(toTest string) bool {
+func isValidURL(toTest string) bool {
 	_, err := url.ParseRequestURI(toTest)
 	if err != nil {
 		return false
