@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/get-woke/woke/pkg/rule"
 
@@ -87,7 +88,7 @@ func loadConfig(filename string) (c Config, err error) {
 	if isValidURL(filename) {
 		// if fileName is a valid URL, we will download and set it to the config
 		log.Debug().Str("url", filename).Msg("Downloading file from")
-		//hardcoding this file and saving to root directory
+		// hardcoding this file and saving to root directory
 		downloadedFile := "downloadedRules.yaml"
 		err := DownloadFile(downloadedFile, filename)
 		if err != nil {
@@ -121,10 +122,15 @@ func isValidURL(toTest string) bool {
 	return true
 }
 
-//downloads file from url to set filepath
+// downloads file from url to set filepath
 func DownloadFile(filepath string, url string) error {
-	// Get the data
-	resp, err := http.Get(url)
+	// Removing gosec lint warning - as we have to pass in user specified url for remote config
+	// nolint:gosec
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := netClient.Get(url)
+	//resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
