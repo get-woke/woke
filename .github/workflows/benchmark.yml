@@ -51,7 +51,7 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: <!-- cob-output -->
 
-      - name: Create or update comment if cob failed
+      - name: Create or update comment if benchmark failed
         uses: peter-evans/create-or-update-comment@v1
         if: steps.cob.outputs.exit_code != '0'
         with:
@@ -61,14 +61,16 @@ jobs:
             <!-- cob-output -->
             ### Benchmark comparison to `origin/main`
 
-            _This is currently only informational, but your PR may have a negative performance impact_
+            _This is currently only informational_
+
+            **This PR may have a negative performance impact**
 
             ```
             ${{ steps.cob.outputs.result }}
             ```
           edit-mode: replace
 
-      - name: Update comment if cob succeeded
+      - name: Update comment if benchmark succeeded
         uses: peter-evans/create-or-update-comment@v1
         if: steps.comment.outputs.comment-id != '' && steps.cob.outputs.exit_code == '0'
         with:
@@ -78,7 +80,9 @@ jobs:
             <!-- cob-output -->
             ### Benchmark comparison to `origin/main`
 
-            _This is currently only informational, your PR previously reported a negative performance impact that appears to have been resolved_
+            _This is currently only informational_
+
+            **This PR previously reported a negative performance impact that appears to have been resolved**
 
             ```
             ${{ steps.cob.outputs.result }}
