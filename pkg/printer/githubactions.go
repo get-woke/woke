@@ -16,6 +16,10 @@ func NewGitHubActions(w io.Writer) *GitHubActions {
 	return &GitHubActions{writer: w}
 }
 
+func (p *GitHubActions) ShouldSkipExitMessage() bool {
+	return false
+}
+
 // Print prints in the format for GitHub actions
 // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
 func (p *GitHubActions) Print(fs *result.FileResults) error {

@@ -20,6 +20,10 @@ func NewJSON(w io.Writer) *JSON {
 	return &JSON{writer: w, newList: true}
 }
 
+func (p *JSON) ShouldSkipExitMessage() bool {
+	return true
+}
+
 func (p *JSON) Start() error {
 	fmt.Fprint(p.writer, `{"findings": [`)
 	return nil

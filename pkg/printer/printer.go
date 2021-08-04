@@ -16,6 +16,7 @@ type Printer interface {
 	Start() error
 	Print(*result.FileResults) error
 	End() error
+	ShouldSkipExitMessage() bool
 }
 
 const (

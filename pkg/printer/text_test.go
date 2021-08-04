@@ -21,6 +21,28 @@ func TestText_Print(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
+func TestText_Start(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewText(buf, true)
+	assert.NoError(t, p.Start())
+	got := buf.String()
+	assert.Equal(t, ``, got)
+}
+
+func TestText_End(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewText(buf, true)
+	assert.NoError(t, p.End())
+	got := buf.String()
+	assert.Equal(t, ``, got)
+}
+
+func TestText_ShouldSkipExitMessage(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewText(buf, true)
+	assert.Equal(t, false, p.ShouldSkipExitMessage())
+}
+
 func TestText_arrowUnderLine(t *testing.T) {
 	p := NewText(io.Discard, true)
 

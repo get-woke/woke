@@ -40,6 +40,10 @@ func NewSonarQube(w io.Writer) *SonarQube {
 	return &SonarQube{writer: w, newList: true}
 }
 
+func (p *SonarQube) ShouldSkipExitMessage() bool {
+	return true
+}
+
 // Print prints in FileResults as json
 // NOTE: The JSON printer will bring each line result as a JSON string.
 // It will not be presented as an array of FileResults. You will neeed to

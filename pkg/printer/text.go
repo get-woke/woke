@@ -23,6 +23,10 @@ func NewText(w io.Writer, disableColor bool) *Text {
 	}
 }
 
+func (t *Text) ShouldSkipExitMessage() bool {
+	return false
+}
+
 // Print prints the file results
 func (t *Text) Print(fs *result.FileResults) error {
 	if t.disableColor {

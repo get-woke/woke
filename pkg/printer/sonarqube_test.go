@@ -18,6 +18,12 @@ func TestSonarQube_Print(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
+func TestSonarQube_ShouldSkipExitMessage(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSonarQube(buf)
+	assert.Equal(t, true, p.ShouldSkipExitMessage())
+}
+
 func TestSonarQube_Start(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSonarQube(buf)

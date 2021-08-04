@@ -33,6 +33,10 @@ func (p *testPrinter) End() error {
 	return nil
 }
 
+func (p *testPrinter) ShouldSkipExitMessage() bool {
+	return false
+}
+
 func testParser() *Parser {
 	r := rule.TestRule
 	return NewParser([]*rule.Rule{&r}, ignore.NewIgnore([]string{}))

@@ -16,6 +16,10 @@ func NewSimple(w io.Writer) *Simple {
 	return &Simple{writer: w}
 }
 
+func (p *Simple) ShouldSkipExitMessage() bool {
+	return false
+}
+
 // Print prints in the format 'filename:line:column: message'
 // based on golint's output: https://github.com/golang/lint/blob/738671d3881b9731cc63024d5d88cf28db875626/golint/golint.go#L121
 func (p *Simple) Print(fs *result.FileResults) error {

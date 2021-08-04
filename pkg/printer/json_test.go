@@ -18,6 +18,12 @@ func TestJSON_Print(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
+func TestJSON_ShouldSkipExitMessage(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewJSON(buf)
+	assert.Equal(t, true, p.ShouldSkipExitMessage())
+}
+
 func TestJSON_Start(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewJSON(buf)
