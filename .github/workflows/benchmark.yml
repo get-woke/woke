@@ -29,11 +29,13 @@ jobs:
         continue-on-error: true
         run: |
           out=$(mktemp -q)
+
+          REF="origin/$GITHUB_BASE_REF"
           set -o pipefail # causes exit code from cob to bubble up from tee
-          cob --base "$GITHUB_BASE_REF" 2>&1 | tee $out
+          cob --base "$REF" 2>&1 | tee $out
           EXIT_CODE=$?
 
-          base_commit="$(git rev-parse $GITHUB_BASE_REF)"
+          base_commit="$(git rev-parse $REF)"
 
           # https://github.community/t/set-output-truncates-multiline-strings/16852/3
           # also remove colors, which don't translate in the github comment
