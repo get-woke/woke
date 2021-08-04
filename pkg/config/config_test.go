@@ -186,6 +186,16 @@ func Test_isValidURL(t *testing.T) {
 		boolResponse := isValidURL("/Users/Document/test.yaml")
 		assert.False(t, boolResponse)
 	})
+
+	t.Run("invalid-url", func(t *testing.T) {
+		boolResponse := isValidURL("C:User\testpath\test.yaml")
+		assert.False(t, boolResponse)
+	})
+
+	t.Run("invalid-url", func(t *testing.T) {
+		boolResponse := isValidURL("C:\\directory.com\test.yaml")
+		assert.False(t, boolResponse)
+	})
 }
 
 func Test_DownloadFile(t *testing.T) {
