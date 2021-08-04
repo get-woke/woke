@@ -12,6 +12,17 @@ var TestRule = Rule{
 	},
 }
 
+var TestErrorRule = Rule{
+	Name:         "slave",           // wokeignore:rule=slave
+	Terms:        []string{"slave"}, // wokeignore:rule=slave
+	Alternatives: []string{"follower"},
+	Severity:     0,
+	Options: Options{
+		WordBoundary: false,
+	},
+}
+
 func init() {
 	TestRule.SetRegexp()
+	TestErrorRule.SetRegexp()
 }

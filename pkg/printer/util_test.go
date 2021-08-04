@@ -17,8 +17,8 @@ func generateResults(filename string) []result.Result {
 	return []result.Result{
 		result.LineResult{
 			Rule:    &rule.TestRule,
-			Finding: "whitelist",
-			Line:    "this whitelist must change",
+			Finding: "whitelist",                  // wokeignore:rule=whitelist
+			Line:    "this whitelist must change", // wokeignore:rule=whitelist
 			StartPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,
@@ -44,9 +44,9 @@ func generateSecondFileResult() *result.FileResults {
 func generateSecondResults(filename string) []result.Result {
 	return []result.Result{
 		result.LineResult{
-			Rule:    &rule.TestRule,
-			Finding: "blacklist",
-			Line:    "this blacklist must change",
+			Rule:    &rule.TestErrorRule,
+			Finding: "slave",                       // wokeignore:rule=slave
+			Line:    "this slave term must change", // wokeignore:rule=slave
 			StartPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,

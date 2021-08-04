@@ -33,7 +33,7 @@ const (
 
 	// OutFormatSonarQube is an output format supported by SonarQube
 	// https://docs.sonarqube.org/latest/analysis/generic-issue/
-	OutFormatSonarQube = "sonar-qube"
+	OutFormatSonarQube = "sonarqube"
 )
 
 // OutFormats are all the available output formats. The first one should be the default

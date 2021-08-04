@@ -44,6 +44,17 @@ func (p *SonarQube) ShouldSkipExitMessage() bool {
 	return true
 }
 
+func calculateSonarSeverity(severity string) string {
+	// Translate the severity to sonarqube terms
+	var sonarSeverity = `MAJOR`
+	if severity == `warning` {
+		sonarSeverity = `MINOR`
+	} else if severity == `info` {
+		sonarSeverity = `INFO`
+	}
+	return sonarSeverity
+}
+
 // Print prints in FileResults as json
 // NOTE: The JSON printer will bring each line result as a JSON string.
 // It will not be presented as an array of FileResults. You will neeed to
@@ -51,24 +62,18 @@ func (p *SonarQube) ShouldSkipExitMessage() bool {
 func (p *SonarQube) Print(fs *result.FileResults) error {
 	var issue Issue
 
-	if p.newList == true {
+	if p.newList {
 		p.newList = false
 	} else {
 		fmt.Fprint(p.writer, `,`) // add comma between issues
 	}
 
 	for i, res := range fs.Results {
-
 		if i != 0 {
 			fmt.Fprint(p.writer, `,`) // add comma between issues in list
 		}
-		// Translate the severity to sonarqube terms
-		var sev = `CRITICAL`
-		if res.GetSeverity().String() == `warning` {
-			sev = `MAJOR`
-		} else if res.GetSeverity().String() == `info` {
-			sev = `INFO`
-		}
+
+		var sev = calculateSonarSeverity(res.GetSeverity().String())
 
 		issue = Issue{
 			EngineID: `woke`,

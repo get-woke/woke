@@ -14,7 +14,7 @@ func TestSonarQube_Print(t *testing.T) {
 	assert.NoError(t, p.Print(res))
 	got := buf.String()
 
-	expected := `{"engineId":"woke","ruleId":"whitelist","primaryLocation":{"message":"` + "`" + `whitelist` + "`" + ` may be insensitive, use ` + "`" + `allowlist` + "`" + ` instead","filePath":"foo.txt","textRange":{"startLine":1,"startColumn":6,"endColumn":15}},"type":"CODE_SMELL","severity":"MAJOR"}` + "\n"
+	expected := `{"engineId":"woke","ruleId":"whitelist","primaryLocation":{"message":"` + "`" + `whitelist` + "`" + ` may be insensitive, use ` + "`" + `allowlist` + "`" + ` instead","filePath":"foo.txt","textRange":{"startLine":1,"startColumn":6,"endColumn":15}},"type":"CODE_SMELL","severity":"MINOR"}` + "\n"
 	assert.Equal(t, expected, got)
 }
 
@@ -55,6 +55,6 @@ func TestSonarQube_Multiple(t *testing.T) {
 	assert.NoError(t, p.End())
 	got := buf.String()
 
-	expected := "{\"issues\":[{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`whitelist` may be insensitive, use `allowlist` instead\",\"filePath\":\"foo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`blacklist` may be insensitive, use `allowlist` instead\",\"filePath\":\"bar.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n]}\n"
+	expected := "{\"issues\":[{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`whitelist` may be insensitive, use `allowlist` instead\",\"filePath\":\"foo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MINOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"slave\",\"primaryLocation\":{\"message\":\"`slave` may be insensitive, use `follower` instead\",\"filePath\":\"bar.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n]}\n"
 	assert.Equal(t, expected, got)
 }

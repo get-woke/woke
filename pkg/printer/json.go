@@ -40,7 +40,7 @@ func (p *JSON) End() error {
 // Split by new line to parse the full output
 func (p *JSON) Print(fs *result.FileResults) error {
 	var buf bytes.Buffer
-	if p.newList == true {
+	if p.newList {
 		p.newList = false
 	} else {
 		fmt.Fprintf(p.writer, `,`) // Add comma between issues

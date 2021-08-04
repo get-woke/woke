@@ -42,7 +42,6 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 
 // ParsePaths parses all files provided and returns the number of files with findings
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
-
 	print.Start()
 	defer print.End()
 
