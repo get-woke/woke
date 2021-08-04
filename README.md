@@ -220,6 +220,7 @@ rules:
     #   word_boundary_start: false
     #   word_boundary_end: false
     #   include_note: false
+    #   categories: nil
 ```
 
 A set of default rules is provided in [`pkg/rule/default.yaml`](https://github.com/get-woke/woke/blob/main/pkg/rule/default.yaml).
@@ -235,7 +236,7 @@ Current options include:
 - `word_boundary` (default: `false`)
   - If `true`, terms will trigger findings when they are surrounded by ASCII word boundaries.
   - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
-  - **NOTE** setting this to true will always win out over `word_boundary_start` and `word_boundary_end`
+  - **NOTE** setting this to true will always win out over `word_boundary_start` and `word_boundary_end`.
 - `word_boundary_start` (default: `false`)
   - If `true`, terms will trigger findings when they begin with an ASCII word boundaries.
   - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it begins with an ASCII word boundary.
@@ -243,9 +244,12 @@ Current options include:
   - If `true`, terms will trigger findings when they end with an ASCII word boundaries.
   - If `false`, will trigger findings if the term if found anywhere in the line, regardless if it ends with an ASCII word boundary.
 - `include_note` (default: `not set`)
-  - If `true`, the rule note will be included in the output message explaining why this finding is not inclusive
-  - If `false`, the rule note will not be included in the output message
+  - If `true`, the rule note will be included in the output message explaining why this finding is not inclusive.
+  - If `false`, the rule note will not be included in the output message.
   - If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`).
+- `categories` (default: `not set`)
+  - A list of any number of string category names to associate with the rule.
+  - These can be used as logical groupings for actions such as excluding certain categories of rules for example.
 
 #### Disabling Default Rules
 
@@ -256,6 +260,46 @@ This will disable the default `whitelist` rule:
 ```yaml
 rules:
   - name: whitelist
+```
+
+#### Excluding Categories of Rules
+
+You can also specify any number of rule categories to be excluded, or filtered out, from within your `woke` configuration. If any rules in a configuration file have matching categories, they will be excluded and will not be run against the target files.
+
+This example will exclude `rule1` and `rule2`, but will still use `rule3`:
+
+```yaml
+exclude_categories:
+  - category1
+
+rules:
+  - name: rule1
+    terms:
+      - rule1
+    alternatives:
+      - alt-rule1
+    severity: warning
+    options:
+      categories:
+        - category1
+
+  - name: rule2
+    terms:
+      - rule2
+    alternatives:
+      - alt-rule2
+    severity: warning
+    options:
+      categories:
+        - category1
+        - category2
+
+  - name: rule3
+    terms:
+      - rule3
+    alternatives:
+      - alt-rule3
+    severity: warning
 ```
 
 ### Ignoring
