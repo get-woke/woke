@@ -37,3 +37,18 @@ func TestSonarQube_End(t *testing.T) {
 	expected := `]}` + "\n"
 	assert.Equal(t, expected, got)
 }
+
+func TestSonarQube_Multiple(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSonarQube(buf)
+	assert.NoError(t, p.Start())
+	res := generateFileResult()
+	assert.NoError(t, p.Print(res))
+	res = generateSecondFileResult()
+	assert.NoError(t, p.Print(res))
+	assert.NoError(t, p.End())
+	got := buf.String()
+
+	expected := "{\"issues\":[{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`whitelist` may be insensitive, use `allowlist` instead\",\"filePath\":\"foo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`blacklist` may be insensitive, use `allowlist` instead\",\"filePath\":\"bar.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n]}\n"
+	assert.Equal(t, expected, got)
+}

@@ -35,6 +35,34 @@ func generateResults(filename string) []result.Result {
 	}
 }
 
+func generateSecondFileResult() *result.FileResults {
+	r := result.FileResults{Filename: "bar.txt"}
+	r.Results = generateSecondResults(r.Filename)
+	return &r
+}
+
+func generateSecondResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
+			Rule:    &rule.TestRule,
+			Finding: "blacklist",
+			Line:    "this blacklist must change",
+			StartPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   6,
+			},
+			EndPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   15,
+			},
+		},
+	}
+}
+
 func newPosition(f string, l, c int) *token.Position {
 	return &token.Position{
 		Filename: f,
