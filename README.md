@@ -203,6 +203,8 @@ This file will be picked up automatically up your customizations without needing
 See [example.yaml](https://github.com/get-woke/woke/blob/main/example.yaml) for an example of adding custom rules.
 You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
 
+You can also supply an external remote ruleset from any public URL. To do so, use the same -c flag, followed by the public URL. For example: '-c https://raw.githubusercontent.com/get-woke/woke/main/example.yaml'
+
 The syntax for rules is very basic. You just need a name, a list of terms to match that violate the rule,
 and a list of alternative suggestions.
 
