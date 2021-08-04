@@ -99,7 +99,6 @@ func loadConfig(filename string) (c Config, err error) {
 		log.Debug().Str("filename", filename).Msg("Saved remote config to local file.")
 	}
 
-	// TO DO = Need to add more error handling on reading/validating yamlFile file - issue # 16
 	yamlFile, err := ioutil.ReadFile(filename)
 	log.Debug().Str("filename", filename).Msg("Adding custom ruleset from")
 	if err != nil {
