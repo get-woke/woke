@@ -27,11 +27,16 @@ jobs:
         # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
         shell: bash {0}
         continue-on-error: true
+        env:
+          BASE_BRANCH: "origin/main"
         run: |
+          printenv
           out=$(mktemp -q)
           set -o pipefail # causes exit code from cob to bubble up from tee
-          cob --base origin/main 2>&1 | tee $out
+          cob --base "${BASE_BRANCH}" 2>&1 | tee $out
           EXIT_CODE=$?
+
+          base_commit="$(git rev-parse $BASE_BRANCH)"
 
           # https://github.community/t/set-output-truncates-multiline-strings/16852/3
           # also remove colors, which don't translate in the github comment
@@ -41,6 +46,7 @@ jobs:
           result="${result//$'\r'/'%0D'}"
           echo "::set-output name=result::$result"
           echo "::set-output name=exit_code::$EXIT_CODE"
+          echo "::set-output name=base_commit::$base_commit"
           exit $EXIT_CODE
 
       - name: Find Comment
@@ -61,6 +67,8 @@ jobs:
             <!-- cob-output -->
             ### Benchmark comparison to `origin/main`
 
+            * Comparison commit: ${{ steps.cob.outputs.base_commit }}
+
             _This is currently only informational_
 
             **This PR may have a negative performance impact**
@@ -79,6 +87,8 @@ jobs:
           body: |
             <!-- cob-output -->
             ### Benchmark comparison to `origin/main`
+
+            * Comparison commit: ${{ steps.cob.outputs.base_commit }}
 
             _This is currently only informational_
 
