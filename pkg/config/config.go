@@ -125,7 +125,6 @@ func isValidURL(toTest string) bool {
 
 // downloads file from url to set filepath
 func DownloadFile(filepath string, url string) error {
-	// Removing gosec lint warning - as we have to pass in user specified url for remote config
 	var client = &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -135,7 +134,6 @@ func DownloadFile(filepath string, url string) error {
 	if err != nil {
 		return err
 	}
-
 	// only parse response body if it is in the response is in the 2xx range
 	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
 		log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
@@ -147,13 +145,12 @@ func DownloadFile(filepath string, url string) error {
 			return err
 		}
 		defer out.Close()
-
-		log.Debug().Int("here", resp.StatusCode).Msg("help")
 		// Write the body to file
 		_, err = io.Copy(out, resp.Body)
 		return err
 	} else {
-		return fmt.Errorf("unable to download remote config from url - http response code: %v", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		return fmt.Errorf("unable to download remote config from url. Response code: %v. Response body: %c", resp.StatusCode, body)
 	}
 }
 
