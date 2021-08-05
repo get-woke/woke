@@ -92,18 +92,19 @@ func (p *SonarQube) Print(fs *result.FileResults) error {
 		if err != nil {
 			return err // bubble up errors instead of continuing
 		}
-		fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
+		_, err = fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (p *SonarQube) Start() error {
+func (p *SonarQube) Start() {
 	fmt.Fprint(p.writer, `{"issues":[`)
-	return nil
 }
 
-func (p *SonarQube) End() error {
+func (p *SonarQube) End() {
 	fmt.Fprint(p.writer, `]}`+"\n")
-	return nil
 }

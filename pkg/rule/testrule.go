@@ -22,7 +22,18 @@ var TestErrorRule = Rule{
 	},
 }
 
+var TestInfoRule = Rule{
+	Name:         "test",           // wokeignore:rule=slave
+	Terms:        []string{"test"}, // wokeignore:rule=slave
+	Alternatives: []string{"alternative"},
+	Severity:     2,
+	Options: Options{
+		WordBoundary: false,
+	},
+}
+
 func init() {
 	TestRule.SetRegexp()
 	TestErrorRule.SetRegexp()
+	TestInfoRule.SetRegexp()
 }

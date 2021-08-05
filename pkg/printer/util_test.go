@@ -63,6 +63,34 @@ func generateSecondResults(filename string) []result.Result {
 	}
 }
 
+func generateThirdFileResult() *result.FileResults {
+	r := result.FileResults{Filename: "barfoo.txt"}
+	r.Results = generateThirdResults(r.Filename)
+	return &r
+}
+
+func generateThirdResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
+			Rule:    &rule.TestInfoRule,
+			Finding: "test",
+			Line:    "this test must change",
+			StartPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   6,
+			},
+			EndPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   15,
+			},
+		},
+	}
+}
+
 func newPosition(f string, l, c int) *token.Position {
 	return &token.Position{
 		Filename: f,

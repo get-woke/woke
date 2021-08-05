@@ -27,7 +27,7 @@ func TestSonarQube_ShouldSkipExitMessage(t *testing.T) {
 func TestSonarQube_Start(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSonarQube(buf)
-	assert.NoError(t, p.Start())
+	p.Start()
 	got := buf.String()
 
 	expected := `{"issues":[`
@@ -37,7 +37,7 @@ func TestSonarQube_Start(t *testing.T) {
 func TestSonarQube_End(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSonarQube(buf)
-	assert.NoError(t, p.End())
+	p.End()
 	got := buf.String()
 
 	expected := `]}` + "\n"
@@ -47,14 +47,16 @@ func TestSonarQube_End(t *testing.T) {
 func TestSonarQube_Multiple(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSonarQube(buf)
-	assert.NoError(t, p.Start())
+	p.Start()
 	res := generateFileResult()
 	assert.NoError(t, p.Print(res))
 	res = generateSecondFileResult()
 	assert.NoError(t, p.Print(res))
-	assert.NoError(t, p.End())
+	res = generateThirdFileResult()
+	assert.NoError(t, p.Print(res))
+	p.End()
 	got := buf.String()
 
-	expected := "{\"issues\":[{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`whitelist` may be insensitive, use `allowlist` instead\",\"filePath\":\"foo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MINOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"slave\",\"primaryLocation\":{\"message\":\"`slave` may be insensitive, use `follower` instead\",\"filePath\":\"bar.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n]}\n"
+	expected := "{\"issues\":[{\"engineId\":\"woke\",\"ruleId\":\"whitelist\",\"primaryLocation\":{\"message\":\"`whitelist` may be insensitive, use `allowlist` instead\",\"filePath\":\"foo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MINOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"slave\",\"primaryLocation\":{\"message\":\"`slave` may be insensitive, use `follower` instead\",\"filePath\":\"bar.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"MAJOR\"}\n,{\"engineId\":\"woke\",\"ruleId\":\"test\",\"primaryLocation\":{\"message\":\"`test` may be insensitive, use `alternative` instead\",\"filePath\":\"barfoo.txt\",\"textRange\":{\"startLine\":1,\"startColumn\":6,\"endColumn\":15}},\"type\":\"CODE_SMELL\",\"severity\":\"INFO\"}\n]}\n"
 	assert.Equal(t, expected, got)
 }

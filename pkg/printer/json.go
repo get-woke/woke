@@ -11,27 +11,30 @@ import (
 
 // JSON is a JSON printer meant for a machine to read
 type JSON struct {
-	writer  io.Writer
-	newList bool
+	writer     io.Writer
+	newList    bool
+	isTrueJSON bool
 }
 
 // NewJSON returns a new JSON printer
-func NewJSON(w io.Writer) *JSON {
-	return &JSON{writer: w, newList: true}
+func NewJSON(w io.Writer, isTrueJSON bool) *JSON {
+	return &JSON{writer: w, newList: true, isTrueJSON: isTrueJSON}
 }
 
 func (p *JSON) ShouldSkipExitMessage() bool {
-	return true
+	return p.isTrueJSON
 }
 
-func (p *JSON) Start() error {
-	fmt.Fprint(p.writer, `{"findings": [`)
-	return nil
+func (p *JSON) Start() {
+	if p.isTrueJSON {
+		fmt.Fprint(p.writer, `{"findings": [`)
+	}
 }
 
-func (p *JSON) End() error {
-	fmt.Fprint(p.writer, `]}`+"\n")
-	return nil
+func (p *JSON) End() {
+	if p.isTrueJSON {
+		fmt.Fprint(p.writer, `]}`+"\n")
+	}
 }
 
 // Print prints in FileResults as json
@@ -42,10 +45,16 @@ func (p *JSON) Print(fs *result.FileResults) error {
 	var buf bytes.Buffer
 	if p.newList {
 		p.newList = false
-	} else {
-		fmt.Fprintf(p.writer, `,`) // Add comma between issues
+	} else if p.isTrueJSON {
+		_, err := fmt.Fprint(p.writer, `,`) // Add comma between issues
+		if err != nil {
+			return err
+		}
 	}
 	err := json.NewEncoder(&buf).Encode(fs)
-	fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
 	return err
 }

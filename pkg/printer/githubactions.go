@@ -24,17 +24,18 @@ func (p *GitHubActions) ShouldSkipExitMessage() bool {
 // https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
 func (p *GitHubActions) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		fmt.Fprintln(p.writer, formatResultForGitHubAction(r))
+		_, err := fmt.Fprintln(p.writer, formatResultForGitHubAction(r))
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (p *GitHubActions) Start() error {
-	return nil
+func (p *GitHubActions) Start() {
 }
 
-func (p *GitHubActions) End() error {
-	return nil
+func (p *GitHubActions) End() {
 }
 
 func formatResultForGitHubAction(r result.Result) string {

@@ -57,7 +57,7 @@ func TestSimple_Print(t *testing.T) {
 func TestSimple_Start(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSimple(buf)
-	assert.NoError(t, p.Start())
+	p.Start()
 	got := buf.String()
 	assert.Equal(t, ``, got)
 }
@@ -65,7 +65,7 @@ func TestSimple_Start(t *testing.T) {
 func TestSimple_End(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSimple(buf)
-	assert.NoError(t, p.End())
+	p.End()
 	got := buf.String()
 	assert.Equal(t, ``, got)
 }

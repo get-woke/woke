@@ -58,7 +58,7 @@ func TestGitHubActions_Print(t *testing.T) {
 func TestGitHubActions_Start(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewGitHubActions(buf)
-	assert.NoError(t, p.Start())
+	p.Start()
 	got := buf.String()
 	assert.Equal(t, ``, got)
 }
@@ -66,7 +66,7 @@ func TestGitHubActions_Start(t *testing.T) {
 func TestGitHubActions_End(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewGitHubActions(buf)
-	assert.NoError(t, p.End())
+	p.End()
 	got := buf.String()
 	assert.Equal(t, ``, got)
 }

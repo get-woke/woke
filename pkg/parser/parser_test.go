@@ -25,12 +25,10 @@ func (p *testPrinter) Print(r *result.FileResults) error {
 	return nil
 }
 
-func (p *testPrinter) Start() error {
-	return nil
+func (p *testPrinter) Start() {
 }
 
-func (p *testPrinter) End() error {
-	return nil
+func (p *testPrinter) End() {
 }
 
 func (p *testPrinter) ShouldSkipExitMessage() bool {
