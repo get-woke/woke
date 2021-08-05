@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/get-woke/woke/pkg/result"
+	"github.com/get-woke/woke/pkg/rule"
 )
 
 // SonarQube is a JSON printer meant for import into SonarQube
@@ -44,12 +45,12 @@ func (p *SonarQube) ShouldSkipExitMessage() bool {
 	return true
 }
 
-func calculateSonarSeverity(severity string) string {
+func calculateSonarSeverity(s rule.Severity) string {
 	// Translate the severity to sonarqube terms
 	var sonarSeverity = `MAJOR`
-	if severity == `warning` {
+	if s == rule.SevWarn {
 		sonarSeverity = `MINOR`
-	} else if severity == `info` {
+	} else if s == rule.SevInfo {
 		sonarSeverity = `INFO`
 	}
 	return sonarSeverity
@@ -73,12 +74,10 @@ func (p *SonarQube) Print(fs *result.FileResults) error {
 			fmt.Fprint(p.writer, `,`) // add comma between issues in list
 		}
 
-		var sev = calculateSonarSeverity(res.GetSeverity().String())
-
 		issue = Issue{
 			EngineID: `woke`,
 			Type:     `CODE_SMELL`,
-			Severity: sev,
+			Severity: calculateSonarSeverity(res.GetSeverity()),
 			RuleID:   res.GetRuleName(),
 			PrimaryLocation: Location{
 				Message:  res.Reason(),

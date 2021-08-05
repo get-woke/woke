@@ -24,13 +24,10 @@ func (p *Simple) ShouldSkipExitMessage() bool {
 // based on golint's output: https://github.com/golang/lint/blob/738671d3881b9731cc63024d5d88cf28db875626/golint/golint.go#L121
 func (p *Simple) Print(fs *result.FileResults) error {
 	for _, r := range fs.Results {
-		_, err := fmt.Fprintf(p.writer, "%v: [%s] %s\n",
+		fmt.Fprintf(p.writer, "%v: [%s] %s\n",
 			positionString(r.GetStartPosition()),
 			r.GetSeverity(),
 			r.Reason())
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

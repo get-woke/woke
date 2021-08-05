@@ -33,7 +33,6 @@ func (t *Text) Print(fs *result.FileResults) error {
 		color.NoColor = true
 	}
 
-	var err error
 	for _, r := range fs.Results {
 		pos := fmt.Sprintf("%d:%d-%d",
 			r.GetStartPosition().Line,
@@ -42,27 +41,17 @@ func (t *Text) Print(fs *result.FileResults) error {
 
 		sev := r.GetSeverity()
 
-		_, err = fmt.Fprintf(t.writer, "%s:%s: %s (%s)\n",
+		fmt.Fprintf(t.writer, "%s:%s: %s (%s)\n",
 			color.New(color.Bold, color.FgHiCyan).Sprint(fs.Filename),
 			color.New(color.Bold).Sprint(pos),
 			color.New(color.FgHiMagenta).Sprint(r.Reason()),
 			sev.Colorize())
 
-		if err != nil {
-			return err
-		}
-
 		// If the line empty, skip showing the source code
 		// This could happen if the line is too long to be worth showing
 		if len(r.GetLine()) > 0 {
-			_, err = fmt.Fprintln(t.writer, r.GetLine())
-			if err != nil {
-				return err
-			}
-			_, err = fmt.Fprintln(t.writer, t.arrowUnderLine(r))
-			if err != nil {
-				return err
-			}
+			fmt.Fprintln(t.writer, r.GetLine())
+			fmt.Fprintln(t.writer, t.arrowUnderLine(r))
 		}
 	}
 

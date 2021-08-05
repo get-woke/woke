@@ -4,8 +4,16 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/get-woke/woke/pkg/rule"
+
 	"github.com/stretchr/testify/assert"
 )
+
+func TestCalculateSonarSeverity(t *testing.T) {
+	assert.Equal(t, "MAJOR", calculateSonarSeverity(rule.SevError))
+	assert.Equal(t, "MINOR", calculateSonarSeverity(rule.SevWarn))
+	assert.Equal(t, "INFO", calculateSonarSeverity(rule.SevInfo))
+}
 
 func TestSonarQube_Print(t *testing.T) {
 	buf := new(bytes.Buffer)

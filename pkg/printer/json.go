@@ -46,15 +46,9 @@ func (p *JSON) Print(fs *result.FileResults) error {
 	if p.newList {
 		p.newList = false
 	} else if p.isTrueJSON {
-		_, err := fmt.Fprint(p.writer, `,`) // Add comma between issues
-		if err != nil {
-			return err
-		}
+		fmt.Fprint(p.writer, `,`) // Add comma between issues
 	}
 	err := json.NewEncoder(&buf).Encode(fs)
-	if err != nil {
-		return err
-	}
-	_, err = fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
+	fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
 	return err
 }
