@@ -51,6 +51,8 @@ func NewConfig(filename string) (*Config, error) {
 	return &c, nil
 }
 
+// GetSuccessExitMessage returns the message to be shows on a successful exit as
+// defined in the config, or a default message.
 func (c *Config) GetSuccessExitMessage() string {
 	if c.SuccessExitMessage == nil {
 		return "No findings found."

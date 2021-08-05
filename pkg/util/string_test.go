@@ -29,3 +29,24 @@ func TestInSlice(t *testing.T) {
 		})
 	}
 }
+
+func TestContainsAlphanumeric(t *testing.T) {
+	tests := []struct {
+		s         string
+		assertion assert.BoolAssertionFunc
+	}{
+		{"foo", assert.True},
+		{"bar123", assert.True},
+		{"", assert.False},
+		{" ", assert.False},
+		{"123", assert.True},
+		{"<-- -->", assert.False},
+		{"#", assert.False},
+		{"      //", assert.False},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("%s-%d", tt.s, i), func(t *testing.T) {
+			tt.assertion(t, ContainsAlphanumeric(tt.s))
+		})
+	}
+}
