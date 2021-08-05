@@ -91,10 +91,7 @@ func (p *SonarQube) Print(fs *result.FileResults) error {
 		if err != nil {
 			return err // bubble up errors instead of continuing
 		}
-		_, err = fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
-		if err != nil {
-			return err
-		}
+		fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
 	}
 
 	return nil
