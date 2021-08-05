@@ -3,3 +3,4 @@ pkg/rule/default.yaml
 example.yaml
 README.md
 testdata
+downloadedRules.yaml
