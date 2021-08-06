@@ -153,7 +153,7 @@ Flags:
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
       --no-ignore           Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed
-  -o, --output string       Output type [text,simple,github-actions,json,json-list,sonarqube] (default "text")
+  -o, --output string       Output type [text,simple,github-actions,json,sonarqube] (default "text")
       --stdin               Read from stdin
   -v, --version             version for woke
 ```
@@ -196,7 +196,7 @@ This option may not be used at the same time as [File Globs](#file-globs)
 
 ### Output
 
-Options for output include text (default), simple, json, json-list, github-actions, or sonarqube format. The following fields are supported, depending on format:
+Options for output include text (default), simple, json, github-actions, or sonarqube format. The following fields are supported, depending on format:
 
 | Field        | Description                                       |
 | ------------ | ------------                                      |
@@ -248,19 +248,13 @@ Structure:
 
 #### json
 
-Outputs the results as a [json](https://www.json.org/json-en.html) formatted structure. This output type includes every field available in woke.
+Outputs the results as a series of [json](https://www.json.org/json-en.html) formatted structures, one per line. In order to parse as a JSON document, each line must be processed separately. This output type includes every field available in woke.
 
 Structure:
 
 ```
-{"findings": [{"Filename":"<filepath>","Results":[{"Rule":{"Name":"<rulename>","Terms":["<termname>",...],"Alternatives":["<alternative>",...],"Note":"<note>","Severity":"<severity>","Options":{"WordBoundary":<optionbool>,"WordBoundaryStart":<optionbool>,"WordBoundaryEnd":<optionbool>,"IncludeNote":<optionbool>}},"Finding":"<termname>","Line":"<linecontents>","StartPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<startcol>},"EndPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<endcol>},"Reason":"<description>"}]}
-]}
+{"Filename":"<filepath>","Results":[{"Rule":{"Name":"<rulename>","Terms":["<termname>",...],"Alternatives":["<alternative>",...],"Note":"<note>","Severity":"<severity>","Options":{"WordBoundary":<optionbool>,"WordBoundaryStart":<optionbool>,"WordBoundaryEnd":<optionbool>,"IncludeNote":<optionbool>}},"Finding":"<termname>","Line":"<linecontents>","StartPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<startcol>},"EndPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<endcol>},"Reason":"<description>"}]}
 ```
-
-
-#### json-list
-
-The output of json-list is the same as json above, except that each finding is presented on a separate line independently, so the overall file may not be valid json. Originally "json" format.
 
 #### sonarqube
 

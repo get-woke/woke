@@ -16,7 +16,6 @@ func TestCreatePrinter(t *testing.T) {
 		{OutFormatText, &Text{}},
 		{OutFormatGitHubActions, &GitHubActions{}},
 		{OutFormatJSON, &JSON{}},
-		{OutFormatJSONList, &JSON{}},
 		{OutFormatSonarQube, &SonarQube{}},
 	}
 

@@ -31,9 +31,6 @@ const (
 	// OutFormatJSON outputs in json
 	OutFormatJSON = "json"
 
-	// OutFormatJSON outputs in json
-	OutFormatJSONList = "json-list"
-
 	// OutFormatSonarQube is an output format supported by SonarQube
 	// https://docs.sonarqube.org/latest/analysis/generic-issue/
 	OutFormatSonarQube = "sonarqube"
@@ -45,7 +42,6 @@ var OutFormats = []string{
 	OutFormatSimple,
 	OutFormatGitHubActions,
 	OutFormatJSON,
-	OutFormatJSONList,
 	OutFormatSonarQube,
 }
 
@@ -63,9 +59,7 @@ func NewPrinter(f string, w io.Writer) (Printer, error) {
 	case OutFormatGitHubActions:
 		p = NewGitHubActions(w)
 	case OutFormatJSON:
-		p = NewJSON(w, true) // output true JSON format
-	case OutFormatJSONList:
-		p = NewJSON(w, false) // legacy JSON list format
+		p = NewJSON(w)
 	case OutFormatSonarQube:
 		p = NewSonarQube(w)
 	default:
