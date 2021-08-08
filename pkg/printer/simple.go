@@ -9,7 +9,9 @@ import (
 )
 
 // Simple is a simple printer meant for a machine to read
-type Simple struct{ writer io.Writer }
+type Simple struct {
+	writer io.Writer
+}
 
 // NewSimple returns a new simple printer
 func NewSimple(w io.Writer) *Simple {

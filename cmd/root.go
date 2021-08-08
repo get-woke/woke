@@ -112,7 +112,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if findings == 0 {
-		if !(print.ShouldSkipExitMessage()) && cfg.GetSuccessExitMessage() != "" {
+		if print.PrintSuccessExitMessage() && cfg.GetSuccessExitMessage() != "" {
 			fmt.Fprintln(output.Stdout, cfg.GetSuccessExitMessage())
 		}
 	}

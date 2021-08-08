@@ -9,7 +9,9 @@ import (
 )
 
 // GitHubActions is a GitHubActions printer meant for use by a GitHub Action annotation
-type GitHubActions struct{ writer io.Writer }
+type GitHubActions struct {
+	writer io.Writer
+}
 
 // NewGitHubActions returns a new GitHubActions printer
 func NewGitHubActions(w io.Writer) *GitHubActions {
