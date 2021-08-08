@@ -47,19 +47,18 @@ func (p *SonarQube) PrintSuccessExitMessage() bool {
 
 func calculateSonarSeverity(s rule.Severity) string {
 	// Translate the severity to sonarqube terms
-	var sonarSeverity = `MAJOR`
 	if s == rule.SevWarn {
-		sonarSeverity = `MINOR`
+		return `MINOR`
 	} else if s == rule.SevInfo {
-		sonarSeverity = `INFO`
+		return `INFO`
 	}
-	return sonarSeverity
+	return `MAJOR`
 }
 
-// Print prints in FileResults as json
-// NOTE: The JSON printer will bring each line result as a JSON string.
-// It will not be presented as an array of FileResults. You will neeed to
-// Split by new line to parse the full output
+// Print outputs lines in FileResults as sonarqube json format.
+// NOTE: Start() must be called before printing results and End()
+// after printing is complete in order to form a valid JSON structure
+// for sonarqube to import.
 func (p *SonarQube) Print(fs *result.FileResults) error {
 	var issue Issue
 
