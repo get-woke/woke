@@ -19,8 +19,8 @@ func NewJSON(w io.Writer) *JSON {
 	return &JSON{writer: w}
 }
 
-func (p *JSON) ShouldSkipExitMessage() bool {
-	return false
+func (p *JSON) PrintSuccessExitMessage() bool {
+	return true
 }
 
 func (p *JSON) Start() {

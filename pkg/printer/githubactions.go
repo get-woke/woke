@@ -16,8 +16,8 @@ func NewGitHubActions(w io.Writer) *GitHubActions {
 	return &GitHubActions{writer: w}
 }
 
-func (p *GitHubActions) ShouldSkipExitMessage() bool {
-	return false
+func (p *GitHubActions) PrintSuccessExitMessage() bool {
+	return true
 }
 
 // Print prints in the format for GitHub actions

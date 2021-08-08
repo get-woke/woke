@@ -23,8 +23,8 @@ func NewText(w io.Writer, disableColor bool) *Text {
 	}
 }
 
-func (t *Text) ShouldSkipExitMessage() bool {
-	return false
+func (t *Text) PrintSuccessExitMessage() bool {
+	return true
 }
 
 // Print prints the file results

@@ -16,8 +16,8 @@ func NewSimple(w io.Writer) *Simple {
 	return &Simple{writer: w}
 }
 
-func (p *Simple) ShouldSkipExitMessage() bool {
-	return false
+func (p *Simple) PrintSuccessExitMessage() bool {
+	return true
 }
 
 // Print prints in the format 'filename:line:column: message'

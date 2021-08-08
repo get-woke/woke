@@ -31,8 +31,8 @@ func (p *testPrinter) Start() {
 func (p *testPrinter) End() {
 }
 
-func (p *testPrinter) ShouldSkipExitMessage() bool {
-	return false
+func (p *testPrinter) PrintSuccessExitMessage() bool {
+	return true
 }
 
 func testParser() *Parser {

@@ -38,10 +38,10 @@ func TestSimple_positionString(t *testing.T) {
 	}
 }
 
-func TestSimple_ShouldSkipExitMessage(t *testing.T) {
+func TestSimple_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSimple(buf)
-	assert.Equal(t, false, p.ShouldSkipExitMessage())
+	assert.Equal(t, true, p.PrintSuccessExitMessage())
 }
 
 func TestSimple_Print(t *testing.T) {

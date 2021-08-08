@@ -39,10 +39,10 @@ func TestTranslateSeverityForAction(t *testing.T) {
 	assert.Equal(t, translateSeverityForAction(rule.SevInfo), "warning")
 }
 
-func TestGitHubActions_ShouldSkipExitMessage(t *testing.T) {
+func TestGitHubActions_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewGitHubActions(buf)
-	assert.Equal(t, false, p.ShouldSkipExitMessage())
+	assert.Equal(t, true, p.PrintSuccessExitMessage())
 }
 
 func TestGitHubActions_Print(t *testing.T) {

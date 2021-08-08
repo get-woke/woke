@@ -37,10 +37,10 @@ func TestText_End(t *testing.T) {
 	assert.Equal(t, ``, got)
 }
 
-func TestText_ShouldSkipExitMessage(t *testing.T) {
+func TestText_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewText(buf, true)
-	assert.Equal(t, false, p.ShouldSkipExitMessage())
+	assert.Equal(t, true, p.PrintSuccessExitMessage())
 }
 
 func TestText_arrowUnderLine(t *testing.T) {

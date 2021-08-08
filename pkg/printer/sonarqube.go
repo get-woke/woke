@@ -41,8 +41,8 @@ func NewSonarQube(w io.Writer) *SonarQube {
 	return &SonarQube{writer: w, newList: true}
 }
 
-func (p *SonarQube) ShouldSkipExitMessage() bool {
-	return true
+func (p *SonarQube) PrintSuccessExitMessage() bool {
+	return false
 }
 
 func calculateSonarSeverity(s rule.Severity) string {
