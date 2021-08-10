@@ -8,6 +8,8 @@ import (
 
 	"github.com/get-woke/woke/pkg/result"
 	"github.com/get-woke/woke/pkg/rule"
+
+	"github.com/rs/zerolog/log"
 )
 
 // SonarQube is a JSON printer meant for import into SonarQube
@@ -62,17 +64,7 @@ func calculateSonarSeverity(s rule.Severity) string {
 func (p *SonarQube) Print(fs *result.FileResults) error {
 	var issue Issue
 
-	if p.newList {
-		p.newList = false
-	} else {
-		fmt.Fprint(p.writer, `,`) // add comma between issues
-	}
-
-	for i, res := range fs.Results {
-		if i != 0 {
-			fmt.Fprint(p.writer, `,`) // add comma between issues in list
-		}
-
+	for _, res := range fs.Results {
 		issue = Issue{
 			EngineID: `woke`,
 			Type:     `CODE_SMELL`,
@@ -85,11 +77,20 @@ func (p *SonarQube) Print(fs *result.FileResults) error {
 					StartLine:   res.GetStartPosition().Line,
 					StartColumn: res.GetStartPosition().Column,
 					EndColumn:   res.GetEndPosition().Column}}}
+
 		var buf bytes.Buffer
 		err := json.NewEncoder(&buf).Encode(issue)
 		if err != nil {
-			return err // bubble up errors instead of continuing
+			log.Error().Err(err).Msg("Error encoding issue")
+			continue
 		}
+
+		if !(p.newList) {
+			fmt.Fprint(p.writer, `,`) // add comma between issues in list
+		} else {
+			p.newList = false
+		}
+
 		fmt.Fprint(p.writer, buf.String()) // json Encoder already puts a new line in, so no need for Println here
 	}
 
