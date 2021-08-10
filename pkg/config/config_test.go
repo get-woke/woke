@@ -157,59 +157,16 @@ func TestNewConfig(t *testing.T) {
 	})
 }
 
-func Test_LoadConfig(t *testing.T) {
-	t.Run("valid-url", func(t *testing.T) {
-		c, err := loadConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+func Test_LoadRemoteConfig(t *testing.T) {
+	t.Run("load-config-valid-url", func(t *testing.T) {
+		c, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.NoError(t, err)
 		assert.NotNil(t, c)
-		// delete downloaded file after successful test
-		os.Remove("downloadedRules.yaml")
 	})
 
-	t.Run("invalid-url", func(t *testing.T) {})
-	_, err := loadConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+	t.Run("load-config-invalid-url", func(t *testing.T) {})
+	_, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
 	assert.Error(t, err)
-}
-
-func Test_isValidURL(t *testing.T) {
-	t.Run("valid-url", func(t *testing.T) {
-		boolResponse := isValidURL("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
-		assert.True(t, boolResponse)
-	})
-
-	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidURL("Users/Document/test.yaml")
-		assert.False(t, boolResponse)
-	})
-
-	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidURL("/Users/Document/test.yaml")
-		assert.False(t, boolResponse)
-	})
-
-	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidURL("C:User\testpath\test.yaml")
-		assert.False(t, boolResponse)
-	})
-
-	t.Run("invalid-url", func(t *testing.T) {
-		boolResponse := isValidURL("C:\\directory.com\test.yaml")
-		assert.False(t, boolResponse)
-	})
-}
-
-func Test_DownloadFile(t *testing.T) {
-	t.Run("valid-url", func(t *testing.T) {
-		err := DownloadFile("DownloadedFile.yaml", "https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
-		assert.NoError(t, err)
-		// delete downloaded file after successful test
-		os.Remove("DownloadedFile.yaml")
-	})
-
-	t.Run("invalid-url", func(t *testing.T) {
-		err := DownloadFile("DownloadedFile.yaml", "https://raw.githubusercontent.com/get-woke/woke/main/example")
-		assert.Error(t, err)
-	})
 }
 
 func Test_relative(t *testing.T) {

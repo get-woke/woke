@@ -1,15 +1,11 @@
 package config
 
 import (
-	"context"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/get-woke/woke/pkg/rule"
 
@@ -31,7 +27,13 @@ func NewConfig(filename string) (*Config, error) {
 	var c Config
 	if len(filename) > 0 {
 		var err error
-		c, err = loadConfig(filename)
+
+		if isValidURL(filename) {
+			c, err = loadRemoteConfig(filename)
+		} else {
+			c, err = loadConfig(filename)
+		}
+
 		if err != nil {
 			return nil, err
 		}
@@ -88,19 +90,6 @@ func (c *Config) ConfigureRules() {
 }
 
 func loadConfig(filename string) (c Config, err error) {
-	if isValidURL(filename) {
-		// if fileName is a valid URL, we will download and set it to the config
-		log.Debug().Str("url", filename).Msg("Downloading file from")
-		// hardcoding this file and saving to root directory
-		downloadedFile := "downloadedRules.yaml"
-		err := DownloadFile(downloadedFile, filename)
-		if err != nil {
-			return c, err
-		}
-		filename = downloadedFile
-		log.Debug().Str("filename", filename).Msg("Saved remote config to local file.")
-	}
-
 	yamlFile, err := ioutil.ReadFile(filename)
 	log.Debug().Str("filename", filename).Msg("Adding custom ruleset from")
 	if err != nil {
@@ -109,49 +98,26 @@ func loadConfig(filename string) (c Config, err error) {
 	return c, yaml.Unmarshal(yamlFile, &c)
 }
 
-// isValidUrl tests a string to determine if it is a valid URL or not
-func isValidURL(toTest string) bool {
-	_, err := url.ParseRequestURI(toTest)
-	if err != nil {
-		return false
-	}
-
-	u, err := url.Parse(toTest)
-	if err != nil || u.Scheme == "" || u.Host == "" {
-		return false
-	}
-	log.Debug().Str("remoteConfig", toTest).Msg("Valid URL for remote config.")
-	return true
-}
-
-// downloads file from url to set filepath
-func DownloadFile(filepath string, url string) error {
-	var client = &http.Client{
-		Timeout: time.Second * 10,
-	}
-	ctx := context.Background()
-	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+// gets the remote config from the url provided and returns config
+func loadRemoteConfig(url string) (c Config, err error) {
+	log.Debug().Str("url", url).Msg("Downloading file from")
+	client := &http.Client{}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return c, err
 	}
+	body, err := ioutil.ReadAll(resp.Body)
 	// only parse response body if it is in the response is in the 2xx range
 	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
 		log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
 		defer resp.Body.Close()
-
-		// Create the file
-		out, err := os.Create(filepath)
 		if err != nil {
-			return err
+			return c, err
 		}
-		defer out.Close()
-		// Write the body to file
-		_, err = io.Copy(out, resp.Body)
-		return err
+		return c, yaml.Unmarshal(body, &c)
 	} else {
-		body, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("unable to download remote config from url. Response code: %v. Response body: %c", resp.StatusCode, body)
+		return c, fmt.Errorf("unable to download remote config from url. Response code: %v. Response body: %c", resp.StatusCode, body)
 	}
 }
 
