@@ -23,8 +23,8 @@ var TestErrorRule = Rule{
 }
 
 var TestInfoRule = Rule{
-	Name:         "test",           // wokeignore:rule=slave
-	Terms:        []string{"test"}, // wokeignore:rule=slave
+	Name:         "test",
+	Terms:        []string{"test"},
 	Alternatives: []string{"alternative"},
 	Severity:     2,
 	Options: Options{
