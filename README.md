@@ -47,7 +47,8 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
   - [Docker](#docker)
 - [Usage](#usage)
   - [File globs](#file-globs)
-  - [stdin](#stdin)
+  - [STDIN](#stdin)
+  - [Output](#output)
   - [Rules](#rules)
     - [Options](#options)
     - [Disabling Default Rules](#disabling-default-rules)
@@ -152,7 +153,7 @@ Flags:
       --exit-1-on-failure   Exit with exit code 1 on failures
   -h, --help                help for woke
       --no-ignore           Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed
-  -o, --output string       Output type [text,simple,github-actions,json] (default "text")
+  -o, --output string       Output type [text,simple,github-actions,json,sonarqube] (default "text")
       --stdin               Read from stdin
   -v, --version             version for woke
 ```
@@ -180,9 +181,9 @@ test.txt:5:2-11: `blacklist` may be insensitive, use `denylist`, `blocklist` ins
   ^
 ```
 
-### stdin
+### STDIN
 
-You can also provide text to `woke` via stdin
+You can also provide text to `woke` via STDIN (Standard Input)
 
 ```bash
 $ echo "This has whitelist from stdin" | woke --stdin
@@ -190,6 +191,83 @@ $ echo "This has whitelist from stdin" | woke --stdin
 This has whitelist from stdin
          ^
 ```
+
+This option may not be used at the same time as [File Globs](#file-globs)
+
+### Output
+
+Options for output include text (default), simple, json, github-actions, or sonarqube format. The following fields are supported, depending on format:
+
+| Field        | Description                                       |
+| ------------ | ------------                                      |
+| filepath     | Relative path to file including filename          |
+| rulename     | Name of the rule from the config file             |
+| termname     | Specific term that was found in the text          |
+| alternative  | List of alternative terms to use instead          |
+| note         | Note about reasoning for inclusion                |
+| severity     | From config, one of "error", "warning", or "info" |
+| optionbool   | Option value, true or false                       |
+| linecontents | Contents of the line with finding                 |
+| lineno       | Line number, 1 based                              |
+| startcol     | Starting column number, 0 based                   |
+| endcol       | Ending column number, 0 based                     |
+| description  | Description of finding                            |
+
+Output is sent to STDOUT (Standard Output), which may be redirected to a file to save the results of a scan.
+
+#### text
+
+text is the default output format for woke. Displays each result on two lines. Includes color formatting if the terminal supports it.
+
+Structure:
+
+```
+<filepath>:<lineno>:<startcol>-<endcol>: <description> (<severity>)
+<linecontents>
+```
+
+#### simple
+
+simple is a format similar to text, but without color support and with each result on a single line. 
+
+Structure:
+
+```
+<filepath>:<lineno>:<startcol>: <description>
+```
+
+#### github-actions
+
+The github-actions output type is intended for integration with [GitHub Actions](https://github.com/features/actions). See [woke-action](https://github.com/get-woke/woke-action) for more information on integration.
+
+Structure:
+
+```
+::<severity> file=<filepath>,line=<lineno>,col=<startcol>::<description>
+```
+
+#### json
+
+Outputs the results as a series of [json](https://www.json.org/json-en.html) formatted structures, one per line. In order to parse as a JSON document, each line must be processed separately. This output type includes every field available in woke.
+
+Structure:
+
+```
+{"Filename":"<filepath>","Results":[{"Rule":{"Name":"<rulename>","Terms":["<termname>",...],"Alternatives":["<alternative>",...],"Note":"<note>","Severity":"<severity>","Options":{"WordBoundary":<optionbool>,"WordBoundaryStart":<optionbool>,"WordBoundaryEnd":<optionbool>,"IncludeNote":<optionbool>}},"Finding":"<termname>","Line":"<linecontents>","StartPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<startcol>},"EndPosition":{"Filename":"<filepath>","Offset":0,"Line":<lineno>,"Column":<endcol>},"Reason":"<description>"}]}
+```
+
+#### sonarqube
+
+Format used to populate results into the popular [SonarQube](https://www.sonarqube.org/) code quality tool. Note: woke is not executed as part of SonarQube itself, so must be run and the results file output prior to execution. Typically woke would be executed with an automation server such as Jenkins, Travis CI or Github Actions prior to creating the SonarQube report. For details on the file format, see [Generic Issue Input Format](https://docs.sonarqube.org/latest/analysis/generic-issue/). The [Analysis Parameter](https://docs.sonarqube.org/latest/analysis/analysis-parameters/) `sonar.externalIssuesReportPaths` is used to point to the path to the report file generated by woke.
+
+Structure:
+
+``` 
+{"issues":[{"engineId":"woke","ruleId":"<rulename>","primaryLocation":{"message":"<description>","filePath":"<filepath>","textRange":{"startLine":<lineno>,"startColumn":<startcol>,"endColumn":<endcol>}},"type":"CODE_SMELL","severity":"<sonarqubeseverity>"}
+]}
+```
+
+_Note: sonarqubeseverity is mapped from severity, such that an error in woke is translated to a MAJOR, warning to a MINOR, and info to INFO_
 
 ### Rules
 

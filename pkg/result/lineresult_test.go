@@ -38,6 +38,11 @@ func TestLineResult_GetSeverity(t *testing.T) {
 	assert.Equal(t, lr.GetSeverity(), lr.Rule.Severity)
 }
 
+func TestLineResult_GetRuleName(t *testing.T) {
+	lr := testLineResult()
+	assert.Equal(t, lr.GetRuleName(), lr.Rule.Name)
+}
+
 func TestLineResult_GetStartPosition(t *testing.T) {
 	lr := testLineResult()
 	assert.Equal(t, lr.GetStartPosition(), lr.StartPosition)

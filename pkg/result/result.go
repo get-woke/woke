@@ -9,6 +9,7 @@ import (
 // Result is an interface for a finding of a rule
 type Result interface {
 	GetSeverity() rule.Severity
+	GetRuleName() string
 	GetStartPosition() *token.Position
 	GetEndPosition() *token.Position
 	Reason() string

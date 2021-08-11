@@ -38,12 +38,34 @@ func TestSimple_positionString(t *testing.T) {
 	}
 }
 
-func TestSimple_Print(t *testing.T) {
-	p := NewSimple()
-	res := generateFileResult()
+func TestSimple_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
-	assert.NoError(t, p.Print(buf, res))
+	p := NewSimple(buf)
+	assert.Equal(t, true, p.PrintSuccessExitMessage())
+}
+
+func TestSimple_Print(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSimple(buf)
+	res := generateFileResult()
+	assert.NoError(t, p.Print(res))
 	got := buf.String()
 	expected := fmt.Sprintf("foo.txt:1:6: [warning] %s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
+}
+
+func TestSimple_Start(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSimple(buf)
+	p.Start()
+	got := buf.String()
+	assert.Equal(t, ``, got)
+}
+
+func TestSimple_End(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSimple(buf)
+	p.End()
+	got := buf.String()
+	assert.Equal(t, ``, got)
 }
