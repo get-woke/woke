@@ -155,20 +155,17 @@ func TestNewConfig(t *testing.T) {
 		// check IncludeNote is not overridden for rule1
 		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
 	})
-}
 
-func Test_LoadRemoteConfig(t *testing.T) {
-	t.Run("load-config-valid-url", func(t *testing.T) {
+	t.Run("load-remote-config-valid-url", func(t *testing.T) {
 		c, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.NoError(t, err)
 		assert.NotNil(t, c)
 	})
 
-	t.Run("load-config-invalid-url", func(t *testing.T) {})
+	t.Run("load-remote-config-invalid-url", func(t *testing.T) {})
 	_, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
 	assert.Error(t, err)
 }
-
 func Test_relative(t *testing.T) {
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)

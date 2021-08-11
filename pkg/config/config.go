@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -107,18 +108,20 @@ func loadRemoteConfig(url string) (c Config, err error) {
 	if err != nil {
 		return c, err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return c, err
+	}
+	defer resp.Body.Close()
+
 	// only parse response body if it is in the response is in the 2xx range
-	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
-		log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
-		defer resp.Body.Close()
-		if err != nil {
-			return c, err
-		}
-		return c, yaml.Unmarshal(body, &c)
-	} else {
+	statusOK := resp.StatusCode >= 200 && resp.StatusCode <= 299
+	if !statusOK {
 		return c, fmt.Errorf("unable to download remote config from url. Response code: %v. Response body: %c", resp.StatusCode, body)
 	}
+
+	log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
+	return c, yaml.Unmarshal(body, &c)
 }
 
 func relative(filename string) string {
