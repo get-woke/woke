@@ -35,7 +35,7 @@ func TestNewConfig(t *testing.T) {
 			defaultRules[i] = fmt.Sprintf("%q", rule.DefaultRules[i].Name)
 		}
 
-		c, err := NewConfig("testdata/good.yaml")
+		c, err := NewConfig("testdata/good.yaml", false)
 		assert.NoError(t, err)
 		enabledRules := make([]string, len(c.Rules))
 		for i := range c.Rules {
@@ -52,7 +52,7 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	t.Run("config-good", func(t *testing.T) {
-		c, err := NewConfig("testdata/good.yaml")
+		c, err := NewConfig("testdata/good.yaml", false)
 		assert.NoError(t, err)
 
 		expectedRules := []*rule.Rule{}
@@ -79,7 +79,7 @@ func TestNewConfig(t *testing.T) {
 			Rules:       expectedRules,
 			IgnoreFiles: []string{"README.md", "pkg/rule/default.go", "testdata/good.yaml"},
 		}
-		expected.ConfigureRules()
+		expected.ConfigureRules(false)
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 
@@ -89,7 +89,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-empty-missing", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("")
+		c, err := NewConfig("", false)
 		assert.NoError(t, err)
 
 		expectedEmpty := &Config{
@@ -101,14 +101,14 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-missing", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/missing.yaml")
+		c, err := NewConfig("testdata/missing.yaml", false)
 		assert.Error(t, err)
 		assert.Nil(t, c)
 	})
 
 	t.Run("config-empty-success-message", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/empty-success-message.yaml")
+		c, err := NewConfig("testdata/empty-success-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check default config message
@@ -117,7 +117,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-custom-success-message", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/custom-success-message.yaml")
+		c, err := NewConfig("testdata/custom-success-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check default config message
@@ -126,7 +126,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-add-note-messaage", func(t *testing.T) {
 		// Test when it is configured to add a note to the output message
-		c, err := NewConfig("testdata/add-note-message.yaml")
+		c, err := NewConfig("testdata/add-note-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check global IncludeNote
@@ -139,9 +139,9 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, false, *c.Rules[0].Options.IncludeNote)
 	})
 
-	t.Run("config-dont-add-note-messaage", func(t *testing.T) {
+	t.Run("config-dont-add-note-message", func(t *testing.T) {
 		// Test when it is nott configured to add a note to the output message
-		c, err := NewConfig("testdata/dont-add-note-message.yaml")
+		c, err := NewConfig("testdata/dont-add-note-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check global IncludeNote
@@ -152,6 +152,16 @@ func TestNewConfig(t *testing.T) {
 
 		// check IncludeNote is not overridden for rule1
 		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
+	})
+
+	t.Run("disable-default-rules", func(t *testing.T) {
+		c, err := NewConfig("testdata/good.yaml", true)
+		assert.NoError(t, err)
+		assert.Len(t, c.Rules, 3)
+
+		c, err = NewConfig("testdata/good.yaml", false)
+		assert.NoError(t, err)
+		assert.Len(t, c.Rules, len(rule.DefaultRules)+2)
 	})
 }
 

@@ -22,7 +22,7 @@ type Config struct {
 }
 
 // NewConfig returns a new Config
-func NewConfig(filename string) (*Config, error) {
+func NewConfig(filename string, disableDefaultRules bool) (*Config, error) {
 	var c Config
 	if len(filename) > 0 {
 		var err error
@@ -40,7 +40,7 @@ func NewConfig(filename string) (*Config, error) {
 		log.Debug().Msg("no config file loaded, using only default rules")
 	}
 
-	c.ConfigureRules()
+	c.ConfigureRules(disableDefaultRules)
 	logRuleset("all", c.Rules)
 
 	return &c, nil
@@ -67,14 +67,16 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 // ConfigureRules adds the config Rules to DefaultRules
 // Configure RegExps for all rules
 // Configure IncludeNote for all rules
-func (c *Config) ConfigureRules() {
-	for _, r := range rule.DefaultRules {
-		if !c.inExistingRules(r) {
-			c.Rules = append(c.Rules, r)
+func (c *Config) ConfigureRules(disableDefaultRules bool) {
+	if !disableDefaultRules {
+		for _, r := range rule.DefaultRules {
+			if !c.inExistingRules(r) {
+				c.Rules = append(c.Rules, r)
+			}
 		}
-	}
 
-	logRuleset("default", rule.DefaultRules)
+		logRuleset("default", rule.DefaultRules)
+	}
 
 	for _, r := range c.Rules {
 		r.SetRegexp()
