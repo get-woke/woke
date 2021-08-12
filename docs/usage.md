@@ -168,6 +168,7 @@ Outputs the results as a series of [`json`](https://www.json.org/json-en.html) f
           "WordBoundary": <optionbool>,
           "WordBoundaryStart": <optionbool>,
           "WordBoundaryEnd": <optionbool>,
+          "RegexTerms": <optionbool>,
           "IncludeNote": <optionbool>
         }
       },

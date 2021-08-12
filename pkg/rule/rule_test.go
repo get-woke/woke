@@ -21,6 +21,32 @@ func testRule() Rule {
 	}
 }
 
+func testRegexRuleWithOptions(o Options) Rule {
+	r := testRegexRule()
+	r.SetOptions(o)
+	return r
+}
+
+func testRegexRule() Rule {
+	return Rule{
+		Name:         "ruleregex",
+		Terms:        []string{`\d+`},
+		Alternatives: []string{"alt-regex1", "alt-regex-1"},
+		Severity:     SevWarn,
+	}
+}
+
+func testInvalidRegexRule() Rule {
+	r := Rule{
+		Name:         "invalidrule",
+		Terms:        []string{"("},
+		Alternatives: []string{"alt-rule1", "alt-rule-1"},
+		Severity:     SevWarn,
+	}
+	r.SetOptions(Options{RegexTerms: true})
+	return r
+}
+
 func TestRule_FindMatchIndexes(t *testing.T) {
 	tests := []struct {
 		text       string
@@ -43,6 +69,43 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 		r := testRuleWithOptions(Options{WordBoundary: true})
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expectedWb, got)
+	}
+
+	e := Rule{Name: "rule1"}
+	assert.Equal(t, [][]int(nil), e.FindMatchIndexes("rule1"))
+}
+
+func TestRule_InvalidRegexRule(t *testing.T) {
+	r := testInvalidRegexRule()
+
+	// Verify rule is compiled
+	r.setRegex()
+
+	// Validate that terms are now empty / rule is disabled
+	assert.Empty(t, r.Terms)
+	assert.True(t, r.Disabled())
+}
+
+func TestRule_FindMatchRegexIndexes(t *testing.T) {
+	tests := []struct {
+		text       string
+		expected   [][]int
+		expectedRe [][]int
+	}{
+		{"this string has 123456 and 56789 included", [][]int(nil), [][]int{{16, 22}, {27, 32}}},
+		{"this string does not have any findings", [][]int(nil), [][]int(nil)},
+		{`this string has finding with \d+ \d+`, [][]int{{29, 32}, {33, 36}}, [][]int(nil)},
+	}
+	for _, test := range tests {
+		r := testRegexRule() // Default to non regular expression matching
+		got := r.FindMatchIndexes(test.text)
+		assert.Equal(t, test.expected, got)
+	}
+
+	for _, test := range tests {
+		r := testRegexRuleWithOptions(Options{RegexTerms: true})
+		got := r.FindMatchIndexes(test.text)
+		assert.Equal(t, test.expectedRe, got)
 	}
 
 	e := Rule{Name: "rule1"}
@@ -132,6 +195,11 @@ func TestRule_regexString(t *testing.T) {
 			desc:     "word boundary",
 			rule:     testRuleWithOptions(Options{WordBoundary: true}),
 			expected: `(?i)\b(%s)\b`,
+		},
+		{
+			desc:     "regex rule",
+			rule:     testRegexRuleWithOptions(Options{RegexTerms: true}),
+			expected: `(?i)(%s)`,
 		},
 		{
 			desc:     "word boundary start",

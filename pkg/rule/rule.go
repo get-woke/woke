@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/get-woke/woke/pkg/util"
 )
 
@@ -81,8 +83,13 @@ func (r *Rule) SetOptions(o Options) {
 }
 
 func (r *Rule) setRegex() {
-	group := strings.Join(escape(r.Terms), "|")
-	r.re = regexp.MustCompile(fmt.Sprintf(r.regexString(), group))
+	var err error
+	group := strings.Join(escape(r, r.Terms), "|")
+	r.re, err = regexp.Compile(fmt.Sprintf(r.regexString(), group))
+	if err != nil {
+		log.Error().Err(err).Str("Rule", r.Name).Msg("Unable to compile regular expression, disabling rule")
+		r.Terms = nil // Disable the rule
+	}
 }
 
 func (r *Rule) regexString() string {
@@ -189,9 +196,13 @@ func IsDirectiveOnlyLine(line string) bool {
 	return !util.ContainsAlphanumeric(leftText)
 }
 
-func escape(ss []string) []string {
+func escape(r *Rule, ss []string) []string {
 	for i, s := range ss {
-		ss[i] = regexp.QuoteMeta(s)
+		if r.Options.RegexTerms {
+			ss[i] = s
+		} else {
+			ss[i] = regexp.QuoteMeta(s)
+		}
 	}
 	return ss
 }
