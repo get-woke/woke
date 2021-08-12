@@ -1,0 +1,102 @@
+site_name: "Woke - Detect non-inclusive language in your source code"
+
+site_author: Caitlin Elfring
+site_description: Detect non-inclusive language in your source code.
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/default-monochrome.svg
+  favicon: assets/favicon.ico
+  palette:
+    primary: black
+    accent: orange
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      note: fontawesome/solid/sticky-note
+      abstract: fontawesome/solid/book
+      info: fontawesome/solid/info-circle
+      tip: fontawesome/solid/bullhorn
+      success: fontawesome/solid/check
+      question: fontawesome/solid/question-circle
+      warning: fontawesome/solid/exclamation-triangle
+      failure: fontawesome/solid/bomb
+      danger: fontawesome/solid/skull
+      bug: fontawesome/solid/robot
+      example: fontawesome/solid/flask
+      quote: fontawesome/solid/quote-left
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.integrate
+nav:
+  - Introduction: index.md
+  - Getting Started:
+    - Installation: installation.md
+  - User Guide:
+    - Usage: usage.md
+    - Rules: rules.md
+    - Ignoring: ignore.md
+  - More Info:
+      About: about.md
+      Tools: tools.md
+
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 4
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - macros
+
+repo_url: https://github.com/get-woke/woke
+repo_name: get-woke/woke
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2020 - 2021 Caitlin Elfring
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/get-woke
+      name: GitHub
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/getwoke/woke/
+      name: Docker
+  # TODO
+  # analytics:
+  #   provider: google
+  #   property: G-XXXXXXXXXX
+  #   property: UA-XXXXXXXX-X

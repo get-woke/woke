@@ -1,14 +1,20 @@
-name: Documentation refresh
+name: Update mkdocs page
 
 on:
   push:
-    tags:
-      - v*
-
+    # branches: [ main ]
+    branches: [ docs ]
+    paths:
+      - "docs/**"
+      - mkdocs.yml
+      - .github/workflows/docs.yml
 jobs:
-  docs:
-    name: Renew documentation
+  deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Pull new module version
-      uses: andrewslotin/go-proxy-pull-action@v1.0.2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install -r docs/requirements.txt
+      - run: mkdocs gh-deploy --force
