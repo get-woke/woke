@@ -40,7 +40,7 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v2
-      - name: MarkdownLint
-        uses: actionshub/markdownlint@2.0.2
+      - uses: nosborn/github-action-markdown-cli@v2.0.0
         with:
-          path: docs
+          files: docs/*.md
+          config_file: .markdownlint.json
