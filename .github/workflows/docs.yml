@@ -1,4 +1,4 @@
-name: Update mkdocs page
+name: MkDocs page
 
 on:
   push:
@@ -8,8 +8,14 @@ on:
       - "docs/**"
       - mkdocs.yml
       - .github/workflows/docs.yml
+  pull_request:
+    paths:
+      - "docs/**"
+      - mkdocs.yml
+      - .github/workflows/docs.yml
+
 jobs:
-  deploy:
+  mkdocs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,8 +23,24 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install -r docs/requirements.txt
-      - run: |
+
+      - name: MkDocs build
+        if: github.event_name == 'pull_request'
+        run: mkdocs build
+
+      - name: MkDocs deploy
+        if: github.event_name != 'pull_request'
+        run: |
           # Hard-code user configuration
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions"
           mkdocs gh-deploy --force
+  markdownlint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v2
+      - name: MarkdownLint
+        uses: actionshub/markdownlint@2.0.2
+        with:
+          path: docs
