@@ -17,8 +17,64 @@ func generateResults(filename string) []result.Result {
 	return []result.Result{
 		result.LineResult{
 			Rule:    &rule.TestRule,
-			Finding: "whitelist",
-			Line:    "this whitelist must change",
+			Finding: "whitelist",                  // wokeignore:rule=whitelist
+			Line:    "this whitelist must change", // wokeignore:rule=whitelist
+			StartPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   6,
+			},
+			EndPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   15,
+			},
+		},
+	}
+}
+
+func generateSecondFileResult() *result.FileResults {
+	r := result.FileResults{Filename: "bar.txt"}
+	r.Results = generateSecondResults(r.Filename)
+	return &r
+}
+
+func generateSecondResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
+			Rule:    &rule.TestErrorRule,
+			Finding: "slave",                       // wokeignore:rule=slave
+			Line:    "this slave term must change", // wokeignore:rule=slave
+			StartPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   6,
+			},
+			EndPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   15,
+			},
+		},
+	}
+}
+
+func generateThirdFileResult() *result.FileResults {
+	r := result.FileResults{Filename: "barfoo.txt"}
+	r.Results = generateThirdResults(r.Filename)
+	return &r
+}
+
+func generateThirdResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
+			Rule:    &rule.TestInfoRule,
+			Finding: "test",
+			Line:    "this test must change",
 			StartPosition: &token.Position{
 				Filename: filename,
 				Offset:   0,

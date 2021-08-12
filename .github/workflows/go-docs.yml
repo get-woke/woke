@@ -1,0 +1,14 @@
+name: Documentation refresh
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  docs:
+    name: Renew documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull new module version
+      uses: andrewslotin/go-proxy-pull-action@v1.0.2

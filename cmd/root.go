@@ -98,7 +98,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 
 	p := parser.NewParser(cfg.Rules, ignorer)
 
-	print, err := printer.NewPrinter(outputName)
+	print, err := printer.NewPrinter(outputName, output.Stdout)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if findings == 0 {
-		if cfg.GetSuccessExitMessage() != "" {
+		if print.PrintSuccessExitMessage() && cfg.GetSuccessExitMessage() != "" {
 			fmt.Fprintln(output.Stdout, cfg.GetSuccessExitMessage())
 		}
 	}

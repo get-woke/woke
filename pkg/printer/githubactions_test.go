@@ -39,12 +39,34 @@ func TestTranslateSeverityForAction(t *testing.T) {
 	assert.Equal(t, translateSeverityForAction(rule.SevInfo), "warning")
 }
 
-func TestGitHubActions_Print(t *testing.T) {
-	p := NewGitHubActions()
-	res := generateFileResult()
+func TestGitHubActions_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
-	assert.NoError(t, p.Print(buf, res))
+	p := NewGitHubActions(buf)
+	assert.Equal(t, true, p.PrintSuccessExitMessage())
+}
+
+func TestGitHubActions_Print(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewGitHubActions(buf)
+	res := generateFileResult()
+	assert.NoError(t, p.Print(res))
 	got := buf.String()
 	expected := fmt.Sprintf("::warning file=foo.txt,line=1,col=6::%s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
+}
+
+func TestGitHubActions_Start(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewGitHubActions(buf)
+	p.Start()
+	got := buf.String()
+	assert.Equal(t, ``, got)
+}
+
+func TestGitHubActions_End(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewGitHubActions(buf)
+	p.End()
+	got := buf.String()
+	assert.Equal(t, ``, got)
 }

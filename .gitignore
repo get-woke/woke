@@ -5,3 +5,6 @@ dist/*
 # pprof files
 *.test
 *.prof
+
+# mkdocs
+site/
