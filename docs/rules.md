@@ -69,7 +69,6 @@ You can configure options for each rule. Add an `options` key to your rule defin
 * If `false`, terms will be treated as plain-text values
 * **NOTE** this is an advanced feature. Rules will be skipped if they do not compile. Only use non-capturing groups in patterns. Look-around assertions are not supported.
 
-
 ## Disabling Default Rules
 
 You can disable default rules by providing a rule in your `woke` config file (ie `.woke.yml`), with no terms or alternatives.
