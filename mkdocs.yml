@@ -33,6 +33,8 @@ theme:
     - navigation.expand
     - navigation.top
     - toc.integrate
+    - search.suggest
+    - search.highlight
 nav:
   - Introduction: index.md
   - Getting Started:
@@ -80,6 +82,7 @@ markdown_extensions:
 
 plugins:
   - macros
+  - search
 
 repo_url: https://github.com/get-woke/woke
 repo_name: get-woke/woke
