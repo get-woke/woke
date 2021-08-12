@@ -42,4 +42,4 @@ The following projects provided inspiration for parts of `woke`
 ## License
 
 This application is licensed under the MIT License, you may obtain a copy of it
-[here](LICENSE).
+[here]({{config.repo_url}}blob/main/LICENSE).
