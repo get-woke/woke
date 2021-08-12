@@ -4,7 +4,6 @@
 
 You can ignore files by adding to your config file. All ways of ignoring files below should follow the [gitignore](https://git-scm.com/docs/gitignore) convention.
 
-
 ```yaml
 ignore_files:
   - other/files/in/repo
