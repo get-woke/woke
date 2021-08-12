@@ -12,19 +12,6 @@ theme:
     primary: black
   icon:
     repo: fontawesome/brands/github
-    admonition:
-      note: fontawesome/solid/sticky-note
-      abstract: fontawesome/solid/book
-      info: fontawesome/solid/info-circle
-      tip: fontawesome/solid/bullhorn
-      success: fontawesome/solid/check
-      question: fontawesome/solid/question-circle
-      warning: fontawesome/solid/exclamation-triangle
-      failure: fontawesome/solid/bomb
-      danger: fontawesome/solid/skull
-      bug: fontawesome/solid/robot
-      example: fontawesome/solid/flask
-      quote: fontawesome/solid/quote-left
   features:
     - navigation.instant
     - navigation.tabs

@@ -30,16 +30,13 @@ A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_ur
 
 You can configure options for each rule. Add an `options` key to your rule definition to customize.
 
-Current options include:
-
 ### `word_boundary`
 
 :octicons-milestone-24: Default: `false`
 
 * If `true`, terms will trigger findings when they are surrounded by ASCII word boundaries.
 * If `false`, will trigger findings if the term if found anywhere in the line, regardless if it is within an ASCII word boundary.
-* !!! note
-      setting `word_boundary` to `true` will always win out over `word_boundary_start` and `word_boundary_end`
+* !!! warning "setting `word_boundary` to `true` will always win out over `word_boundary_start` and `word_boundary_end`"
 
 ### `word_boundary_start`
 
