@@ -2,8 +2,7 @@ name: MkDocs page
 
 on:
   push:
-    # branches: [ main ]
-    branches: [ docs ]
+    branches: [ main ]
     paths:
       - "docs/**"
       - mkdocs.yml
