@@ -1,0 +1,14 @@
+- name: rule1
+  terms:
+    - rule1
+  alternatives:
+    - alt-rule1
+  severity: warning
+  options:
+    include_note: false
+- name: rule2
+  terms:
+    - rule2
+  alternatives:
+    - alt-rule2
+  severity: warning
