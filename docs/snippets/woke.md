@@ -7,7 +7,6 @@ Check for usage of non-inclusive language in your code and provide alternatives
 
 ### Synopsis
 
-
 woke is a linter that will check your source code for usage of non-inclusive
 language and provide suggestions for alternatives. Rules can be customized
 to suit your needs.
