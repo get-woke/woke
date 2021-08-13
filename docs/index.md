@@ -5,13 +5,23 @@
 <p align="center">{{ config.site_description }}</p>
 </p>
 
-<!-- TODO center these -->
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)]({{config.repo_url}}releases)
-[![GitHub All Releases](https://img.shields.io/github/downloads/get-woke/woke/total)]({{config.repo_url}}releases)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)]({{config.repo_url}}blob/main/LICENSE)
-[![codecov](https://codecov.io/gh/get-woke/woke/branch/main/graph/badge.svg?token=BP133BM3HP)](https://codecov.io/gh/get-woke/woke/branch/main)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fget-woke%2Fwoke.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fget-woke%2Fwoke?ref=badge_shield)
-[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#other-software)
+<div align="center">
+  <a href="{{config.repo_url}}releases">
+    <img alt="GitHub latest release" src="https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver">
+  </a>
+  <a href="{{config.repo_url}}releases">
+    <img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/get-woke/woke/total">
+  </a>
+  <a href="{{config.repo_url}}blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg">
+  </a>
+  <a href="https://codecov.io/gh/get-woke/woke/branch/main">
+    <img alt="Code Coverage" src="https://codecov.io/gh/get-woke/woke/branch/main/graph/badge.svg?token=BP133BM3HP">
+  </a>
+  <a href="https://github.com/avelino/awesome-go#other-software">
+    <img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg">
+  </a>
+</div>
 
 ---
 
