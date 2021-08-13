@@ -1,27 +1,6 @@
 # Usage
 
-```text
-$ woke --help
-
-woke is a linter that will check your source code for usage of non-inclusive
-language and provide suggestions for alternatives. Rules can be customized
-to suit your needs.
-
-Provide a list file globs for files you'd like to check.
-
-Usage:
-  woke [globs ...] [flags]
-
-Flags:
-  -c, --config string       Config file (default is .woke.yaml in current directory, or $HOME)
-      --debug               Enable debug logging
-      --exit-1-on-failure   Exit with exit code 1 on failures
-  -h, --help                help for woke
-      --no-ignore           Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed
-  -o, --output string       Output type [text,simple,github-actions,json,sonarqube] (default "text")
-      --stdin               Read from stdin
-  -v, --version             version for woke
-```
+{% include "woke.md" %}
 
 ## Config file
 
