@@ -89,8 +89,7 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/getwoke/woke/
       name: Docker
-  # TODO
-  # analytics:
-  #   provider: google
-  #   property: G-XXXXXXXXXX
-  #   property: UA-XXXXXXXX-X
+  analytics:
+    provider: google
+    property: G-7X5Z78ZRDB
+    # property: UA-XXXXXXXX-X
