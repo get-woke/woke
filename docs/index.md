@@ -39,4 +39,17 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 
 ![woke.gif](https://raw.githubusercontent.com/get-woke/get-woke.github.io/main/img/woke.gif)
 
+## Why is this named `woke`?
+
+> When [I](https://github.com/caitlinelfring) started writing `woke` in August 2020, my goal was to build a 
+> tool that would shed light on non-inclusive language in source code and that would enable a long-term commitment to using inclusive language.
+>
+> `woke` is a reference to an awareness of social and political issues, especially racial prejudice and discrimination,
+> and has a historic use within the African-American community. 
+> This tool aims to push this kind of awareness even further into the software development community.
+>
+> I named this project `woke` because I saw it as a tool to awaken our code to non-inclusive language.
+>
+> You can read more about the origins and history of the word on [Wikipedia](https://en.wikipedia.org/wiki/Woke).
+
 {% include "about.md" %}
