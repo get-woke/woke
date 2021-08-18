@@ -2,7 +2,7 @@
 
 - [ ] The commit message follows our [guidelines](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md)
 - [ ] Tests for the changes have been added (for bug fixes / features)
-- [ ] Docs have been added / updated (for bug fixes / features)
+- [ ] Docs have been added / updated (for bug fixes / features) see [docs/README.md](https://github.com/get-woke/woke/blob/main/docs/README.md)
 
 
 **What kind of change does this PR introduce?** (Bug fix, feature, docs update, ...)

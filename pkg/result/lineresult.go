@@ -76,6 +76,9 @@ func (r LineResult) String() string {
 // GetSeverity returns the rule severity for the Result
 func (r LineResult) GetSeverity() rule.Severity { return r.Rule.Severity }
 
+// GetRuleName returns the rule name for the Result
+func (r LineResult) GetRuleName() string { return r.Rule.Name }
+
 // GetStartPosition returns the start position for the Result
 func (r LineResult) GetStartPosition() *token.Position { return r.StartPosition }
 

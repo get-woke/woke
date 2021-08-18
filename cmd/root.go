@@ -98,7 +98,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 
 	p := parser.NewParser(cfg.Rules, ignorer)
 
-	print, err := printer.NewPrinter(outputName)
+	print, err := printer.NewPrinter(outputName, output.Stdout)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 
 	if findings == 0 {
-		if cfg.GetSuccessExitMessage() != "" {
+		if print.PrintSuccessExitMessage() && cfg.GetSuccessExitMessage() != "" {
 			fmt.Fprintln(output.Stdout, cfg.GetSuccessExitMessage())
 		}
 	}
@@ -136,6 +136,11 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed")
 	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
+}
+
+// GetRootCmd returns the rootCmd, which should only be used by the docs generator in cmd/docs/main.go
+func GetRootCmd() cobra.Command {
+	return *rootCmd
 }
 
 func parseArgs(args []string) []string {

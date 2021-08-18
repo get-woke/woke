@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"io"
 	"os"
 	"regexp"
 	"testing"
@@ -9,6 +10,7 @@ import (
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +22,10 @@ import (
 //    go tool pprof mem.prof
 // cpu:
 //    go tool pprof cpu.prof
-func BenchmarkExecute(b *testing.B) {
+func BenchmarkRootRunE(b *testing.B) {
+	zerolog.SetGlobalLevel(zerolog.NoLevel)
+	output.Stdout = io.Discard
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		assert.NoError(b, rootRunE(new(cobra.Command), []string{".."}))
 	}
