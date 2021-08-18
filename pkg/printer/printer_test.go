@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,14 +16,15 @@ func TestCreatePrinter(t *testing.T) {
 		{OutFormatText, &Text{}},
 		{OutFormatGitHubActions, &GitHubActions{}},
 		{OutFormatJSON, &JSON{}},
+		{OutFormatSonarQube, &SonarQube{}},
 	}
 
 	for _, test := range tests {
-		p, err := NewPrinter(test.OutFormat)
+		p, err := NewPrinter(test.OutFormat, io.Discard)
 		assert.NoError(t, err)
 		assert.IsType(t, test.Type, p)
 	}
 
-	_, err := NewPrinter("invalid-printer")
+	_, err := NewPrinter("invalid-printer", io.Discard)
 	assert.Errorf(t, err, "invalid-printer is not a valid printer type")
 }

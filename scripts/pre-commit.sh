@@ -3,7 +3,7 @@
 set -e
 
 if ! type woke > /dev/null; then
-  echo "woke is not installed, or is not available in your PATH. See https://github.com/get-woke/woke#installation."
+  echo "woke is not installed, or is not available in your PATH. See https://docs.getwoke.tech/installation."
   exit 1
 fi
 

@@ -13,7 +13,10 @@ import (
 
 // Printer is an interface for printing FileResults
 type Printer interface {
-	Print(io.Writer, *result.FileResults) error
+	Print(*result.FileResults) error
+	Start()
+	End()
+	PrintSuccessExitMessage() bool
 }
 
 const (
@@ -27,6 +30,10 @@ const (
 
 	// OutFormatJSON outputs in json
 	OutFormatJSON = "json"
+
+	// OutFormatSonarQube is an output format supported by SonarQube
+	// https://docs.sonarqube.org/latest/analysis/generic-issue/
+	OutFormatSonarQube = "sonarqube"
 )
 
 // OutFormats are all the available output formats. The first one should be the default
@@ -35,23 +42,26 @@ var OutFormats = []string{
 	OutFormatSimple,
 	OutFormatGitHubActions,
 	OutFormatJSON,
+	OutFormatSonarQube,
 }
 
 // OutFormatsString is all OutFormats, as a comma-separated string
 var OutFormatsString = strings.Join(OutFormats, ",")
 
 // NewPrinter returns a valid new Printer from a string, or an error if the printer is invalid
-func NewPrinter(f string) (Printer, error) {
+func NewPrinter(f string, w io.Writer) (Printer, error) {
 	var p Printer
 	switch f {
 	case OutFormatText:
-		p = NewText(env.GetBoolDefault("DISABLE_COLORS", false))
+		p = NewText(w, env.GetBoolDefault("DISABLE_COLORS", false))
 	case OutFormatSimple:
-		p = NewSimple()
+		p = NewSimple(w)
 	case OutFormatGitHubActions:
-		p = NewGitHubActions()
+		p = NewGitHubActions(w)
 	case OutFormatJSON:
-		p = NewJSON()
+		p = NewJSON(w)
+	case OutFormatSonarQube:
+		p = NewSonarQube(w)
 	default:
 		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}
