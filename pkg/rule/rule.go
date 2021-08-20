@@ -236,3 +236,13 @@ func (r *Rule) SetIncludeNote(includeNote bool) {
 
 	r.Options.IncludeNote = &includeNote
 }
+
+// ContainsCategory denotes if the provided category exists in the rule's Options.Categories
+func (r *Rule) ContainsCategory(cat string) bool {
+	for _, ruleCat := range r.Options.Categories {
+		if ruleCat == cat {
+			return true
+		}
+	}
+	return false
+}

@@ -198,6 +198,15 @@ func TestRule_IncludeNote(t *testing.T) {
 	assert.Equal(t, true, r.includeNote())
 }
 
+func TestRule_ContainsCategory(t *testing.T) {
+	r := testRuleWithOptions(Options{Categories: []string{"cat1", "cat2"}})
+	testCategories := []string{"cat1", "cat2", "cat3"}
+
+	assert.True(t, r.ContainsCategory(testCategories[0]))
+	assert.True(t, r.ContainsCategory(testCategories[1]))
+	assert.False(t, r.ContainsCategory(testCategories[2]))
+}
+
 func Test_IsDirectiveOnlyLine(t *testing.T) {
 	tests := []struct {
 		name      string
