@@ -30,9 +30,9 @@ A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_ur
 
 ## `regex`
 
-Allows the definition of a regular expression (regex) directly. If specified, 
-any terms in the rule definition as well as word boundary options are ignored. 
-This is an advanced feature. Only use non-capturing groups in patterns. 
+Allows the definition of a regular expression (regex) directly. If specified,
+any terms in the rule definition as well as word boundary options are ignored.
+This is an advanced feature. Only use non-capturing groups in patterns.
 Look-around assertions are not supported.
 
 ## Options
