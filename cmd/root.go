@@ -138,6 +138,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 }
 
+// GetRootCmd returns the rootCmd, which should only be used by the docs generator in cmd/docs/main.go
+func GetRootCmd() cobra.Command {
+	return *rootCmd
+}
+
 func parseArgs(args []string) []string {
 	if len(args) == 0 {
 		args = parser.DefaultPath

@@ -2,6 +2,11 @@ site_name: "Woke - Detect non-inclusive language in your source code"
 
 site_author: Caitlin Elfring
 site_description: Detect non-inclusive language in your source code.
+repo_url: https://github.com/get-woke/woke
+repo_name: get-woke/woke
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2020 - 2021 Caitlin Elfring
+
 theme:
   name: material
   custom_dir: docs/overrides
@@ -70,14 +75,10 @@ markdown_extensions:
   - pymdownx.tilde
 
 plugins:
-  - macros
+  - macros:
+      include_dir: docs/snippets
   - search
-
-repo_url: https://github.com/get-woke/woke
-repo_name: get-woke/woke
-edit_uri: edit/main/docs/
-
-copyright: Copyright &copy; 2020 - 2021 Caitlin Elfring
+  - git-revision-date
 
 extra_css:
   - css/extra.css
@@ -89,8 +90,7 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/r/getwoke/woke/
       name: Docker
-  # TODO
-  # analytics:
-  #   provider: google
-  #   property: G-XXXXXXXXXX
-  #   property: UA-XXXXXXXX-X
+  analytics:
+    provider: google
+    property: G-7X5Z78ZRDB
+    # property: UA-XXXXXXXX-X
