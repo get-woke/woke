@@ -13,19 +13,26 @@ rules:
       - white-list
     alternatives:
       - allowlist
+    # regex: regexterm
     note: An optional description why these terms are not inclusive. It can be optionally included in the output message.
     # options:
     #   word_boundary: false
     #   word_boundary_start: false
     #   word_boundary_end: false
     #   include_note: false
-    #   regex_terms: false
 ```
 
 A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_url}}blob/main/pkg/rule/default.yaml).
 
 !!! tip
     If you copy these rules into your config file, be sure to put them under the `rules:` key.
+
+## `regex`
+
+Allows the definition of a regular expression (regex) directly. If specified, 
+any terms in the rule definition as well as word boundary options are ignored. 
+This is an advanced feature. Only use non-capturing groups in patterns. 
+Look-around assertions are not supported.
 
 ## Options
 
@@ -61,13 +68,6 @@ You can configure options for each rule. Add an `options` key to your rule defin
 * If `false`, the rule note will not be included in the output message
 * If `not set`, `include_note` in your `woke` config file (ie `.woke.yml`) regulates if the note should be included in the output message (default: `false`).
 
-### `regex_terms`
-
-:octicons-milestone-24: Default: `false`
-
-* If `true`, terms will be evaluated as regular expressions
-* If `false`, terms will be treated as plain-text values
-* **NOTE** this is an advanced feature. Rules will be skipped if they do not compile. Only use non-capturing groups in patterns. Look-around assertions are not supported.
 
 ## Disabling Default Rules
 

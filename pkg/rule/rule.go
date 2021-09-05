@@ -5,8 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/get-woke/woke/pkg/util"
 )
 
@@ -19,6 +17,7 @@ type Rule struct {
 	Name         string   `yaml:"name"`
 	Terms        []string `yaml:"terms"`
 	Alternatives []string `yaml:"alternatives"`
+	Regex        string   `yaml:"regex"`
 	Note         string   `yaml:"note"`
 	Severity     Severity `yaml:"severity"`
 	Options      Options  `yaml:"options"`
@@ -83,12 +82,11 @@ func (r *Rule) SetOptions(o Options) {
 }
 
 func (r *Rule) setRegex() {
-	var err error
-	group := strings.Join(escape(r, r.Terms), "|")
-	r.re, err = regexp.Compile(fmt.Sprintf(r.regexString(), group))
-	if err != nil {
-		log.Error().Err(err).Str("Rule", r.Name).Msg("Unable to compile regular expression, disabling rule")
-		r.Terms = nil // Disable the rule
+	if len(r.Regex) != 0 {
+		r.re = regexp.MustCompile(fmt.Sprintf(`(%s)`, r.Regex))
+	} else {
+		group := strings.Join(escape(r.Terms), "|")
+		r.re = regexp.MustCompile(fmt.Sprintf(r.regexString(), group))
 	}
 }
 
@@ -196,13 +194,9 @@ func IsDirectiveOnlyLine(line string) bool {
 	return !util.ContainsAlphanumeric(leftText)
 }
 
-func escape(r *Rule, ss []string) []string {
+func escape(ss []string) []string {
 	for i, s := range ss {
-		if r.Options.RegexTerms {
-			ss[i] = s
-		} else {
-			ss[i] = regexp.QuoteMeta(s)
-		}
+		ss[i] = regexp.QuoteMeta(s)
 	}
 	return ss
 }
@@ -234,7 +228,7 @@ func maskInlineIgnore(line string) string {
 // which is helpful for disabling default rules. Eventually, there should be a better
 // way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
 func (r *Rule) Disabled() bool {
-	return len(r.Terms) == 0
+	return len(r.Terms) == 0 && len(r.Regex) == 0
 }
 
 // SetIncludeNote populates IncludeNote attributte in Options

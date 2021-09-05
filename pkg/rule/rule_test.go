@@ -21,16 +21,10 @@ func testRule() Rule {
 	}
 }
 
-func testRegexRuleWithOptions(o Options) Rule {
-	r := testRegexRule()
-	r.SetOptions(o)
-	return r
-}
-
 func testRegexRule() Rule {
 	return Rule{
 		Name:         "ruleregex",
-		Terms:        []string{`\d+`},
+		Regex:        `\d+`,
 		Alternatives: []string{"alt-regex1", "alt-regex-1"},
 		Severity:     SevWarn,
 	}
@@ -39,11 +33,10 @@ func testRegexRule() Rule {
 func testInvalidRegexRule() Rule {
 	r := Rule{
 		Name:         "invalidrule",
-		Terms:        []string{"("},
+		Regex:        `(`,
 		Alternatives: []string{"alt-rule1", "alt-rule-1"},
 		Severity:     SevWarn,
 	}
-	r.SetOptions(Options{RegexTerms: true})
 	return r
 }
 
@@ -76,34 +69,30 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 }
 
 func TestRule_InvalidRegexRule(t *testing.T) {
+	// turn off the panic
+	defer func() { _ = recover() }()
+
 	r := testInvalidRegexRule()
 
-	// Verify rule is compiled
+	// Verify rule is compiled - should panic
 	r.setRegex()
 
 	// Validate that terms are now empty / rule is disabled
-	assert.Empty(t, r.Terms)
-	assert.True(t, r.Disabled())
+	t.Errorf("Invalid rule should have panicked")
 }
 
 func TestRule_FindMatchRegexIndexes(t *testing.T) {
 	tests := []struct {
 		text       string
-		expected   [][]int
 		expectedRe [][]int
 	}{
-		{"this string has 123456 and 56789 included", [][]int(nil), [][]int{{16, 22}, {27, 32}}},
-		{"this string does not have any findings", [][]int(nil), [][]int(nil)},
-		{`this string has finding with \d+ \d+`, [][]int{{29, 32}, {33, 36}}, [][]int(nil)},
-	}
-	for _, test := range tests {
-		r := testRegexRule() // Default to non regular expression matching
-		got := r.FindMatchIndexes(test.text)
-		assert.Equal(t, test.expected, got)
+		{"this string has 123456 and 56789 included", [][]int{{16, 22}, {27, 32}}},
+		{"this string does not have any findings", [][]int(nil)},
+		{`this string has finding with \d+ \d+`, [][]int(nil)},
 	}
 
 	for _, test := range tests {
-		r := testRegexRuleWithOptions(Options{RegexTerms: true})
+		r := testRegexRule()
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expectedRe, got)
 	}
@@ -198,7 +187,7 @@ func TestRule_regexString(t *testing.T) {
 		},
 		{
 			desc:     "regex rule",
-			rule:     testRegexRuleWithOptions(Options{RegexTerms: true}),
+			rule:     testRegexRule(),
 			expected: `(?i)(%s)`,
 		},
 		{
