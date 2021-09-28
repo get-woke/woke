@@ -49,8 +49,6 @@ changelog:
 
 dockers:
   - dockerfile: build/Dockerfile
-    binaries:
-      - woke
     image_templates:
       - "getwoke/woke:latest"
       - "getwoke/woke:{{ .Major }}.{{ .Minor }}"
