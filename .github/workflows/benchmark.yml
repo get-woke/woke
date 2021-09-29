@@ -1,0 +1,103 @@
+name: Benchmark Regression
+on:
+  pull_request:
+    paths:
+      - "**.go"
+      - .github/workflows/benchmark.yml
+jobs:
+  docs:
+    name: benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Install cob
+        run: curl -sfL https://raw.githubusercontent.com/knqyf263/cob/master/install.sh | sudo sh -s -- -b /usr/local/bin
+
+      # POC -- should not be blocking yet until benchmarks are stable and can be used to block PRs
+      - name: Run Benchmark
+        id: cob
+        # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell
+        shell: bash {0}
+        continue-on-error: true
+        run: |
+          out=$(mktemp -q)
+
+          REF="origin/$GITHUB_BASE_REF"
+          set -o pipefail # causes exit code from cob to bubble up from tee
+          cob --base "$REF" 2>&1 | tee $out
+          EXIT_CODE=$?
+
+          base_commit="$(git rev-parse $REF)"
+
+          # https://github.community/t/set-output-truncates-multiline-strings/16852/3
+          # also remove colors, which don't translate in the github comment
+          result="$(cat $out | sed -e 's/\x1B\[1;91m/-/g' -e 's/\x1B\[0m\s//g' -e 's/\x1B\[1;34m/\+/g')"
+          result="${result//'%'/'%25'}"
+          result="${result//$'\n'/'%0A'}"
+          result="${result//$'\r'/'%0D'}"
+
+          echo "::set-output name=result::$result"
+          echo "::set-output name=exit_code::$EXIT_CODE"
+          echo "::set-output name=base_commit::$base_commit"
+
+          exit $EXIT_CODE
+
+      # FIXME: The action to comment on PRs does not work for forks
+      # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#restrictions-on-repository-forks
+      # - name: Find Comment
+      #   uses: peter-evans/find-comment@v1
+      #   id: comment
+      #   with:
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     comment-author: 'github-actions[bot]'
+      #     body-includes: <!-- cob-output -->
+
+      # - name: Create or update comment if benchmark failed
+      #   uses: peter-evans/create-or-update-comment@v1
+      #   if: steps.cob.outputs.exit_code != '0'
+      #   with:
+      #     comment-id: ${{ steps.comment.outputs.comment-id }}
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body: |
+      #       <!-- cob-output -->
+      #       ### Benchmark comparison to `origin/main`
+
+      #       * Comparison commit: ${{ steps.cob.outputs.base_commit }}
+
+      #       _This is currently only informational_
+
+      #       **This PR may have a negative performance impact**
+
+      #       ```
+      #       ${{ steps.cob.outputs.result }}
+      #       ```
+      #     edit-mode: replace
+
+      # - name: Update comment if benchmark succeeded
+      #   uses: peter-evans/create-or-update-comment@v1
+      #   if: steps.comment.outputs.comment-id != '' && steps.cob.outputs.exit_code == '0'
+      #   with:
+      #     comment-id: ${{ steps.comment.outputs.comment-id }}
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body: |
+      #       <!-- cob-output -->
+      #       ### Benchmark comparison to `origin/main`
+
+      #       * Comparison commit: ${{ steps.cob.outputs.base_commit }}
+
+      #       _This is currently only informational_
+
+      #       **This PR previously reported a negative performance impact that appears to have been resolved**
+
+      #       ```
+      #       ${{ steps.cob.outputs.result }}
+      #       ```
+      #     edit-mode: replace

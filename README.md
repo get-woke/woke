@@ -36,41 +36,25 @@ Companies like [GitHub](https://github.com/github/renaming), [Twitter](https://t
 
 ![woke.gif](https://raw.githubusercontent.com/get-woke/get-woke.github.io/main/img/woke.gif)
 
-**Table of Contents**
+## Why is this named `woke`?
 
-- [Installation](#installation)
-  - [macOS](#macos)
-  - [Windows](#windows)
-  - [Simple installation](#simple-installation)
-  - [Build from source](#build-from-source)
-  - [Releases](#releases)
-  - [Docker](#docker)
-- [Usage](#usage)
-  - [File globs](#file-globs)
-  - [stdin](#stdin)
-  - [Rules](#rules)
-    - [Options](#options)
-    - [Disabling Default Rules](#disabling-default-rules)
-  - [Ignoring](#ignoring)
-    - [Files](#files)
-    - [`.wokeignore`](#wokeignore)
-    - [In-line ignoring](#in-line-ignoring)
-  - [Exit Code](#exit-code)
-  - [Parallelism](#parallelism)
-- [Tools](#tools)
-- [Who uses `woke`](#who-uses-woke)
-- [Resources](#resources)
-- [Contributing](#contributing)
-- [Versioning](#versioning)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgments)
-- [License](#license)
+> When [I](https://github.com/caitlinelfring) started writing `woke` in August 2020, my goal was to build a
+> tool that would shed light on non-inclusive language in source code and that would enable a long-term commitment to using inclusive language.
+>
+> `woke` is a reference to an awareness of social and political issues, especially racial prejudice and discrimination,
+> and has a historic use within the African-American community.
+> This tool aims to push this kind of awareness even further into the software development community.
+>
+> I named this project `woke` because I saw it as a tool to awaken our code to non-inclusive language.
+>
+> You can read more about the origins and history of the word on [Wikipedia](https://en.wikipedia.org/wiki/Woke).
 
-## Installation
+## Install `woke`
 
-### macOS
+- [On my machine](https://docs.getwoke.tech/installation)
+- [On CI/CD systems](https://docs.getwoke.tech/installation/#ci)
 
-You can install a binary release on macOS using [brew](https://brew.sh)
+## Documentation
 
 ```bash
 brew install get-woke/tap/woke
@@ -355,23 +339,13 @@ Are you using `woke` in your org? We'd love to know! Please send a PR and add yo
 
 Please read [CONTRIBUTING.md](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/get-woke/woke/tags).
+![GitHub contributors](https://img.shields.io/github/contributors/get-woke/woke)
 
 ## Authors
 
 - **Caitlin Elfring** - [caitlinelfring](https://github.com/caitlinelfring)
 
-<!-- See also the list of [contributors](https://github.com/get-woke/woke/contributors) who participated in this project. -->
-
-## Acknowledgments
-
-The following projects provided inspiration for parts of `woke`
-
-- <https://github.com/get-alex/alex>
-- <https://github.com/retextjs/retext-equality>
-- <https://github.com/golangci/golangci-lint>
+See also the list of [contributors](https://github.com/get-woke/woke/contributors) who have participated in this project.
 
 ## License
 

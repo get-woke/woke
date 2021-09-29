@@ -2,7 +2,6 @@ package parser
 
 import (
 	"go/token"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -21,9 +20,19 @@ type testPrinter struct {
 }
 
 // Print doesn't actually write anything, just stores the results in memory so they can be read later
-func (p *testPrinter) Print(_ io.Writer, r *result.FileResults) error {
+func (p *testPrinter) Print(r *result.FileResults) error {
 	p.results = append(p.results, r)
 	return nil
+}
+
+func (p *testPrinter) Start() {
+}
+
+func (p *testPrinter) End() {
+}
+
+func (p *testPrinter) PrintSuccessExitMessage() bool {
+	return true
 }
 
 func testParser() *Parser {
@@ -156,11 +165,12 @@ func parsePathTests(t *testing.T) {
 	t.Run("default path", func(t *testing.T) {
 		// Test default path (which would run tests against the parser package)
 		p := testParser()
+		p.Ignorer = ignore.NewIgnore([]string{"*_test.go"}, false)
 		pr := new(testPrinter)
 		findings := p.ParsePaths(pr)
 
 		assert.Equal(t, len(pr.results), findings)
-		assert.Greater(t, len(pr.results), 0)
+		assert.Equal(t, len(pr.results), 0)
 	})
 
 	t.Run("stdin", func(t *testing.T) {
@@ -200,17 +210,21 @@ func parsePathTests(t *testing.T) {
 	})
 
 	t.Run("note is not included in output message", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist")
+		assert.NoError(t, err)
 		const TestNote = "TEST NOTE"
 		p := testParser()
 		p.Rules[0].Note = TestNote
 		p.Rules[0].Options.IncludeNote = nil
 		pr := new(testPrinter)
-		p.ParsePaths(pr)
+		p.ParsePaths(pr, f.Name())
 
 		assert.NotContains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})
 
 	t.Run("note is included in output message", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist")
+		assert.NoError(t, err)
 		const TestNote = "TEST NOTE"
 		includeNote := true
 		p := testParser()
@@ -219,7 +233,7 @@ func parsePathTests(t *testing.T) {
 		// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
 		p.Rules[0].SetIncludeNote(false)
 		pr := new(testPrinter)
-		p.ParsePaths(pr)
+		p.ParsePaths(pr, f.Name())
 
 		assert.Contains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})
@@ -263,21 +277,15 @@ func writeToStdin(t *testing.T, text string, f func()) error {
 
 func BenchmarkParsePaths(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
-	// TODO: Use b.TempDir() instead of os.TempDir()
-	// Fix in go 1.16: https://github.com/golang/go/issues/41062
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "")
+	tmpFile, err := ioutil.TempFile(b.TempDir(), "")
 	assert.NoError(b, err)
 
-	// Remember to clean up the file afterwards
-	// TODO: Can be removed once b.TempDir() is used above, since the testing package
-	// cleans up directories for us
-	defer os.Remove(tmpFile.Name())
-
-	for i := 0; i < b.N; i++ {
+	for i := 0; i < 100; i++ {
 		_, _ = tmpFile.WriteString("this whitelist, he put in man hours to sanity-check the master/slave dummy-value. we can do better.\n")
 	}
 	tmpFile.Close()
 
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		p := testParser()
 		pr := new(testPrinter)

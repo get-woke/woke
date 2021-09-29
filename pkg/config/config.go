@@ -19,6 +19,7 @@ type Config struct {
 	IgnoreFiles        []string     `yaml:"ignore_files"`
 	SuccessExitMessage *string      `yaml:"success_exit_message"`
 	IncludeNote        bool         `yaml:"include_note"`
+	ExcludeCategories  []string     `yaml:"exclude_categories"`
 }
 
 // NewConfig returns a new Config
@@ -41,11 +42,13 @@ func NewConfig(filename string) (*Config, error) {
 	}
 
 	c.ConfigureRules()
-	logRuleset("all", c.Rules)
+	logRuleset("all enabled", c.Rules)
 
 	return &c, nil
 }
 
+// GetSuccessExitMessage returns the message to be shows on a successful exit as
+// defined in the config, or a default message.
 func (c *Config) GetSuccessExitMessage() string {
 	if c.SuccessExitMessage == nil {
 		return "No findings found."
@@ -65,6 +68,7 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 // ConfigureRules adds the config Rules to DefaultRules
 // Configure RegExps for all rules
 // Configure IncludeNote for all rules
+// Filter out any rules that fall under ExcludeCategories
 func (c *Config) ConfigureRules() {
 	for _, r := range rule.DefaultRules {
 		if !c.inExistingRules(r) {
@@ -73,11 +77,42 @@ func (c *Config) ConfigureRules() {
 	}
 
 	logRuleset("default", rule.DefaultRules)
+	var excludeIndices []int
 
-	for _, r := range c.Rules {
+RuleLoop:
+	for i, r := range c.Rules {
+		for _, ex := range c.ExcludeCategories {
+			// append and continue to next rule if category match found
+			if r.ContainsCategory(ex) {
+				excludeIndices = append(excludeIndices, i)
+				continue RuleLoop
+			}
+		}
+
 		r.SetRegexp()
 		r.SetIncludeNote(c.IncludeNote)
 	}
+
+	// Remove excluded rules after done iterating through them
+	if len(c.ExcludeCategories) > 0 {
+		log.Debug().Strs("categories", c.ExcludeCategories).Msg("excluding categories")
+	}
+	for i, exIdx := range excludeIndices {
+		// every time a rule is removed, index of rules that come after it must be reduced by one
+		adjustedIdx := exIdx - i
+		log.Debug().
+			Strs("categories", c.Rules[adjustedIdx].Options.Categories).
+			Msg(fmt.Sprintf("rule \"%s\" excluded with categories", c.Rules[adjustedIdx].Name))
+		c.RemoveRule(adjustedIdx)
+	}
+}
+
+// Remove rule at index i in c.Rules while maintaining order
+func (c *Config) RemoveRule(i int) {
+	if i >= len(c.Rules) || i < 0 {
+		return
+	}
+	c.Rules = append(c.Rules[:i], c.Rules[i+1:]...)
 }
 
 func loadConfig(filename string) (c Config, err error) {
@@ -108,6 +143,6 @@ func logRuleset(name string, rules []*rule.Rule) {
 		for i := range rules {
 			enabledRules[i] = rules[i].Name
 		}
-		log.Debug().Strs("rules", enabledRules).Msg(fmt.Sprintf("%s rules enabled", name))
+		log.Debug().Strs("rules", enabledRules).Msg(fmt.Sprintf("%s rules", name))
 	}
 }
