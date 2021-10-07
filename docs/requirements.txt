@@ -7,3 +7,4 @@ fontawesome-markdown
 markdown-include
 pymdown-extensions
 mkdocs-macros-plugin
+mkdocs-git-revision-date-plugin
