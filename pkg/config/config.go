@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -136,7 +137,11 @@ func loadConfig(filename string) (c Config, err error) {
 func loadRemoteConfig(url string) (c Config, err error) {
 	log.Debug().Str("url", url).Msg("Downloading file from")
 	client := &http.Client{}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return c, err
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return c, err

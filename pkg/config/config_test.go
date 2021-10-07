@@ -209,6 +209,17 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, "No findings found.", c.GetSuccessExitMessage())
 	})
 
+	t.Run("load-config-with-bad-url", func(t *testing.T) {
+		_, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+		assert.Error(t, err)
+	})
+
+	t.Run("load-config-with-url", func(t *testing.T) {
+		c, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
 	t.Run("load-remote-config-valid-url", func(t *testing.T) {
 		c, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
 		assert.NoError(t, err)
