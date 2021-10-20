@@ -30,7 +30,8 @@ func TestGenerateFileFindings(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
-			p := testParser()
+			p, err := testParser()
+			assert.NoError(t, err)
 			res, err := p.generateFileFindingsFromFilename(f.Name())
 			assert.NoError(t, err)
 
@@ -60,8 +61,9 @@ func TestGenerateFileFindings(t *testing.T) {
 		})
 	}
 	t.Run("missing file", func(t *testing.T) {
-		p := testParser()
-		_, err := p.generateFileFindingsFromFilename("missing.file")
+		p, err := testParser()
+		assert.NoError(t, err)
+		_, err = p.generateFileFindingsFromFilename("missing.file")
 		assert.Error(t, err)
 	})
 
@@ -69,7 +71,8 @@ func TestGenerateFileFindings(t *testing.T) {
 		f, err := newFileWithPrefix(t, "whitelist-", "content")
 		assert.NoError(t, err)
 
-		p := testParser()
+		p, err := testParser()
+		assert.NoError(t, err)
 		res, err := p.generateFileFindingsFromFilename(f.Name())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
@@ -80,7 +83,8 @@ func TestGenerateFileFindings(t *testing.T) {
 		f, err := newFileWithPrefix(t, "empty-whitelist-", "")
 		assert.NoError(t, err)
 
-		p := testParser()
+		p, err := testParser()
+		assert.NoError(t, err)
 		res, err := p.generateFileFindingsFromFilename(f.Name())
 		assert.NoError(t, err)
 		assert.Len(t, res.Results, 1)
@@ -127,7 +131,8 @@ func TestGenerateFileFindingsOverlappingRules(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 
-			p := testParser()
+			p, err := testParser()
+			assert.NoError(t, err)
 			res, err := p.generateFileFindingsFromFilename(f.Name())
 			assert.NoError(t, err)
 			assert.Len(t, res.Results, tc.matches)
@@ -152,7 +157,8 @@ func TestGenerateFileFindingsNewLineIgnores(t *testing.T) {
 			f, err := newFile(t, tc.content)
 			assert.NoError(t, err)
 
-			p := testParser()
+			p, err := testParser()
+			assert.NoError(t, err)
 			res, err := p.generateFileFindingsFromFilename(f.Name())
 			assert.NoError(t, err)
 			assert.Len(t, res.Results, tc.matches)

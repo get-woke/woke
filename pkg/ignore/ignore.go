@@ -1,7 +1,6 @@
 package ignore
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -29,16 +28,40 @@ func getDomainFromWorkingDir(absPath, workingDir string) []string {
 		workingDir += string(os.PathSeparator)
 	}
 
-	res := strings.Split(absPath, workingDir)
+	res := strings.SplitN(absPath, workingDir, 2)
 	if len(res) > 1 {
-		return util.FilterEmptyStrings(strings.Split(res[1], string(os.PathSeparator)))
+		x := util.FilterEmptyStrings(strings.Split(res[1], string(os.PathSeparator)))
+		return x
 	}
 	return []string{}
 }
 
+func GetRootGitDir(path string) (filesystem billy.Filesystem, err error) {
+	opt := &git.PlainOpenOptions{DetectDotGit: true}
+	var repo *git.Repository
+	repo, err = git.PlainOpenWithOptions(path, opt)
+	if err != nil {
+		if err == git.ErrRepositoryNotExists {
+			log.Debug().Str("reason", err.Error()).Msg("Could Not Find Root Git Folder")
+			filesystem = osfs.New(path)
+		} else {
+			return
+		}
+	}
+	if repo != nil {
+		var worktree *git.Worktree
+		worktree, err = repo.Worktree()
+		if err != nil {
+			return
+		}
+		filesystem = worktree.Filesystem
+	}
+	return
+}
+
 // NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
 // which you can match files against
-func NewIgnore(lines []string, findRootDir bool) *Ignore {
+func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
@@ -48,36 +71,12 @@ func NewIgnore(lines []string, findRootDir bool) *Ignore {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-
-	// DetectDotGit will traverse parent directories until it finds the root git dir if true
-	opt := &git.PlainOpenOptions{DetectDotGit: findRootDir}
-	repo, err := git.PlainOpenWithOptions("", opt)
-	var filesystem billy.Filesystem
-	if err != nil {
-		if err == git.ErrRepositoryNotExists {
-			log.Debug().Str("reason", err.Error()).Msg("Could Not Find Root Git Folder")
-			filesystem = osfs.New(cwd)
-		} else {
-			fmt.Println(err)
-			return nil
-		}
-	}
-	if repo != nil {
-		worktree, err := repo.Worktree()
-		if err != nil {
-			fmt.Println(err)
-			return nil
-		}
-		filesystem = worktree.Filesystem
+		return
 	}
 
 	ps, err := readPatterns(filesystem, nil)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return
 	}
 
 	domain := getDomainFromWorkingDir(cwd, filesystem.Root())
@@ -87,11 +86,11 @@ func NewIgnore(lines []string, findRootDir bool) *Ignore {
 		ps = append(ps, pattern)
 	}
 
-	ignorer := Ignore{
+	ignore = &Ignore{
 		matcher: gitignore.NewMatcher(ps),
 	}
 
-	return &ignorer
+	return
 }
 
 // Match returns true if the provided file matches any of the defined ignores
