@@ -66,18 +66,17 @@ func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err
 			Msg("finished compiling ignores")
 	}()
 
-	cwd, err := os.Getwd()
-	if err != nil {
+	var cwd string
+	if cwd, err = os.Getwd(); err != nil {
 		return
 	}
 
-	ps, err := readPatterns(filesystem, nil)
-	if err != nil {
+	var ps []gitignore.Pattern
+	if ps, err = readPatterns(filesystem, nil); err != nil {
 		return
 	}
 
 	domain := getDomainFromWorkingDir(cwd, filesystem.Root())
-
 	for _, line := range lines {
 		pattern := gitignore.ParsePattern(line, domain)
 		ps = append(ps, pattern)

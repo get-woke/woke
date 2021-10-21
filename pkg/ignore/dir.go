@@ -28,15 +28,18 @@ var defaultIgnoreFiles = []string{
 
 // readIgnoreFile reads a specific git ignore file.
 func readIgnoreFile(fs billy.Filesystem, path []string, ignoreFile string) (ps []gitignore.Pattern, err error) {
-	f, err := fs.Open(fs.Join(append(path, ignoreFile)...))
+	ps = []gitignore.Pattern{}
+	var f billy.File
+	ignoreFilePath := fs.Join(append(path, ignoreFile)...)
+	f, err = fs.Open(ignoreFilePath)
 	if err != nil {
 		_event := log.Warn()
 		if errors.Is(err, os.ErrNotExist) {
 			_event = log.Debug()
 			err = nil
 		}
-		_event.Err(err).Str("file", fs.Join(append(path, ignoreFile)...)).Msg("skipping ignorefile")
-		return []gitignore.Pattern{}, err
+		_event.Err(err).Str("file", ignoreFilePath).Msg("skipping ignorefile")
+		return
 	}
 
 	defer f.Close()
@@ -48,6 +51,9 @@ func readIgnoreFile(fs billy.Filesystem, path []string, ignoreFile string) (ps [
 			ps = append(ps, gitignore.ParsePattern(s, path))
 		}
 	}
+	if err = scanner.Err(); err != nil {
+		return
+	}
 
 	return
 }
@@ -58,8 +64,7 @@ func readPatterns(fs billy.Filesystem, path []string) (ps []gitignore.Pattern, e
 	ps = []gitignore.Pattern{}
 	for _, filename := range defaultIgnoreFiles {
 		var subps []gitignore.Pattern
-		subps, err = readIgnoreFile(fs, path, filename)
-		if err != nil {
+		if subps, err = readIgnoreFile(fs, path, filename); err != nil {
 			return ps, err
 		}
 		if len(subps) > 0 {
@@ -68,16 +73,14 @@ func readPatterns(fs billy.Filesystem, path []string) (ps []gitignore.Pattern, e
 	}
 
 	var fis []os.FileInfo
-	fis, err = fs.ReadDir(fs.Join(path...))
-	if err != nil {
+	if fis, err = fs.ReadDir(fs.Join(path...)); err != nil {
 		return ps, err
 	}
 
 	for _, fi := range fis {
 		if fi.IsDir() && fi.Name() != gitDir {
 			var subps []gitignore.Pattern
-			subps, err = readPatterns(fs, append(path, fi.Name()))
-			if err != nil {
+			if subps, err = readPatterns(fs, append(path, fi.Name())); err != nil {
 				return ps, err
 			}
 

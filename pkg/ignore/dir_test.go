@@ -71,7 +71,7 @@ func (suite *DirTestSuite) TestReadIgnoreFile() {
 	suite.Equal(patterns, ignoreLines)
 
 	noIgnoreLines, _ := readIgnoreFile(suite.GFS, []string{"noignore"}, ".gitignore")
-	suite.Nil(noIgnoreLines)
+	suite.Empty(noIgnoreLines)
 }
 
 func (suite *DirTestSuite) TestReadPatterns() {

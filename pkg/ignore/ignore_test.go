@@ -69,7 +69,7 @@ func (suite *IgnoreTestSuite) SetupTest() {
 
 	f, err = fs.Create(".wokeignore")
 	suite.NoError(err)
-	_, err = f.Write([]byte("*.WOKEIGNORE\n"))
+	_, err = f.Write([]byte("*.WOKEIGNORE\ntestFolder\n"))
 	suite.NoError(err)
 	err = f.Close()
 	suite.NoError(err)
@@ -130,6 +130,8 @@ func (suite *IgnoreTestSuite) TestIgnoreDefaultIgoreFiles_Match() {
 	suite.True(i.Match(filepath.Join("testdata", "test.DS_Store"), false))     // From .gitignore
 	suite.True(i.Match(filepath.Join("testdata", "test.IGNORE"), false))       // From .ignore
 	suite.True(i.Match(filepath.Join("testdata", "test.WOKEIGNORE"), false))   // From .wokeignore
+	suite.True(i.Match(filepath.Join("testdata", "testFolder"), true))         // From .wokeignore
+	suite.False(i.Match(filepath.Join("testdata", "notTestFolder"), true))     // From .wokeignore
 	suite.False(i.Match(filepath.Join("testdata", "test.NOTIGNORED"), false))  // From .notincluded - making sure only default are included
 }
 
