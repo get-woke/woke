@@ -78,13 +78,13 @@ func (suite *IgnoreTestSuite) SetupTest() {
 }
 
 func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
-	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "b/c/d"))
-	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "a/b/c/d"))
-	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "c"))
-	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "b/c"))
-	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir("a/b/c/d", "a"))
-	suite.Equal([]string{"c", "d"}, getDomainFromWorkingDir("a/b/c/d", "b/"))
-	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir("b/b/c/d", "b/"))
+	suite.Equal([]string{}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("b/c/d")))
+	suite.Equal([]string{}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("a/b/c/d")))
+	suite.Equal([]string{"d"}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), "c"))
+	suite.Equal([]string{"d"}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("b/c")))
+	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), "a"))
+	suite.Equal([]string{"c", "d"}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("b/")))
+	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir(filepath.FromSlash("b/b/c/d"), filepath.FromSlash("b/")))
 }
 
 func (suite *IgnoreTestSuite) TestGetRootGitDir() {
