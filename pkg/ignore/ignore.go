@@ -24,7 +24,7 @@ type Ignore struct {
 // it will return data/effx.yaml
 func getDomainFromWorkingDir(absPath, workingDir string) []string {
 	// if working directory does not end with a slash, add it
-	if strings.LastIndex(workingDir, string(os.PathSeparator)) != len(workingDir)-1 {
+	if !strings.HasSuffix(workingDir, string(os.PathSeparator)) {
 		workingDir += string(os.PathSeparator)
 	}
 

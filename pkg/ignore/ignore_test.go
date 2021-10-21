@@ -1,14 +1,15 @@
 package ignore
 
 import (
-	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"testing"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/go-git/go-billy/v5/util"
+	"github.com/go-git/go-git/v5"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/suite"
 )
@@ -75,16 +76,11 @@ func (suite *IgnoreTestSuite) SetupTest() {
 	suite.NoError(err)
 
 	suite.GFS = fs
-	// suite.tempDir = path
-}
-
-func (suite *IgnoreTestSuite) TearDownSuite() {
-	// _ = util.RemoveAll(suite.GFS, suite.tempDir)
 }
 
 func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
 	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "b/c/d"))
-	// suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "a/b/c/d"))
+	suite.Equal([]string{}, getDomainFromWorkingDir("a/b/c/d", "a/b/c/d"))
 	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "c"))
 	suite.Equal([]string{"d"}, getDomainFromWorkingDir("a/b/c/d", "b/c"))
 	suite.Equal([]string{"b", "c", "d"}, getDomainFromWorkingDir("a/b/c/d", "a"))
@@ -93,29 +89,19 @@ func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
 }
 
 func (suite *IgnoreTestSuite) TestGetRootGitDir() {
+	cwd, err := os.Getwd()
+	suite.NoError(err)
+
+	rootFs, err := GetRootGitDir(cwd)
+	suite.NoError(err)
+	suite.Equal(path.Join(cwd, "../../"), rootFs.Root())
+}
+
+func (suite *IgnoreTestSuite) TestGetRootGitDirError() {
 	fs, clean := suite.TempFileSystem()
-	log.Println(fs.Root())
 	defer clean()
-	dir, err := util.TempDir(fs, fs.Root(), "")
-	log.Println(filepath.Abs(dir))
-	suite.NoError(err)
-
-	subdir := filepath.Join(dir, "a")
-	log.Println(filepath.Abs(subdir))
-	err = fs.MkdirAll(subdir, 0755)
-	suite.NoError(err)
-
-	gitdir := filepath.Join(dir, ".git")
-	log.Println(filepath.Abs(gitdir))
-	err = fs.MkdirAll(gitdir, 0755)
-	suite.NoError(err)
-
-	// root := fs.Root()
-
-	// expected := osfs.New(fs.Join(root, dir))
-	rootFs, err := GetRootGitDir(subdir)
-	suite.NoError(err)
-	suite.Equal(dir, rootFs.Root())
+	_, err := GetRootGitDir(fs.Root())
+	suite.EqualError(err, git.ErrRepositoryNotExists.Error())
 }
 func (suite *IgnoreTestSuite) TestIgnore_Match() {
 	i, err := NewIgnore(suite.GFS, []string{"my/files/*"})
