@@ -9,7 +9,6 @@ import (
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/go-git/go-billy/v5/util"
-	"github.com/go-git/go-git/v5"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/suite"
 )
@@ -97,11 +96,12 @@ func (suite *IgnoreTestSuite) TestGetRootGitDir() {
 	suite.Equal(path.Join(cwd, "../../"), rootFs.Root())
 }
 
-func (suite *IgnoreTestSuite) TestGetRootGitDirError() {
+func (suite *IgnoreTestSuite) TestGetRootGitDirNotExist() {
 	fs, clean := suite.TempFileSystem()
 	defer clean()
-	_, err := GetRootGitDir(fs.Root())
-	suite.EqualError(err, git.ErrRepositoryNotExists.Error())
+	rootFs, err := GetRootGitDir(fs.Root())
+	suite.NoError(err)
+	suite.Equal(fs.Root(), rootFs.Root())
 }
 func (suite *IgnoreTestSuite) TestIgnore_Match() {
 	i, err := NewIgnore(suite.GFS, []string{"my/files/*"})

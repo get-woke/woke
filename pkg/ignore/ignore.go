@@ -2,12 +2,12 @@ package ignore
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/rs/zerolog/log"
 
@@ -36,27 +36,24 @@ func getDomainFromWorkingDir(absPath, workingDir string) []string {
 	return []string{}
 }
 
-func GetRootGitDir(path string) (filesystem billy.Filesystem, err error) {
-	opt := &git.PlainOpenOptions{DetectDotGit: true}
-	var repo *git.Repository
-	repo, err = git.PlainOpenWithOptions(path, opt)
+func GetRootGitDir(workingDir string) (filesystem billy.Filesystem, err error) {
+	dir, err := filepath.Abs(workingDir)
 	if err != nil {
-		if err == git.ErrRepositoryNotExists {
-			log.Debug().Str("reason", err.Error()).Msg("Could Not Find Root Git Folder")
-			filesystem = osfs.New(path)
-		} else {
-			return
-		}
+		return
 	}
-	if repo != nil {
-		var worktree *git.Worktree
-		worktree, err = repo.Worktree()
-		if err != nil {
-			return
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, ".git")); err == nil {
+			return osfs.New(dir), nil
 		}
-		filesystem = worktree.Filesystem
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			log.Debug().Msg("Could Not Find Root Git Folder")
+			return osfs.New(workingDir), nil
+		}
+		dir = parent
 	}
-	return
 }
 
 // NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
