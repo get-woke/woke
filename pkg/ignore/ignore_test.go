@@ -2,7 +2,6 @@ package ignore
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 	"testing"
 
@@ -93,7 +92,7 @@ func (suite *IgnoreTestSuite) TestGetRootGitDir() {
 
 	rootFs, err := GetRootGitDir(cwd)
 	suite.NoError(err)
-	suite.Equal(path.Join(cwd, "../../"), rootFs.Root())
+	suite.Equal(filepath.Dir(filepath.Dir(cwd)), rootFs.Root())
 }
 
 func (suite *IgnoreTestSuite) TestGetRootGitDirNotExist() {
