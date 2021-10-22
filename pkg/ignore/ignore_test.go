@@ -107,11 +107,6 @@ func (suite *IgnoreTestSuite) TestIgnore_Match() {
 	suite.NoError(err)
 	suite.NotNil(i)
 
-	// Test if rules with backslashes match on windows
-	suite.False(i.Match("not/foo", false))
-	suite.True(i.Match("my/files/file1", false))
-	suite.False(i.Match("my/files", false))
-
 	suite.False(i.Match(filepath.Join("not", "foo"), false))
 	suite.True(i.Match(filepath.Join("my", "files", "file1"), false))
 	suite.False(i.Match(filepath.Join("my", "files"), false))
