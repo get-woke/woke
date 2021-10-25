@@ -26,16 +26,17 @@ var defaultIgnoreFiles = []string{
 	".git/info/exclude",
 }
 
-// given a absolute path (example: /runner/folder/root/data/effx.yaml)
-// and given a workingDir (example: root)
-// it will return data/effx.yaml
-func getDomainFromWorkingDir(absPath, workingDir string) []string {
+// Given a workingDir (example: /root/proj/subDir/curDir)
+// and given a gitRoot (example: /root/proj)
+// it will return []string{"subDir", "curDir"}.
+// This is the domain (path from git root) that ignore rules will apply to.
+func getDomainFromWorkingDir(workingDir, gitRoot string) []string {
 	// if working directory does not end with a slash, add it
-	if !strings.HasSuffix(workingDir, string(os.PathSeparator)) {
-		workingDir += string(os.PathSeparator)
+	if !strings.HasSuffix(gitRoot, string(os.PathSeparator)) {
+		gitRoot += string(os.PathSeparator)
 	}
 
-	res := strings.SplitN(absPath, workingDir, 2)
+	res := strings.SplitN(workingDir, gitRoot, 2)
 	if len(res) > 1 {
 		x := util.FilterEmptyStrings(strings.Split(res[1], string(os.PathSeparator)))
 		return x
@@ -83,6 +84,7 @@ func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err
 		return
 	}
 
+	// get domain for git ignore rules supplied from the lines argument
 	domain := getDomainFromWorkingDir(cwd, filesystem.Root())
 	for _, line := range lines {
 		pattern := gitignore.ParsePattern(line, domain)
