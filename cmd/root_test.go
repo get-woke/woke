@@ -98,6 +98,8 @@ func TestRunE(t *testing.T) {
 
 	t.Run("findings w error", func(t *testing.T) {
 		exitOneOnFailure = true
+		// don't ignore testdata folder
+		noIgnore = true
 
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
