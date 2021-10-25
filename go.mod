@@ -45,3 +45,5 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
+
+replace github.com/go-git/go-git/v5 => github.com/inclusive-dev-tools/go-git/v5 v5.4.4

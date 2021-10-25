@@ -19,6 +19,13 @@ type Ignore struct {
 	matcher gitignore.Matcher
 }
 
+var defaultIgnoreFiles = []string{
+	".gitignore",
+	".ignore",
+	".wokeignore",
+	".git/info/exclude",
+}
+
 // given a absolute path (example: /runner/folder/root/data/effx.yaml)
 // and given a workingDir (example: root)
 // it will return data/effx.yaml
@@ -72,7 +79,7 @@ func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err
 	}
 
 	var ps []gitignore.Pattern
-	if ps, err = readPatterns(filesystem, nil); err != nil {
+	if ps, err = gitignore.ReadPatterns(filesystem, nil, defaultIgnoreFiles); err != nil {
 		return
 	}
 
