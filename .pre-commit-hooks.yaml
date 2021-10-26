@@ -1,6 +1,7 @@
 - id: woke
   name: 'woke'
-  entry: woke --exit-1-on-failure
+  entry: woke
+  args: [--exit-1-on-failure]
   # The 'go' binary on your path must be at least version 1.17.
   language: 'golang'
   description: "Runs `woke`"
