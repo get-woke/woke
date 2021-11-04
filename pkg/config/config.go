@@ -1,8 +1,11 @@
 package config
 
 import (
+	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -27,7 +30,13 @@ func NewConfig(filename string) (*Config, error) {
 	var c Config
 	if len(filename) > 0 {
 		var err error
-		c, err = loadConfig(filename)
+
+		if isValidURL(filename) {
+			c, err = loadRemoteConfig(filename)
+		} else {
+			c, err = loadConfig(filename)
+		}
+
 		if err != nil {
 			return nil, err
 		}
@@ -117,11 +126,40 @@ func (c *Config) RemoveRule(i int) {
 
 func loadConfig(filename string) (c Config, err error) {
 	yamlFile, err := ioutil.ReadFile(filename)
+	log.Debug().Str("filename", filename).Msg("Adding custom ruleset from")
 	if err != nil {
 		return c, err
 	}
-
 	return c, yaml.Unmarshal(yamlFile, &c)
+}
+
+// gets the remote config from the url provided and returns config
+func loadRemoteConfig(url string) (c Config, err error) {
+	log.Debug().Str("url", url).Msg("Downloading file from")
+	client := &http.Client{}
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return c, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c, err
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return c, err
+	}
+	defer resp.Body.Close()
+
+	// only parse response body if it is in the response is in the 2xx range
+	statusOK := resp.StatusCode >= 200 && resp.StatusCode <= 299
+	if !statusOK {
+		return c, fmt.Errorf("unable to download remote config from url. Response code: %v. Response body: %c", resp.StatusCode, body)
+	}
+
+	log.Debug().Int("HTTP Response Status:", resp.StatusCode).Msg("Valid URL Response")
+	return c, yaml.Unmarshal(body, &c)
 }
 
 func relative(filename string) string {

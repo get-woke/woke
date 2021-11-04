@@ -42,12 +42,14 @@ func TestNewConfig(t *testing.T) {
 			enabledRules[i] = fmt.Sprintf("%q", c.Rules[i].Name)
 		}
 
+		loadedRemoteConfigMsg := `{"level":"debug","filename":"testdata/good.yaml","message":"Adding custom ruleset from"}`
+		loadedRemoteConfig := `{"level":"debug","filename":"testdata/good.yaml","message":"Adding custom ruleset from"}`
 		loadedConfigMsg := `{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`
 		configRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"config rules"}`, strings.Join(configRules, ","))
 		defaultRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"default rules"}`, strings.Join(defaultRules, ","))
 		allRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"all enabled rules"}`, strings.Join(enabledRules, ","))
 		assert.Equal(t,
-			loadedConfigMsg+"\n"+configRulesMsg+"\n"+defaultRulesMsg+"\n"+allRulesMsg+"\n",
+			loadedRemoteConfigMsg+"\n"+loadedRemoteConfig+"\n"+loadedConfigMsg+"\n"+configRulesMsg+"\n"+defaultRulesMsg+"\n"+allRulesMsg+"\n",
 			out.String())
 	})
 
@@ -206,8 +208,29 @@ func TestNewConfig(t *testing.T) {
 		assert.EqualValues(t, expected.Rules, c.Rules)
 		assert.Equal(t, "No findings found.", c.GetSuccessExitMessage())
 	})
-}
 
+	t.Run("load-config-with-bad-url", func(t *testing.T) {
+		_, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+		assert.Error(t, err)
+	})
+
+	t.Run("load-config-with-url", func(t *testing.T) {
+		c, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
+	t.Run("load-remote-config-valid-url", func(t *testing.T) {
+		c, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
+	t.Run("load-remote-config-invalid-url", func(t *testing.T) {
+		_, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+		assert.Error(t, err)
+	})
+}
 func Test_relative(t *testing.T) {
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)
