@@ -79,7 +79,9 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 // Configure IncludeNote for all rules
 // Filter out any rules that fall under ExcludeCategories
 func (c *Config) ConfigureRules(disableDefaultRules bool) {
-	if !disableDefaultRules {
+	if disableDefaultRules {
+		log.Debug().Msg("disabling default rules")
+	} else {
 		for _, r := range rule.DefaultRules {
 			if !c.inExistingRules(r) {
 				c.Rules = append(c.Rules, r)
