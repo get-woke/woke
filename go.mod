@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/caitlinelfring/go-env-default v1.0.0
-	github.com/fatih/color v1.12.0
+	github.com/fatih/color v1.13.0
 	github.com/get-woke/fastwalk v1.0.0
 	github.com/get-woke/go-gitignore v1.1.2
 	github.com/mattn/go-colorable v0.1.11
