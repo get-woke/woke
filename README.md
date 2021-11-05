@@ -62,7 +62,7 @@ Documentation is hosted at <https://docs.getwoke.tech>.
 
 Please read [CONTRIBUTING.md](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-![GitHub contributors](https://img.shields.io/github/contributors/get-woke/woke)
+[![GitHub contributors](https://img.shields.io/github/contributors/get-woke/woke)](https://github.com/get-woke/woke/graphs/contributors)
 
 ## Authors
 
