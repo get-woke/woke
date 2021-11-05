@@ -1,4 +1,4 @@
-# This is an example goreleaser.yaml file with some sane defaults.
+# This is an example goreleaser.yaml file with some sensible defaults.
 # Make sure to check the documentation at http://goreleaser.com
 
 before:
@@ -15,6 +15,7 @@ builds:
     goarch:
       - "amd64"
       - "386"
+      - "arm64"
     ldflags: -s -w -X github.com/get-woke/woke/cmd.Version={{.Version}} -X github.com/get-woke/woke/cmd.Commit={{.ShortCommit}} -X github.com/get-woke/woke/cmd.Date={{.Date}}
 
 archives:
@@ -49,8 +50,6 @@ changelog:
 
 dockers:
   - dockerfile: build/Dockerfile
-    binaries:
-      - woke
     image_templates:
       - "getwoke/woke:latest"
       - "getwoke/woke:{{ .Major }}.{{ .Minor }}"
