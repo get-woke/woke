@@ -13,6 +13,7 @@ rules:
       - white-list
     alternatives:
       - allowlist
+    # regex: regexterm
     note: An optional description why these terms are not inclusive. It can be optionally included in the output message.
     # options:
     #   word_boundary: false
@@ -26,6 +27,13 @@ A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_ur
 
 !!! tip
     If you copy these rules into your config file, be sure to put them under the `rules:` key.
+
+## `regex`
+
+Allows the definition of a regular expression (regex) directly. If specified,
+any terms in the rule definition as well as word boundary options are ignored.
+This is an advanced feature. Only use non-capturing groups in patterns.
+Look-around assertions are not supported.
 
 ## Options
 

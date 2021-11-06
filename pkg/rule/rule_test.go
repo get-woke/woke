@@ -21,6 +21,25 @@ func testRule() Rule {
 	}
 }
 
+func testRegexRule() Rule {
+	return Rule{
+		Name:         "ruleregex",
+		Regex:        `\d+`,
+		Alternatives: []string{"alt-regex1", "alt-regex-1"},
+		Severity:     SevWarn,
+	}
+}
+
+func testInvalidRegexRule() Rule {
+	r := Rule{
+		Name:         "invalidrule",
+		Regex:        `(`,
+		Alternatives: []string{"alt-rule1", "alt-rule-1"},
+		Severity:     SevWarn,
+	}
+	return r
+}
+
 func TestRule_FindMatchIndexes(t *testing.T) {
 	tests := []struct {
 		text       string
@@ -43,6 +62,39 @@ func TestRule_FindMatchIndexes(t *testing.T) {
 		r := testRuleWithOptions(Options{WordBoundary: true})
 		got := r.FindMatchIndexes(test.text)
 		assert.Equal(t, test.expectedWb, got)
+	}
+
+	e := Rule{Name: "rule1"}
+	assert.Equal(t, [][]int(nil), e.FindMatchIndexes("rule1"))
+}
+
+func TestRule_InvalidRegexRule(t *testing.T) {
+	// turn off the panic
+	defer func() { _ = recover() }()
+
+	r := testInvalidRegexRule()
+
+	// Verify rule is compiled - should panic
+	r.setRegex()
+
+	// Validate that terms are now empty / rule is disabled
+	t.Errorf("Invalid rule should have panicked")
+}
+
+func TestRule_FindMatchRegexIndexes(t *testing.T) {
+	tests := []struct {
+		text       string
+		expectedRe [][]int
+	}{
+		{"this string has 123456 and 56789 included", [][]int{{16, 22}, {27, 32}}},
+		{"this string does not have any findings", [][]int(nil)},
+		{`this string has finding with \d+ \d+`, [][]int(nil)},
+	}
+
+	for _, test := range tests {
+		r := testRegexRule()
+		got := r.FindMatchIndexes(test.text)
+		assert.Equal(t, test.expectedRe, got)
 	}
 
 	e := Rule{Name: "rule1"}
@@ -132,6 +184,11 @@ func TestRule_regexString(t *testing.T) {
 			desc:     "word boundary",
 			rule:     testRuleWithOptions(Options{WordBoundary: true}),
 			expected: `(?i)\b(%s)\b`,
+		},
+		{
+			desc:     "regex rule",
+			rule:     testRegexRule(),
+			expected: `(?i)(%s)`,
 		},
 		{
 			desc:     "word boundary start",

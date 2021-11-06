@@ -17,6 +17,7 @@ type Rule struct {
 	Name         string   `yaml:"name"`
 	Terms        []string `yaml:"terms"`
 	Alternatives []string `yaml:"alternatives"`
+	Regex        string   `yaml:"regex"`
 	Note         string   `yaml:"note"`
 	Severity     Severity `yaml:"severity"`
 	Options      Options  `yaml:"options"`
@@ -81,8 +82,12 @@ func (r *Rule) SetOptions(o Options) {
 }
 
 func (r *Rule) setRegex() {
-	group := strings.Join(escape(r.Terms), "|")
-	r.re = regexp.MustCompile(fmt.Sprintf(r.regexString(), group))
+	if len(r.Regex) != 0 {
+		r.re = regexp.MustCompile(fmt.Sprintf(`(%s)`, r.Regex))
+	} else {
+		group := strings.Join(escape(r.Terms), "|")
+		r.re = regexp.MustCompile(fmt.Sprintf(r.regexString(), group))
+	}
 }
 
 func (r *Rule) regexString() string {
@@ -223,7 +228,7 @@ func maskInlineIgnore(line string) string {
 // which is helpful for disabling default rules. Eventually, there should be a better
 // way to disable a default rule, and then, if a rule has no Terms, it falls back to the Name.
 func (r *Rule) Disabled() bool {
-	return len(r.Terms) == 0
+	return len(r.Terms) == 0 && len(r.Regex) == 0
 }
 
 // SetIncludeNote populates IncludeNote attributte in Options

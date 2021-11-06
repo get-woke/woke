@@ -74,6 +74,7 @@ The following fields are supported, depending on format:
 | alternative  | List of alternative terms to use instead          |
 | note         | Note about reasoning for inclusion                |
 | severity     | From config, one of "error", "warning", or "info" |
+| regex        | Optional regular expression defined by rule       |
 | optionbool   | Option value, true or false                       |
 | linecontents | Contents of the line with finding                 |
 | lineno       | Line number, 1 based                              |
@@ -150,6 +151,7 @@ Outputs the results as a series of [`json`](https://www.json.org/json-en.html) f
           "<alternative>",
           ...
         ],
+        "Regex": "<regex>",
         "Note": "<note>",
         "Severity": "<severity>",
         "Options": {
