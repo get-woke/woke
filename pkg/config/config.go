@@ -26,7 +26,7 @@ type Config struct {
 }
 
 // NewConfig returns a new Config
-func NewConfig(filename string) (*Config, error) {
+func NewConfig(filename string, disableDefaultRules bool) (*Config, error) {
 	var c Config
 	if len(filename) > 0 {
 		var err error
@@ -50,7 +50,7 @@ func NewConfig(filename string) (*Config, error) {
 		log.Debug().Msg("no config file loaded, using only default rules")
 	}
 
-	c.ConfigureRules()
+	c.ConfigureRules(disableDefaultRules)
 	logRuleset("all enabled", c.Rules)
 
 	return &c, nil
@@ -78,13 +78,16 @@ func (c *Config) inExistingRules(r *rule.Rule) bool {
 // Configure RegExps for all rules
 // Configure IncludeNote for all rules
 // Filter out any rules that fall under ExcludeCategories
-func (c *Config) ConfigureRules() {
-	for _, r := range rule.DefaultRules {
-		if !c.inExistingRules(r) {
-			c.Rules = append(c.Rules, r)
+func (c *Config) ConfigureRules(disableDefaultRules bool) {
+	if disableDefaultRules {
+		log.Debug().Msg("disabling default rules")
+	} else {
+		for _, r := range rule.DefaultRules {
+			if !c.inExistingRules(r) {
+				c.Rules = append(c.Rules, r)
+			}
 		}
 	}
-
 	logRuleset("default", rule.DefaultRules)
 	var excludeIndices []int
 

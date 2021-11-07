@@ -31,21 +31,43 @@ func BenchmarkRootRunE(b *testing.B) {
 	}
 }
 
-func TestInitConfig(t *testing.T) {
+func setTestConfigFile(t *testing.T, filename string) {
+	origConfigFile := viper.ConfigFileUsed()
 	t.Cleanup(func() {
-		cfgFile = ""
-		debug = false
+		viper.SetConfigFile(origConfigFile)
 	})
-	debug = true
-	t.Run("good config", func(t *testing.T) {
-		cfgFile = "../testdata/good.yml"
-		initConfig()
-	})
+	viper.SetConfigFile(filename)
+}
 
-	t.Run("no config", func(t *testing.T) {
-		cfgFile = ""
-		initConfig()
-	})
+func TestInitConfig(t *testing.T) {
+	tests := []struct {
+		desc    string
+		cfgFile string
+	}{
+		{
+			desc:    "good config",
+			cfgFile: "../testdata/good.yml",
+		},
+		{
+			desc:    "no config",
+			cfgFile: "",
+		},
+		{
+			desc:    "invalid config",
+			cfgFile: "../testdata/invalid.yml",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			t.Cleanup(func() {
+				cfgFile = ""
+				initConfig()
+			})
+			cfgFile = tt.cfgFile
+			initConfig()
+			assert.Equal(t, tt.cfgFile, viper.ConfigFileUsed())
+		})
+	}
 }
 
 func TestParseArgs(t *testing.T) {
@@ -62,13 +84,9 @@ func TestParseArgs(t *testing.T) {
 
 func TestRunE(t *testing.T) {
 	origStdout := output.Stdout
-	origConfigFile := viper.ConfigFileUsed()
 	t.Cleanup(func() {
-		exitOneOnFailure = false
-		noIgnore = false
 		// Reset back to original
 		output.Stdout = origStdout
-		viper.SetConfigName(origConfigFile)
 	})
 
 	t.Run("no findings found", func(t *testing.T) {
@@ -86,8 +104,7 @@ func TestRunE(t *testing.T) {
 	t.Run("no findings found with custom message", func(t *testing.T) {
 		buf := new(bytes.Buffer)
 		output.Stdout = buf
-
-		viper.SetConfigFile("../testdata/.woke-custom-exit-success.yaml")
+		setTestConfigFile(t, "../testdata/.woke-custom-exit-success.yaml")
 		err := rootRunE(new(cobra.Command), []string{"../testdata/good.yml"})
 		assert.NoError(t, err)
 
@@ -98,9 +115,38 @@ func TestRunE(t *testing.T) {
 
 	t.Run("findings w error", func(t *testing.T) {
 		exitOneOnFailure = true
-
+		t.Cleanup(func() {
+			exitOneOnFailure = false
+		})
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 		assert.Regexp(t, regexp.MustCompile(`^files with findings: \d`), err.Error())
+	})
+
+	t.Run("no rules enabled", func(t *testing.T) {
+		disableDefaultRules = true
+		t.Cleanup(func() {
+			disableDefaultRules = false
+		})
+
+		err := rootRunE(new(cobra.Command), []string{"../testdata"})
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, ErrNoRulesEnabled)
+	})
+
+	t.Run("invalid printer", func(t *testing.T) {
+		outputName = "foo"
+		t.Cleanup(func() {
+			outputName = "text"
+		})
+		err := rootRunE(new(cobra.Command), []string{"../testdata"})
+		assert.Error(t, err)
+		assert.Equal(t, "foo is not a valid printer type", err.Error())
+	})
+
+	t.Run("invalid config", func(t *testing.T) {
+		setTestConfigFile(t, "../testdata/invalid.yaml")
+		err := rootRunE(new(cobra.Command), []string{"../testdata"})
+		assert.Error(t, err)
 	})
 }
