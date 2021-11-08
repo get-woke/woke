@@ -9,7 +9,7 @@ require (
 	github.com/get-woke/go-gitignore v1.1.2
 	github.com/mattn/go-colorable v0.1.11
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/rs/zerolog v1.25.0
+	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
