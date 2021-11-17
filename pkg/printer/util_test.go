@@ -91,6 +91,34 @@ func generateThirdResults(filename string) []result.Result {
 	}
 }
 
+func generateFilePathResult() *result.FileResults {
+	r := result.FileResults{Filename: "whitelist.txt"}
+	r.Results = generatePathResults(r.Filename)
+	return &r
+}
+
+func generatePathResults(filename string) []result.Result {
+	return []result.Result{
+		result.LineResult{
+			Rule:    &rule.TestRule,
+			Finding: "whitelist",
+			Line:    "this whitelist must change",
+			StartPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   1,
+			},
+			EndPosition: &token.Position{
+				Filename: filename,
+				Offset:   0,
+				Line:     1,
+				Column:   1,
+			},
+		},
+	}
+}
+
 func newPosition(f string, l, c int) *token.Position {
 	return &token.Position{
 		Filename: f,

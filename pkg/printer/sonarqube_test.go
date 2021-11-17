@@ -26,6 +26,17 @@ func TestSonarQube_Print(t *testing.T) {
 	assert.Equal(t, expected, got)
 }
 
+func TestSonarQube_PrintPath(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewSonarQube(buf)
+	res := generateFilePathResult()
+	assert.NoError(t, p.Print(res))
+	got := buf.String()
+
+	expected := `{"engineId":"woke","ruleId":"whitelist","primaryLocation":{"message":"` + "`" + `whitelist` + "`" + ` may be insensitive, use ` + "`" + `allowlist` + "`" + ` instead","filePath":"whitelist.txt","textRange":{"startLine":1,"startColumn":0,"endColumn":1}},"type":"CODE_SMELL","severity":"MINOR"}` + "\n"
+	assert.Equal(t, expected, got)
+}
+
 func TestSonarQube_PrintSuccessExitMessage(t *testing.T) {
 	buf := new(bytes.Buffer)
 	p := NewSonarQube(buf)
