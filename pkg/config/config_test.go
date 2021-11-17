@@ -35,24 +35,26 @@ func TestNewConfig(t *testing.T) {
 			defaultRules[i] = fmt.Sprintf("%q", rule.DefaultRules[i].Name)
 		}
 
-		c, err := NewConfig("testdata/good.yaml")
+		c, err := NewConfig("testdata/good.yaml", false)
 		assert.NoError(t, err)
 		enabledRules := make([]string, len(c.Rules))
 		for i := range c.Rules {
 			enabledRules[i] = fmt.Sprintf("%q", c.Rules[i].Name)
 		}
 
+		loadedRemoteConfigMsg := `{"level":"debug","filename":"testdata/good.yaml","message":"Adding custom ruleset from"}`
+		loadedRemoteConfig := `{"level":"debug","filename":"testdata/good.yaml","message":"Adding custom ruleset from"}`
 		loadedConfigMsg := `{"level":"debug","config":"testdata/good.yaml","message":"loaded config file"}`
 		configRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"config rules"}`, strings.Join(configRules, ","))
 		defaultRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"default rules"}`, strings.Join(defaultRules, ","))
 		allRulesMsg := fmt.Sprintf(`{"level":"debug","rules":[%s],"message":"all enabled rules"}`, strings.Join(enabledRules, ","))
 		assert.Equal(t,
-			loadedConfigMsg+"\n"+configRulesMsg+"\n"+defaultRulesMsg+"\n"+allRulesMsg+"\n",
+			loadedRemoteConfigMsg+"\n"+loadedRemoteConfig+"\n"+loadedConfigMsg+"\n"+configRulesMsg+"\n"+defaultRulesMsg+"\n"+allRulesMsg+"\n",
 			out.String())
 	})
 
 	t.Run("config-good", func(t *testing.T) {
-		c, err := NewConfig("testdata/good.yaml")
+		c, err := NewConfig("testdata/good.yaml", false)
 		assert.NoError(t, err)
 
 		expectedRules := []*rule.Rule{}
@@ -79,7 +81,7 @@ func TestNewConfig(t *testing.T) {
 			Rules:       expectedRules,
 			IgnoreFiles: []string{"README.md", "pkg/rule/default.go", "testdata/good.yaml"},
 		}
-		expected.ConfigureRules()
+		expected.ConfigureRules(false)
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 
@@ -89,7 +91,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-empty-missing", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("")
+		c, err := NewConfig("", false)
 		assert.NoError(t, err)
 
 		expectedEmpty := &Config{
@@ -101,14 +103,14 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-missing", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/missing.yaml")
+		c, err := NewConfig("testdata/missing.yaml", false)
 		assert.Error(t, err)
 		assert.Nil(t, c)
 	})
 
 	t.Run("config-empty-success-message", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/empty-success-message.yaml")
+		c, err := NewConfig("testdata/empty-success-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check default config message
@@ -117,7 +119,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-custom-success-message", func(t *testing.T) {
 		// Test when no config file is provided
-		c, err := NewConfig("testdata/custom-success-message.yaml")
+		c, err := NewConfig("testdata/custom-success-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check default config message
@@ -126,7 +128,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-add-note-messaage", func(t *testing.T) {
 		// Test when it is configured to add a note to the output message
-		c, err := NewConfig("testdata/add-note-message.yaml")
+		c, err := NewConfig("testdata/add-note-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check global IncludeNote
@@ -139,9 +141,9 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, false, *c.Rules[0].Options.IncludeNote)
 	})
 
-	t.Run("config-dont-add-note-messaage", func(t *testing.T) {
+	t.Run("config-dont-add-note-message", func(t *testing.T) {
 		// Test when it is nott configured to add a note to the output message
-		c, err := NewConfig("testdata/dont-add-note-message.yaml")
+		c, err := NewConfig("testdata/dont-add-note-message.yaml", false)
 		assert.NoError(t, err)
 
 		// check global IncludeNote
@@ -154,9 +156,19 @@ func TestNewConfig(t *testing.T) {
 		assert.Equal(t, true, *c.Rules[0].Options.IncludeNote)
 	})
 
+	t.Run("disable-default-rules", func(t *testing.T) {
+		c, err := NewConfig("testdata/good.yaml", true)
+		assert.NoError(t, err)
+		assert.Len(t, c.Rules, 3)
+
+		c, err = NewConfig("testdata/good.yaml", false)
+		assert.NoError(t, err)
+		assert.Len(t, c.Rules, len(rule.DefaultRules)+2)
+	})
+
 	t.Run("config-exclude-a-category", func(t *testing.T) {
 		// Test when configured to exclude a single category
-		c, err := NewConfig("testdata/exclude-single-category.yaml")
+		c, err := NewConfig("testdata/exclude-single-category.yaml", false)
 		assert.NoError(t, err)
 
 		expectedRules := []*rule.Rule{}
@@ -178,7 +190,7 @@ func TestNewConfig(t *testing.T) {
 			Rules:             expectedRules,
 			ExcludeCategories: []string{"cat2"},
 		}
-		expected.ConfigureRules()
+		expected.ConfigureRules(false)
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 		assert.Equal(t, "No findings found.", c.GetSuccessExitMessage())
@@ -186,7 +198,7 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("config-exclude-multiple-categories", func(t *testing.T) {
 		// Test when configured to exclude multiple categories
-		c, err := NewConfig("testdata/exclude-multiple-categories.yaml")
+		c, err := NewConfig("testdata/exclude-multiple-categories.yaml", false)
 		assert.NoError(t, err)
 
 		expectedRules := []*rule.Rule{}
@@ -201,13 +213,34 @@ func TestNewConfig(t *testing.T) {
 			Rules:             expectedRules,
 			ExcludeCategories: []string{"cat1", "cat2"},
 		}
-		expected.ConfigureRules()
+		expected.ConfigureRules(false)
 
 		assert.EqualValues(t, expected.Rules, c.Rules)
 		assert.Equal(t, "No findings found.", c.GetSuccessExitMessage())
 	})
-}
 
+	t.Run("load-config-with-bad-url", func(t *testing.T) {
+		_, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example", false)
+		assert.Error(t, err)
+	})
+
+	t.Run("load-config-with-url", func(t *testing.T) {
+		c, err := NewConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml", false)
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
+	t.Run("load-remote-config-valid-url", func(t *testing.T) {
+		c, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example.yaml")
+		assert.NoError(t, err)
+		assert.NotNil(t, c)
+	})
+
+	t.Run("load-remote-config-invalid-url", func(t *testing.T) {
+		_, err := loadRemoteConfig("https://raw.githubusercontent.com/get-woke/woke/main/example")
+		assert.Error(t, err)
+	})
+}
 func Test_relative(t *testing.T) {
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)

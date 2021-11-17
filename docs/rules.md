@@ -79,6 +79,18 @@ rules:
   - name: whitelist
 ```
 
+### Disable all Default Rules
+
+There may be a case where you want full control over the rules you want to run with woke.
+
+You can either disable each default rule via the instructions above.
+
+Or you can run woke with `--disable-default-rules` to completely disable all default rules.
+
+!!! note
+    `woke` will fail to run if you use `--disable-default-rules` without providing your own rules
+    because that would mean running `woke` without any rules, which is pointless.
+
 ## Excluding Categories of Rules
 
 You can also specify any number of rule categories to be excluded, or filtered out, from within your `woke` configuration. If any rules in a configuration file have matching categories, they will be excluded and will not be run against the target files.
