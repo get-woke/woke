@@ -78,6 +78,13 @@ func (p *SonarQube) Print(fs *result.FileResults) error {
 					StartColumn: res.GetStartPosition().Column,
 					EndColumn:   res.GetEndPosition().Column}}}
 
+		// start column and end column are both 1 for file results, all other findings
+		// should be at least 1 character long
+		if res.GetStartPosition().Column == 1 && res.GetEndPosition().Column == 1 {
+			// File / path results should be 0 based for sonarqube, but are 1 based instead
+			issue.PrimaryLocation.TextRange.StartColumn = 0
+		}
+
 		var buf bytes.Buffer
 		err := json.NewEncoder(&buf).Encode(issue)
 		if err != nil {
