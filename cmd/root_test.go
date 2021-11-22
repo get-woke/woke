@@ -10,6 +10,7 @@ import (
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -31,14 +32,6 @@ func BenchmarkRootRunE(b *testing.B) {
 	}
 }
 
-func setTestConfigFile(t *testing.T, filename string) {
-	origConfigFile := viper.ConfigFileUsed()
-	t.Cleanup(func() {
-		viper.SetConfigFile(origConfigFile)
-	})
-	viper.SetConfigFile(filename)
-}
-
 func TestInitConfig(t *testing.T) {
 	tests := []struct {
 		desc    string
@@ -57,6 +50,9 @@ func TestInitConfig(t *testing.T) {
 			cfgFile: "../testdata/invalid.yml",
 		},
 	}
+
+	overrideHomeDir(t)
+
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
 			t.Cleanup(func() {
@@ -149,4 +145,26 @@ func TestRunE(t *testing.T) {
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 	})
+}
+
+// helper functions
+
+func setTestConfigFile(t *testing.T, filename string) {
+	origConfigFile := viper.ConfigFileUsed()
+	t.Cleanup(func() {
+		viper.SetConfigFile(origConfigFile)
+	})
+	viper.SetConfigFile(filename)
+}
+
+// overrideHomeDir to avoid pulling in a config file in the home directory
+// while running tests
+func overrideHomeDir(t *testing.T) {
+	origHome := os.Getenv("HOME")
+	t.Cleanup(func() {
+		os.Setenv("HOME", origHome)
+		homedir.Reset()
+	})
+	os.Setenv("HOME", "foo")
+	homedir.Reset()
 }
