@@ -23,6 +23,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -44,12 +45,13 @@ import (
 
 var (
 	// flags
-	exitOneOnFailure bool
-	cfgFile          string
-	debug            bool
-	stdin            bool
-	outputName       string
-	noIgnore         bool
+	exitOneOnFailure    bool
+	cfgFile             string
+	debug               bool
+	stdin               bool
+	outputName          string
+	noIgnore            bool
+	disableDefaultRules bool
 
 	// Version is populated by goreleaser during build
 	// Version...
@@ -73,6 +75,8 @@ Provide a list file globs for files you'd like to check.`,
 	RunE: rootRunE,
 }
 
+var ErrNoRulesEnabled = errors.New("no rules enabled: either configure rules in your config file or remove the `--disable-default-rules` flag")
+
 func rootRunE(cmd *cobra.Command, args []string) error {
 	setDebugLogLevel()
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -86,9 +90,13 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 			Msg("woke completed")
 	}()
 
-	cfg, err := config.NewConfig(viper.ConfigFileUsed())
+	cfg, err := config.NewConfig(viper.ConfigFileUsed(), disableDefaultRules)
 	if err != nil {
 		return err
+	}
+
+	if len(cfg.Rules) == 0 {
+		return ErrNoRulesEnabled
 	}
 
 	var ignorer *ignore.Ignore
@@ -146,6 +154,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed")
 	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
+	rootCmd.PersistentFlags().BoolVar(&disableDefaultRules, "disable-default-rules", false, "Disable the default ruleset")
 }
 
 // GetRootCmd returns the rootCmd, which should only be used by the docs generator in cmd/docs/main.go

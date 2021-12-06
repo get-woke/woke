@@ -14,6 +14,15 @@ This file will be picked up automatically up your customizations without needing
 See [example.yaml]({{config.repo_url}}blob/main/example.yaml) for an example of adding custom rules.
 You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
 
+### Remote config file
+
+You can also use a remote config file by providing a publicly-accessible URL.
+
+```bash
+$ woke -c https://raw.githubusercontent.com/get-woke/woke/main/example.yaml
+No findings found.
+```
+
 ## Inputs
 
 ### File globs

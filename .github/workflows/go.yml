@@ -5,10 +5,14 @@ on:
     branches: [ main ]
     paths:
       - "**.go"
+      - go.mod
+      - go.sum
       - .github/workflows/go.yml
   pull_request:
     paths:
       - "**.go"
+      - go.mod
+      - go.sum
       - .github/workflows/go.yml
 
 jobs:

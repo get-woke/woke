@@ -17,6 +17,8 @@ Are you using `woke` in your org? We'd love to know! Please send a PR and add yo
 - [Veue](https://veuelive.com)
 - [Cisco](https://ciscotechblog.com/blog/inclusive-infrastructure/)
 - [Orchard](https://orchard.com/)
+- [Canonical](https://canonical.com/)
+- [Airbnb](http://airbnb.com/) ([blog post](https://medium.com/airbnb-engineering/building-an-inclusive-codebase-bbaa2315e5b8))
 
 {% include "about.md" %}
 
