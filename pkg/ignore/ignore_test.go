@@ -81,9 +81,16 @@ func (suite *IgnoreTestSuite) SetupTest() {
 func BenchmarkIgnore(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	fs, clean := TempFileSystem()
+	defer clean()
 	for i := 0; i < 10; i++ {
-		for j := 0; j < 100; j++ {
+		for j := 0; j < 10; j++ {
 			err := fs.MkdirAll(fs.Join(fmt.Sprintf("%d", i), fmt.Sprintf("%d", j)), os.ModePerm)
+			assert.NoError(b, err)
+			f, err := fs.Create(".wokeignore")
+			assert.NoError(b, err)
+			_, err = f.Write([]byte("testFolder"))
+			assert.NoError(b, err)
+			err = f.Close()
 			assert.NoError(b, err)
 			for k := 0; k < 100; k++ {
 				f, err := fs.Create(fmt.Sprintf("%d.txt", k))
@@ -93,8 +100,6 @@ func BenchmarkIgnore(b *testing.B) {
 			}
 		}
 	}
-
-	defer clean()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
