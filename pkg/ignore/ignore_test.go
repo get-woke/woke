@@ -1,6 +1,7 @@
 package ignore
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -9,6 +10,7 @@ import (
 	"github.com/go-git/go-billy/v5/osfs"
 	"github.com/go-git/go-billy/v5/util"
 	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,7 +23,7 @@ type IgnoreTestSuite struct {
 	GFS billy.Filesystem // git repository root
 }
 
-func (suite *IgnoreTestSuite) TempFileSystem() (fs billy.Filesystem, clean func()) {
+func TempFileSystem() (fs billy.Filesystem, clean func()) {
 	fs = osfs.New(os.TempDir())
 	path, err := util.TempDir(fs, "", "")
 	if err != nil {
@@ -40,7 +42,7 @@ func (suite *IgnoreTestSuite) TempFileSystem() (fs billy.Filesystem, clean func(
 
 func (suite *IgnoreTestSuite) SetupTest() {
 	// setup generic git repository root
-	fs, clean := suite.TempFileSystem()
+	fs, clean := TempFileSystem()
 	defer clean()
 	f, err := fs.Create(".gitignore")
 	suite.NoError(err)
@@ -76,6 +78,32 @@ func (suite *IgnoreTestSuite) SetupTest() {
 	suite.GFS = fs
 }
 
+func BenchmarkIgnore(b *testing.B) {
+	zerolog.SetGlobalLevel(zerolog.NoLevel)
+	fs, clean := TempFileSystem()
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 100; j++ {
+			err := fs.MkdirAll(fs.Join(fmt.Sprintf("%d", i), fmt.Sprintf("%d", j)), os.ModePerm)
+			assert.NoError(b, err)
+			for k := 0; k < 100; k++ {
+				f, err := fs.Create(fmt.Sprintf("%d.txt", k))
+				assert.NoError(b, err)
+				err = f.Close()
+				assert.NoError(b, err)
+			}
+		}
+	}
+
+	defer clean()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ignorer, err := NewIgnore(fs, []string{})
+		assert.NoError(b, err)
+		ignorer.Match(filepath.Join("not", "foo"), false)
+	}
+}
+
 func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
 	suite.Equal([]string{}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("b/c/d")))
 	suite.Equal([]string{}, getDomainFromWorkingDir(filepath.FromSlash("a/b/c/d"), filepath.FromSlash("a/b/c/d")))
@@ -96,7 +124,7 @@ func (suite *IgnoreTestSuite) TestGetRootGitDir() {
 }
 
 func (suite *IgnoreTestSuite) TestGetRootGitDirNotExist() {
-	fs, clean := suite.TempFileSystem()
+	fs, clean := TempFileSystem()
 	defer clean()
 	rootFs, err := GetRootGitDir(fs.Root())
 	suite.NoError(err)
