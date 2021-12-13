@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/get-woke/fastwalk v1.0.0
 	github.com/get-woke/go-gitignore v1.1.2
-	github.com/mattn/go-colorable v0.1.11
+	github.com/mattn/go-colorable v0.1.12
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
