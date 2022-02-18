@@ -1,0 +1,20 @@
+name: Greeting first time contributors
+
+on:
+  pull_request:
+    types: ["opened"]
+  issues:
+    types: ["opened"]
+
+jobs:
+  greet-user:
+    name: Greeting Action
+    runs-on: ubuntu-latest
+
+    # Runs the greeting action (Options can be found here https://github.com/actions/first-interaction)
+    steps:
+      - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: "👋 Thanks for submitting your first issue!\n\nPlease be sure to read and follow our [Code of Conduct](https://github.com/get-woke/woke/blob/main/CODE_OF_CONDUCT.md) and [Contributing](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md) guide.\n\n⭐️ Is your org or open source project using `woke`? If so, we'd love for you to be included in the 'Who uses `woke`' list at https://github.com/get-woke/woke/blob/main/docs/about.md#who-uses-woke."
+          pr-message: "👋 Thanks for submitting your first PR!\n\nPlease be sure to read and follow our [Code of Conduct](https://github.com/get-woke/woke/blob/main/CODE_OF_CONDUCT.md) and [Contributing](https://github.com/get-woke/woke/blob/main/CONTRIBUTING.md) guide.\n\n⭐️ Is your org or open source project using `woke`? If so, we'd love for you to be included in the 'Who uses `woke`' list at https://github.com/get-woke/woke/blob/main/docs/about.md#who-uses-woke."
