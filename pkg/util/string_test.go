@@ -50,3 +50,19 @@ func TestContainsAlphanumeric(t *testing.T) {
 		})
 	}
 }
+
+func TestFilterEmptyStrings(t *testing.T) {
+	tests := []struct {
+		s      []string
+		actual []string
+	}{
+		{[]string{"foo", "bar"}, []string{"foo", "bar"}},
+		{[]string{"foo", "", "bar"}, []string{"foo", "bar"}},
+		{[]string{"", "bar"}, []string{"bar"}},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("%s-%d", tt.s, i), func(t *testing.T) {
+			assert.ElementsMatch(t, FilterEmptyStrings(tt.s), tt.actual)
+		})
+	}
+}

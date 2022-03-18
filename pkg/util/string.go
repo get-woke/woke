@@ -23,6 +23,16 @@ func InSlice(s string, slice []string) bool {
 	return false
 }
 
+func FilterEmptyStrings(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 // ContainsAlphanumeric returns true if alphanumeric chars are found in the string
 func ContainsAlphanumeric(s string) bool {
 	if len(s) == 0 {

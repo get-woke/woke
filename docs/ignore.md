@@ -74,3 +74,27 @@ func main() {
   fmt.Println("and here is the blacklist")
 }
 ```
+
+## Nested Ignore Files
+
+`woke` will apply ignore rules from nested ignore files to any child files/folders, similar to a nested `.gitignore` file. Nested ignore files work for any ignore file type listed above.
+
+```txt
+project
+│   README.md
+│   .wokeignore (applies to whole project)
+│
+└───folder1
+│   │   file011.txt
+│   │   file012.txt
+│   │   .wokeignore (applies to file011.txt, file012.txt, and subfolder1)
+│   │
+│   └───subfolder1
+│       │   file111.txt
+│       │   file112.txt
+│       │   ...
+│
+└───folder2
+    │   file021.txt
+    │   file022.txt
+```

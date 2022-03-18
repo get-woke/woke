@@ -101,9 +101,19 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 
 	var ignorer *ignore.Ignore
 	if !noIgnore {
-		ignorer = ignore.NewIgnore(cfg.IgnoreFiles)
+		cwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		fs, err := ignore.GetRootGitDir(cwd)
+		if err != nil {
+			return err
+		}
+		ignorer, err = ignore.NewIgnore(fs, cfg.IgnoreFiles)
+		if err != nil {
+			return err
+		}
 	}
-
 	p := parser.NewParser(cfg.Rules, ignorer)
 
 	print, err := printer.NewPrinter(outputName, output.Stdout)

@@ -111,6 +111,9 @@ func TestRunE(t *testing.T) {
 
 	t.Run("findings w error", func(t *testing.T) {
 		exitOneOnFailure = true
+		// don't ignore testdata folder
+		noIgnore = true
+
 		t.Cleanup(func() {
 			exitOneOnFailure = false
 		})
