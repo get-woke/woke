@@ -50,10 +50,11 @@ is available on your `$PATH` (check with `woke --version`).
 Install the go toolchain: <https://golang.org/doc/install>
 
 ```bash
-go get -u github.com/get-woke/woke
-```
+go install github.com/get-woke/woke@latest
 
-`woke` will be installed to `$GOPATH/bin/woke`.
+# Or pin a specific version
+go install github.com/get-woke/woke@v0.9.0
+```
 
 ## Docker
 
