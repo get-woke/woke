@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/get-woke/go-git/v5/plumbing/format/gitignore"
 	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/osfs"
-	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/rs/zerolog/log"
 
 	"github.com/get-woke/woke/pkg/util"
