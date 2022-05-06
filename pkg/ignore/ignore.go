@@ -23,7 +23,6 @@ var defaultIgnoreFiles = []string{
 	".gitignore",
 	".ignore",
 	".wokeignore",
-	".git/info/exclude",
 }
 
 // Given a workingDir (example: /root/proj/subDir/curDir)
