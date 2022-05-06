@@ -6,7 +6,7 @@ require (
 	github.com/caitlinelfring/go-env-default v1.0.0
 	github.com/fatih/color v1.13.0
 	github.com/get-woke/fastwalk v1.0.0
-	github.com/get-woke/go-git/v5 v5.4.5
+	github.com/get-woke/go-git/v5 v5.4.6
 	github.com/go-git/go-billy/v5 v5.3.1
 	github.com/mattn/go-colorable v0.1.12
 	github.com/mitchellh/go-homedir v1.1.0
