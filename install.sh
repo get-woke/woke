@@ -65,10 +65,13 @@ get_binaries() {
   case "$PLATFORM" in
     darwin/386) BINARIES="woke" ;;
     darwin/amd64) BINARIES="woke" ;;
+    darwin/arm64) BINARIES="woke" ;;
     linux/386) BINARIES="woke" ;;
     linux/amd64) BINARIES="woke" ;;
+    linux/arm64) BINARIES="woke" ;;
     windows/386) BINARIES="woke" ;;
     windows/amd64) BINARIES="woke" ;;
+    windows/arm64) BINARIES="woke" ;;
     *)
       log_crit "platform $PLATFORM is not supported.  Make sure this script is up-to-date and file request at https://github.com/${PREFIX}/issues/new"
       exit 1
