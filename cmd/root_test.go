@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/output"
@@ -70,12 +72,93 @@ func TestParseArgs(t *testing.T) {
 	t.Cleanup(func() {
 		stdin = false
 	})
-	assert.Equal(t, parser.DefaultPath, parseArgs([]string{}))
-	assert.Equal(t, []string{"../.."}, parseArgs([]string{"../.."}))
+	tests := []struct {
+		stdin         bool
+		args          []string
+		expectedArgs  []string
+		expectedError error
+	}{
+		{
+			stdin:         false,
+			args:          []string{},
+			expectedArgs:  parser.DefaultPath,
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../.."},
+			expectedArgs:  []string{"../.."},
+			expectedError: nil,
+		},
 
-	stdin = true
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{}))
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{"../.."}))
+		// Test glob expansion
+		{
+			stdin:         false,
+			args:          []string{"../testdata/*.yml"},
+			expectedArgs:  []string{"../testdata/good.yml", "../testdata/whitelist.yml"},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/g??d.yml"},
+			expectedArgs:  []string{"../testdata/good.yml"},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[a-z]ood.yml"},
+			expectedArgs:  []string{"../testdata/good.yml"},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/*/*.yml"},
+			expectedArgs:  []string{"../testdata/subdir1/good.yml", "../testdata/subdir1/whitelist.yml"},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/**/*.yml"},
+			expectedArgs: []string{
+				"../testdata/good.yml",
+				"../testdata/whitelist.yml",
+				"../testdata/subdir1/good.yml",
+				"../testdata/subdir1/whitelist.yml",
+				"../testdata/subdir1/subdir2/good.yml",
+				"../testdata/subdir1/subdir2/whitelist.yml",
+			},
+			expectedError: nil,
+		},
+
+		// Bad glob pattern
+		{
+			stdin:         false,
+			args:          []string{"r[.go"},
+			expectedArgs:  nil,
+			expectedError: filepath.ErrBadPattern,
+		},
+
+		{
+			stdin:         true,
+			args:          []string{},
+			expectedArgs:  []string{os.Stdin.Name()},
+			expectedError: nil,
+		},
+		{
+			stdin:         true,
+			args:          []string{"../.."},
+			expectedArgs:  []string{os.Stdin.Name()},
+			expectedError: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
+			stdin = tt.stdin
+			files, err := parseArgs(tt.args)
+			assert.ErrorIs(t, err, tt.expectedError)
+			assert.Equal(t, tt.expectedArgs, files)
+		})
+	}
 }
 
 func TestRunE(t *testing.T) {

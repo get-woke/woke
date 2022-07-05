@@ -26,6 +26,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -36,6 +37,7 @@ import (
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -121,7 +123,11 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	findings := p.ParsePaths(print, parseArgs(args)...)
+	files, err := parseArgs(args)
+	if err != nil {
+		return err
+	}
+	findings := p.ParsePaths(print, files...)
 
 	if exitOneOnFailure && findings > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
@@ -162,7 +168,10 @@ func GetRootCmd() cobra.Command {
 	return *rootCmd
 }
 
-func parseArgs(args []string) []string {
+// parseArgs parses the command-line positional arguments that contain file glob patterns.
+// If no argument is provided, return the default path (current directory).
+// Perform glob pattern expansion.
+func parseArgs(args []string) ([]string, error) {
 	if len(args) == 0 {
 		args = parser.DefaultPath
 	}
@@ -170,8 +179,29 @@ func parseArgs(args []string) []string {
 	if stdin {
 		args = []string{os.Stdin.Name()}
 	}
+	// Perform glob expansion.
+	var files []string
+	for _, arg := range args {
+		var f []string
+		var err error
+		if strings.Contains(arg, "**") {
+			// Double star glob expansion.
+			base, pattern := doublestar.SplitPattern(arg)
+			fsys := os.DirFS(base)
+			f, err = doublestar.Glob(fsys, pattern)
+			for i := range f {
+				f[i] = filepath.Join(base, f[i])
+			}
+		} else {
+			f, err = filepath.Glob(arg)
+		}
+		if err != nil {
+			return nil, err
+		}
+		files = append(files, f...)
+	}
 
-	return args
+	return files, nil
 }
 
 func setDebugLogLevel() {

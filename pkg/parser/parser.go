@@ -54,9 +54,6 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 		return r.Len()
 	}
 
-	if len(paths) == 0 {
-		paths = DefaultPath
-	}
 	var wg sync.WaitGroup
 
 	done := make(chan bool)
