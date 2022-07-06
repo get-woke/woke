@@ -34,6 +34,10 @@ const (
 	// OutFormatSonarQube is an output format supported by SonarQube
 	// https://docs.sonarqube.org/latest/analysis/generic-issue/
 	OutFormatSonarQube = "sonarqube"
+
+	// OutFormatCheckstyle outputs in checkstyle format.
+	// https://github.com/checkstyle/checkstyle
+	OutFormatCheckstyle = "checkstyle"
 )
 
 // OutFormats are all the available output formats. The first one should be the default
@@ -42,6 +46,7 @@ var OutFormats = []string{
 	OutFormatSimple,
 	OutFormatGitHubActions,
 	OutFormatJSON,
+	OutFormatCheckstyle,
 	OutFormatSonarQube,
 }
 
@@ -62,6 +67,8 @@ func NewPrinter(f string, w io.Writer) (Printer, error) {
 		p = NewJSON(w)
 	case OutFormatSonarQube:
 		p = NewSonarQube(w)
+	case OutFormatCheckstyle:
+		p = NewCheckstyle(w)
 	default:
 		return p, fmt.Errorf("%s is not a valid printer type", f)
 	}
