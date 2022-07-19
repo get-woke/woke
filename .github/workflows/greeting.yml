@@ -10,6 +10,11 @@ jobs:
   greet-user:
     name: Greeting Action
     runs-on: ubuntu-latest
+    # Hopefully this will help with the "Resource not accessible by integration" error
+    # https://github.com/actions/first-interaction/issues/10#issuecomment-1114048624
+    permissions:
+      issues: write
+      pull-requests: write
 
     # Runs the greeting action (Options can be found here https://github.com/actions/first-interaction)
     steps:
