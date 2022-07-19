@@ -31,7 +31,7 @@ jobs:
           HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
 
       - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v2
+        uses: peter-evans/dockerhub-description@v3
         env:
           DOCKERHUB_USERNAME: celfring
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
