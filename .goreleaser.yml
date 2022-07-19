@@ -50,10 +50,39 @@ changelog:
 
 dockers:
   - dockerfile: build/Dockerfile
+    use: buildx
+    goos: linux
+    goarch: amd64
+    build_flag_templates:
+      - "--platform=linux/amd64"
     image_templates:
-      - "getwoke/woke:latest"
-      - "getwoke/woke:{{ .Major }}.{{ .Minor }}"
-      - "getwoke/woke:{{ .RawVersion }}"
+      - "getwoke/woke:latest-amd64"
+      - "getwoke/woke:{{ .Major }}.{{ .Minor }}-amd64"
+      - "getwoke/woke:{{ .RawVersion }}-amd64"
+  - dockerfile: build/Dockerfile
+    use: buildx
+    goos: linux
+    goarch: arm64
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    image_templates:
+      - "getwoke/woke:latest-arm64"
+      - "getwoke/woke:{{ .Major }}.{{ .Minor }}-arm64"
+      - "getwoke/woke:{{ .RawVersion }}-arm64"
+
+docker_manifests:
+  - name_template: getwoke/woke:latest
+    image_templates:
+      - "getwoke/woke:latest-amd64"
+      - "getwoke/woke:latest-arm64"
+  - name_template: getwoke/woke:{{ .Major }}.{{ .Minor }}
+    image_templates:
+      - "getwoke/woke:{{ .Major }}.{{ .Minor }}-amd64"
+      - "getwoke/woke:{{ .Major }}.{{ .Minor }}-arm64"
+  - name_template: getwoke/woke:{{ .RawVersion }}
+    image_templates:
+      - "getwoke/woke:{{ .RawVersion }}-amd64"
+      - "getwoke/woke:{{ .RawVersion }}-arm64"
 
 brews:
   - tap:
