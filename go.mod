@@ -1,6 +1,6 @@
 module github.com/get-woke/woke
 
-go 1.17
+go 1.18
 
 require (
 	github.com/caitlinelfring/go-env-default v1.1.0

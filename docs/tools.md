@@ -27,7 +27,7 @@ script that is used, not the version of `woke` itself.)
 
 Alternatively, you can tell `pre-commit` to build `woke` from source,
 although this requires you and anyone working on your repository to have
-`go` on your command search path and for it to be at least version 1.17:
+`go` on your command search path and for it to be at least version 1.18:
 
 ```yaml
 -   repo: https://github.com/get-woke/woke
