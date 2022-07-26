@@ -60,16 +60,24 @@ func (p *Checkstyle) Print(fs *result.FileResults) error {
 func (p *Checkstyle) Start() {
 	fmt.Fprint(p.writer, xml.Header)
 	p.encoder.Indent("", "  ")
-	p.encoder.EncodeToken(xml.StartElement{
+	if err := p.encoder.EncodeToken(xml.StartElement{
 		Name: xml.Name{Local: "checkstyle"},
 		Attr: []xml.Attr{
 			{Name: xml.Name{Local: "version"}, Value: "5.0"},
 		},
-	})
-	p.encoder.Flush()
+	}); err != nil {
+		panic(err)
+	}
+	if err := p.encoder.Flush(); err != nil {
+		panic(err)
+	}
 }
 
 func (p *Checkstyle) End() {
-	p.encoder.EncodeToken(xml.EndElement{Name: xml.Name{Local: "checkstyle"}})
-	p.encoder.Flush()
+	if err := p.encoder.EncodeToken(xml.EndElement{Name: xml.Name{Local: "checkstyle"}}); err != nil {
+		panic(err)
+	}
+	if err := p.encoder.Flush(); err != nil {
+		panic(err)
+	}
 }

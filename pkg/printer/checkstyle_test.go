@@ -46,3 +46,25 @@ func TestFormatResultForCheckstyle(t *testing.T) {
 </checkstyle>`
 	assert.Equal(t, expected, buf.String())
 }
+
+func TestCheckstyle_Start(t *testing.T) {
+	buf := new(bytes.Buffer)
+	p := NewCheckstyle(buf)
+	p.Start()
+	got := buf.String()
+
+	expected := `<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">`
+	assert.Equal(t, expected, got)
+}
+
+func TestCheckstyle_End(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Expected panic: end tag </checkstyle> without start tag")
+		}
+	}()
+	buf := new(bytes.Buffer)
+	p := NewCheckstyle(buf)
+	p.End()
+}
