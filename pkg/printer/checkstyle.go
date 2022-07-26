@@ -5,7 +5,6 @@ import (
 	"io"
 
 	"github.com/get-woke/woke/pkg/result"
-	"github.com/get-woke/woke/pkg/rule"
 )
 
 // Checkstyle is a Checkstyle printer meant for use by a Checkstyle annotation
@@ -47,14 +46,6 @@ func formatResultForCheckstyle(r result.Result) string {
 		r.GetStartPosition().Column,
 		r.GetStartPosition().Line,
 		r.Reason(),
-		translateSeverityForCheckstyle(r.GetSeverity()),
+		r.GetSeverity(),
 	)
-}
-
-func translateSeverityForCheckstyle(s rule.Severity) string {
-	if s == rule.SevError {
-		return "error"
-	}
-	// treat everything else as a warning
-	return "warning"
 }
