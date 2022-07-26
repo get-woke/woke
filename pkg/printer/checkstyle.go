@@ -13,7 +13,7 @@ type Checkstyle struct {
 	writer io.Writer
 }
 
-// NewGitHubActions returns a new GitHubActions printer
+// NewCheckstyle returns a new Checkstyle printer
 func NewCheckstyle(w io.Writer) *Checkstyle {
 	return &Checkstyle{writer: w}
 }
@@ -22,8 +22,8 @@ func (p *Checkstyle) PrintSuccessExitMessage() bool {
 	return true
 }
 
-// Print prints in the format for Checkstyle
-// https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
+// Print prints in the format for Checkstyle.
+// https://github.com/checkstyle/checkstyle
 func (p *Checkstyle) Print(fs *result.FileResults) error {
 	fmt.Fprintf(p.writer, "  <file name=\"%s\">\n", fs.Filename)
 	for _, r := range fs.Results {

@@ -63,7 +63,7 @@ This option may not be used at the same time as [File Globs](#file-globs)
 
 ## Outputs
 
-Options for output include text (default), simple, json, github-actions, sonarqube or checkstyle format.
+Options for output include text (default), simple, json, github-actions, sonarqube, or checkstyle format.
 The following fields are supported, depending on format:
 
 | Field        | Description                                       |

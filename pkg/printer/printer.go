@@ -46,8 +46,8 @@ var OutFormats = []string{
 	OutFormatSimple,
 	OutFormatGitHubActions,
 	OutFormatJSON,
-	OutFormatCheckstyle,
 	OutFormatSonarQube,
+	OutFormatCheckstyle,
 }
 
 // OutFormatsString is all OutFormats, as a comma-separated string
