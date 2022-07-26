@@ -1,6 +1,7 @@
 package printer
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io"
 
@@ -9,12 +10,30 @@ import (
 
 // Checkstyle is a Checkstyle printer meant for use by a Checkstyle annotation
 type Checkstyle struct {
-	writer io.Writer
+	writer  io.Writer
+	encoder *xml.Encoder
 }
 
 // NewCheckstyle returns a new Checkstyle printer
 func NewCheckstyle(w io.Writer) *Checkstyle {
-	return &Checkstyle{writer: w}
+	return &Checkstyle{
+		writer:  w,
+		encoder: xml.NewEncoder(w),
+	}
+}
+
+type File struct {
+	XMLName xml.Name `xml:"file"`
+	Name    string   `xml:"name,attr"`
+	Errors  []Error  `xml:"error"`
+}
+type Error struct {
+	XMLName  xml.Name `xml:"error"`
+	Column   int      `xml:"column,attr"`
+	Line     int      `xml:"line,attr"`
+	Message  string   `xml:"message,attr"`
+	Severity string   `xml:"severity,attr"`
+	Source   string   `xml:"source,attr"`
 }
 
 func (p *Checkstyle) PrintSuccessExitMessage() bool {
@@ -24,28 +43,33 @@ func (p *Checkstyle) PrintSuccessExitMessage() bool {
 // Print prints in the format for Checkstyle.
 // https://github.com/checkstyle/checkstyle
 func (p *Checkstyle) Print(fs *result.FileResults) error {
-	fmt.Fprintf(p.writer, "  <file name=\"%s\">\n", fs.Filename)
+	var f File
+	f.Name = fs.Filename
 	for _, r := range fs.Results {
-		fmt.Fprintln(p.writer, formatResultForCheckstyle(r))
+		f.Errors = append(f.Errors, Error{
+			Column:   r.GetStartPosition().Column,
+			Line:     r.GetStartPosition().Line,
+			Message:  r.Reason(),
+			Severity: r.GetSeverity().String(),
+			Source:   "woke",
+		})
 	}
-	fmt.Fprintln(p.writer, `  </file>`)
-	return nil
+	return p.encoder.Encode(f)
 }
 
 func (p *Checkstyle) Start() {
-	fmt.Fprintln(p.writer, `<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="5.0">`)
+	fmt.Fprint(p.writer, xml.Header)
+	p.encoder.Indent("", "  ")
+	p.encoder.EncodeToken(xml.StartElement{
+		Name: xml.Name{Local: "checkstyle"},
+		Attr: []xml.Attr{
+			{Name: xml.Name{Local: "version"}, Value: "5.0"},
+		},
+	})
+	p.encoder.Flush()
 }
 
 func (p *Checkstyle) End() {
-	fmt.Fprintln(p.writer, `</checkstyle>`)
-}
-
-func formatResultForCheckstyle(r result.Result) string {
-	return fmt.Sprintf(`    <error column="%d" line="%d" message="%s" severity="%s" source="woke"/>`,
-		r.GetStartPosition().Column,
-		r.GetStartPosition().Line,
-		r.Reason(),
-		r.GetSeverity(),
-	)
+	p.encoder.EncodeToken(xml.EndElement{Name: xml.Name{Local: "checkstyle"}})
+	p.encoder.Flush()
 }
