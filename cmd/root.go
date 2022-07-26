@@ -186,12 +186,7 @@ func parseArgs(args []string) ([]string, error) {
 		var err error
 		if strings.Contains(arg, "**") {
 			// Double star glob expansion.
-			base, pattern := doublestar.SplitPattern(arg)
-			fsys := os.DirFS(base)
-			f, err = doublestar.Glob(fsys, pattern)
-			for i := range f {
-				f[i] = filepath.Join(base, f[i])
-			}
+			f, err = doublestar.FilepathGlob(arg)
 		} else {
 			f, err = filepath.Glob(arg)
 		}
