@@ -229,7 +229,7 @@ Format used to populate results into the [Checkstyle](https://checkstyle.org/) X
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle version="5.0">
   <file name="filepath">
-    <error column="startcol" line="lineno" message="description" severity="severity" source="woke"/>
+    <error column="startcol" line="lineno" message="description" severity="severity" source="woke"></error>
   </file>
 </checkstyle>
 ```
