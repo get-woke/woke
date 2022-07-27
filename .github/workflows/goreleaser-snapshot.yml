@@ -1,0 +1,30 @@
+# This is used to test changes to goreleaser-related files.
+# It should never publish. Publishing should be handled in the `tag.yml` action
+name: Goreleaser snapshot
+
+on:
+  pull_request:
+    paths:
+      - .goreleaser.yml
+      - build/Dockerfile
+      - .github/workflows/goreleaser-snapshot.yml
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.17
+
+      - name: Create snapshot
+        uses: goreleaser/goreleaser-action@v3
+        with:
+          version: latest
+          args: release --snapshot --rm-dist

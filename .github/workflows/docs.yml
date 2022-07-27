@@ -17,8 +17,8 @@ jobs:
   mkdocs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.x
       - run: pip install -r docs/requirements.txt
@@ -38,8 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v2
-      - uses: nosborn/github-action-markdown-cli@v2.0.0
+      - uses: actions/checkout@v3
+      - uses: nosborn/github-action-markdown-cli@v3.1.0
         with:
           files: docs/*.md
           config_file: .markdownlint.json
