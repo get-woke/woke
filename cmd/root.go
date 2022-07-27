@@ -26,7 +26,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -182,14 +181,7 @@ func parseArgs(args []string) ([]string, error) {
 	// Perform glob expansion.
 	var files []string
 	for _, arg := range args {
-		var f []string
-		var err error
-		if strings.Contains(arg, "**") {
-			// Double star glob expansion.
-			f, err = doublestar.FilepathGlob(arg)
-		} else {
-			f, err = filepath.Glob(arg)
-		}
+		f, err := doublestar.FilepathGlob(arg)
 		if err != nil {
 			return nil, err
 		}
