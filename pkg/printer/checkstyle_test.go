@@ -59,12 +59,7 @@ func TestCheckstyle_Start(t *testing.T) {
 }
 
 func TestCheckstyle_End(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Expected panic: end tag </checkstyle> without start tag")
-		}
-	}()
 	buf := new(bytes.Buffer)
 	p := NewCheckstyle(buf)
-	p.End()
+	assert.PanicsWithError(t, "xml: end tag </checkstyle> without start tag", func() { p.End() })
 }
