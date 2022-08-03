@@ -6,7 +6,7 @@
 
 ## Releases
 
-Download the latest binary from [Releases]({{config.repo_url}}releases/latest)
+Download the latest binary from [Releases]({{config.repo_url}}/releases/latest)
 
 ## macOS
 
