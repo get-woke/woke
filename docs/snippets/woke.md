@@ -27,7 +27,7 @@ woke [globs ...] [flags]
       --exit-1-on-failure       Exit with exit code 1 on failures
   -h, --help                    help for woke
       --no-ignore               Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed
-  -o, --output string           Output type [text,simple,github-actions,json,sonarqube] (default "text")
+  -o, --output string           Output type [text,simple,github-actions,json,sonarqube,checkstyle] (default "text")
       --stdin                   Read from stdin
 ```
 
