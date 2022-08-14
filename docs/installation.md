@@ -2,7 +2,7 @@
 
 !!! tip
     There are multiple ways to install `woke`. If you're interested in any installation methods
-    that are not listed here, feel free to open an [issue]({{config.repo_url}}issues).
+    that are not listed here, feel free to open an [issue]({{config.repo_url}}/issues).
 
 ## Releases
 

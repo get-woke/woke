@@ -22,7 +22,7 @@ rules:
     #   categories: nil
 ```
 
-A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_url}}blob/main/pkg/rule/default.yaml).
+A set of default rules is provided in [`pkg/rule/default.yaml`]({{config.repo_url}}/blob/main/pkg/rule/default.yaml).
 
 !!! tip
     If you copy these rules into your config file, be sure to put them under the `rules:` key.

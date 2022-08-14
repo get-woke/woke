@@ -11,7 +11,7 @@ Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses t
 
 This file will be picked up automatically up your customizations without needing to supply it with the `-c` flag.
 
-See [example.yaml]({{config.repo_url}}blob/main/example.yaml) for an example of adding custom rules.
+See [example.yaml]({{config.repo_url}}/blob/main/example.yaml) for an example of adding custom rules.
 You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
 
 ### Remote config file
