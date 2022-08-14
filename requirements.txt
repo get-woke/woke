@@ -1,0 +1,10 @@
+# python requirements for docs
+# https://www.mkdocs.org/
+# https://squidfunk.github.io/mkdocs-material/
+mkdocs
+mkdocs-material
+fontawesome-markdown
+markdown-include
+pymdown-extensions
+mkdocs-macros-plugin
+mkdocs-git-revision-date-plugin
