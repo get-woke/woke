@@ -12,6 +12,7 @@ type Result interface {
 	GetRuleName() string
 	GetStartPosition() *token.Position
 	GetEndPosition() *token.Position
+	GetTerms() []string
 	Reason() string
 	String() string
 	GetLine() string

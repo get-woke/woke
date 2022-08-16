@@ -76,6 +76,9 @@ func (r LineResult) String() string {
 // GetSeverity returns the rule severity for the Result
 func (r LineResult) GetSeverity() rule.Severity { return r.Rule.Severity }
 
+// GetTerms returns the terms for the Result
+func (r LineResult) GetTerms() []string { return r.Rule.Terms }
+
 // GetRuleName returns the rule name for the Result
 func (r LineResult) GetRuleName() string { return r.Rule.Name }
 

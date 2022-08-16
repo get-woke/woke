@@ -16,6 +16,11 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type Prometheus struct {
+	Labels         map[string]string `yaml:"labels,omitempty"`
+	PushgatewayURL string            `yaml:"pushgateway"`
+}
+
 // Config contains a list of rules
 type Config struct {
 	Rules              []*rule.Rule `yaml:"rules"`
@@ -23,6 +28,9 @@ type Config struct {
 	SuccessExitMessage *string      `yaml:"success_exit_message"`
 	IncludeNote        bool         `yaml:"include_note"`
 	ExcludeCategories  []string     `yaml:"exclude_categories"`
+	Outputs            struct {
+		Prometheus *Prometheus `yaml:"prometheus"`
+	} `yaml:"outputs"`
 }
 
 // NewConfig returns a new Config

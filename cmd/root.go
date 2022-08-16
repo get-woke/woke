@@ -116,7 +116,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 	}
 	p := parser.NewParser(cfg.Rules, ignorer)
 
-	print, err := printer.NewPrinter(outputName, output.Stdout)
+	print, err := printer.NewPrinter(outputName, output.Stdout, cfg)
 	if err != nil {
 		return err
 	}
