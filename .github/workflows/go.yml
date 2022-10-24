@@ -94,7 +94,7 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
-      - uses: golangci/golangci-lint-action@v3.2.0
+      - uses: golangci/golangci-lint-action@v3.3.0
         with:
           # https://github.com/golangci/golangci-lint-action/issues/535
           version: v1.47.3
