@@ -8,6 +8,7 @@ import (
 	"github.com/get-woke/woke/pkg/result"
 
 	env "github.com/caitlinelfring/go-env-default"
+	config "github.com/get-woke/woke/pkg/config"
 	"github.com/rs/zerolog/log"
 )
 
@@ -35,6 +36,10 @@ const (
 	// https://docs.sonarqube.org/latest/analysis/generic-issue/
 	OutFormatSonarQube = "sonarqube"
 
+	// OutFormatPrometheus outputs in prometheus format
+	// https://prometheus.io/docs/instrumenting/writing_exporters/
+	OutFormatPrometheus = "prometheus"
+
 	// OutFormatCheckstyle outputs in checkstyle format.
 	// https://github.com/checkstyle/checkstyle
 	OutFormatCheckstyle = "checkstyle"
@@ -47,6 +52,7 @@ var OutFormats = []string{
 	OutFormatGitHubActions,
 	OutFormatJSON,
 	OutFormatSonarQube,
+	OutFormatPrometheus,
 	OutFormatCheckstyle,
 }
 
@@ -54,7 +60,7 @@ var OutFormats = []string{
 var OutFormatsString = strings.Join(OutFormats, ",")
 
 // NewPrinter returns a valid new Printer from a string, or an error if the printer is invalid
-func NewPrinter(f string, w io.Writer) (Printer, error) {
+func NewPrinter(f string, w io.Writer, c *config.Config) (Printer, error) {
 	var p Printer
 	switch f {
 	case OutFormatText:
@@ -67,6 +73,8 @@ func NewPrinter(f string, w io.Writer) (Printer, error) {
 		p = NewJSON(w)
 	case OutFormatSonarQube:
 		p = NewSonarQube(w)
+	case OutFormatPrometheus:
+		p = NewPrometheus(w, c.Outputs.Prometheus)
 	case OutFormatCheckstyle:
 		p = NewCheckstyle(w)
 	default:

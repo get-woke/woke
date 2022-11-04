@@ -216,6 +216,51 @@ Format used to populate results into the popular [SonarQube](https://www.sonarqu
 !!! note
     `<sonarqubeseverity>` is mapped from severity, such that an error in `woke` is translated to a `MAJOR`, warning to a `MINOR`, and info to `INFO`
 
+### Prometheus
+
+!!! example ""
+    `woke -o prometheus`
+
+Outputs the results as a [`prometheus metrics`](https://prometheus.io/docs/practices/naming/) one per line.
+
+#### Structure
+
+!!! info inline end
+    Actual output from woke will be consolidated Prometheus metrics. Having this output as a file could be used after through [textfile-collector / node exporter](https://github.com/prometheus/node_exporter#textfile-collector)
+
+```text
+woke_result{file="CHANGELOG.md:62:24-30", term="master", repo="sample", something="else"} 1 
+woke_result{file="README.md:1:241-247", term="master", repo="sample", something="else"} 1 
+```
+
+If pushgateway parameter is provided, it will push woke result as [`prometheus metrics`](https://prometheus.io/docs/practices/naming/) to a [`pushgateway instance`](https://prometheus.io/docs/practices/pushing/).
+
+#### Configuration
+
+As per the sample output above, this will put labels in the prometheus metric with:
+
+- file: same as previous outputs format, file name with line and start/end position
+- term: this is currently using the rule name
+- repo & something: this is based on a list of labels
+
+Here is an example of the configuration file:
+
+```yaml
+rules:
+    - name: master
+      terms:
+        - master
+      alternatives:
+        - primary
+        - main
+outputs:
+  prometheus:
+    labels:
+      repo: sample
+      something: else
+    pushgateway: "http://pushgateway.example.org:9091"
+```
+
 ### Checkstyle
 
 !!! example ""
