@@ -6,13 +6,13 @@
 </p>
 
 <div align="center">
-  <a href="{{config.repo_url}}releases">
+  <a href="{{config.repo_url}}/releases">
     <img alt="GitHub latest release" src="https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver">
   </a>
-  <a href="{{config.repo_url}}releases">
+  <a href="{{config.repo_url}}/releases">
     <img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/get-woke/woke/total">
   </a>
-  <a href="{{config.repo_url}}blob/main/LICENSE">
+  <a href="{{config.repo_url}}/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg">
   </a>
   <a href="https://codecov.io/gh/get-woke/woke/branch/main">

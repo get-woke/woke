@@ -1,7 +1,7 @@
 name: Greeting first time contributors
 
 on:
-  pull_request:
+  pull_request_target:
     types: ["opened"]
   issues:
     types: ["opened"]

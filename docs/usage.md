@@ -11,7 +11,7 @@ Configure your custom rules config in `.woke.yaml` or `.woke.yml`. `woke` uses t
 
 This file will be picked up automatically up your customizations without needing to supply it with the `-c` flag.
 
-See [example.yaml]({{config.repo_url}}blob/main/example.yaml) for an example of adding custom rules.
+See [example.yaml]({{config.repo_url}}/blob/main/example.yaml) for an example of adding custom rules.
 You can also supply your own rules with `-c path/to/rules.yaml` if you want to handle different rulesets.
 
 ### Remote config file
@@ -83,7 +83,7 @@ This option may not be used at the same time as [File Globs](#file-globs)
 
 ## Outputs
 
-Options for output include text (default), simple, json, github-actions, or sonarqube format.
+Options for output include text (default), simple, json, github-actions, sonarqube, or checkstyle format.
 The following fields are supported, depending on format:
 
 | Field        | Description                                       |
@@ -235,6 +235,24 @@ Format used to populate results into the popular [SonarQube](https://www.sonarqu
 
 !!! note
     `<sonarqubeseverity>` is mapped from severity, such that an error in `woke` is translated to a `MAJOR`, warning to a `MINOR`, and info to `INFO`
+
+### Checkstyle
+
+!!! example ""
+    `woke -o checkstyle`
+
+Format used to populate results into the [Checkstyle](https://checkstyle.org/) XML format.
+
+#### Structure
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+  <file name="filepath">
+    <error column="startcol" line="lineno" message="description" severity="severity" source="woke"></error>
+  </file>
+</checkstyle>
+```
 
 ## Exit Code
 
