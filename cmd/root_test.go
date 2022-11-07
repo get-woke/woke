@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -88,7 +87,7 @@ func TestParseArgs(t *testing.T) {
 		{
 			stdin:        false,
 			args:         []string{"../.."},
-			expectedArgs: []string{filepath.Join("..", "..")},
+			expectedArgs: []string{"../.."},
 		},
 		{
 			stdin:        true,
