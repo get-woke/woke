@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/output"
@@ -20,9 +21,12 @@ import (
 // run profiling with
 // go test -v -cpuprofile cpu.prof -memprofile mem.prof -bench=. ./cmd
 // memory:
-//    go tool pprof mem.prof
+//
+//	go tool pprof mem.prof
+//
 // cpu:
-//    go tool pprof cpu.prof
+//
+//	go tool pprof cpu.prof
 func BenchmarkRootRunE(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	output.Stdout = io.Discard
@@ -70,12 +74,39 @@ func TestParseArgs(t *testing.T) {
 	t.Cleanup(func() {
 		stdin = false
 	})
-	assert.Equal(t, parser.DefaultPath, parseArgs([]string{}))
-	assert.Equal(t, []string{"../.."}, parseArgs([]string{"../.."}))
-
-	stdin = true
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{}))
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{"../.."}))
+	tests := []struct {
+		stdin        bool
+		args         []string
+		expectedArgs []string
+	}{
+		{
+			stdin:        false,
+			args:         []string{},
+			expectedArgs: parser.DefaultPath,
+		},
+		{
+			stdin:        false,
+			args:         []string{"../.."},
+			expectedArgs: []string{"../.."},
+		},
+		{
+			stdin:        true,
+			args:         []string{},
+			expectedArgs: []string{os.Stdin.Name()},
+		},
+		{
+			stdin:        true,
+			args:         []string{"../.."},
+			expectedArgs: []string{os.Stdin.Name()},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
+			stdin = tt.stdin
+			files := parseArgs(tt.args)
+			assert.Equal(t, tt.expectedArgs, files)
+		})
+	}
 }
 
 func TestRunE(t *testing.T) {
