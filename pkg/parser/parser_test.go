@@ -2,7 +2,6 @@ package parser
 
 import (
 	"go/token"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -284,7 +283,7 @@ func TestParser_ParsePaths(t *testing.T) {
 }
 
 func writeToStdin(t *testing.T, text string, f func()) error {
-	tmpfile, err := ioutil.TempFile(os.TempDir(), "")
+	tmpfile, err := os.CreateTemp(os.TempDir(), "")
 	if err != nil {
 		return err
 	}
@@ -310,7 +309,7 @@ func writeToStdin(t *testing.T, text string, f func()) error {
 
 func BenchmarkParsePaths(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
-	tmpFile, err := ioutil.TempFile(b.TempDir(), "")
+	tmpFile, err := os.CreateTemp(b.TempDir(), "")
 	assert.NoError(b, err)
 
 	for i := 0; i < 100; i++ {

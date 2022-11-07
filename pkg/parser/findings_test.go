@@ -2,7 +2,6 @@ package parser
 
 import (
 	"go/token"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -101,7 +100,7 @@ func newFile(t *testing.T, text string) (*os.File, error) {
 // newFile creates a new file with the prefix defined for testing.
 // The file, and the directory that the file was created in will be removed at the completion of the test
 func newFileWithPrefix(t *testing.T, prefix, text string) (*os.File, error) {
-	tmpFile, err := ioutil.TempFile(os.TempDir(), prefix)
+	tmpFile, err := os.CreateTemp(os.TempDir(), prefix)
 	if err != nil {
 		return nil, err
 	}

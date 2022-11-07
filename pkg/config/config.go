@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -128,7 +127,7 @@ func (c *Config) RemoveRule(i int) {
 }
 
 func loadConfig(filename string) (c Config, err error) {
-	yamlFile, err := ioutil.ReadFile(filename)
+	yamlFile, err := os.ReadFile(filename)
 	log.Debug().Str("filename", filename).Msg("Adding custom ruleset from")
 	if err != nil {
 		return c, err
