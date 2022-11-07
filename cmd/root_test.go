@@ -10,9 +10,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bmatcuk/doublestar/v4"
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
+
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
