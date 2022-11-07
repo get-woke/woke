@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -96,39 +97,45 @@ func TestParseArgs(t *testing.T) {
 
 		// Test glob expansion
 		{
-			stdin:         false,
-			args:          []string{"../testdata/*.yml"},
-			expectedArgs:  []string{"../testdata/good.yml", "../testdata/whitelist.yml"},
+			stdin: false,
+			args:  []string{"../testdata/*.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata/good.yml"),
+				filepath.Join("..", "testdata/whitelist.yml"),
+			},
 			expectedError: nil,
 		},
 		{
 			stdin:         false,
 			args:          []string{"../testdata/g??d.yml"},
-			expectedArgs:  []string{"../testdata/good.yml"},
+			expectedArgs:  []string{filepath.Join("..", "testdata/good.yml")},
 			expectedError: nil,
 		},
 		{
 			stdin:         false,
 			args:          []string{"../testdata/[a-z]ood.yml"},
-			expectedArgs:  []string{"../testdata/good.yml"},
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
 			expectedError: nil,
 		},
 		{
-			stdin:         false,
-			args:          []string{"../testdata/*/*.yml"},
-			expectedArgs:  []string{"../testdata/subdir1/good.yml", "../testdata/subdir1/whitelist.yml"},
+			stdin: false,
+			args:  []string{"../testdata/*/*.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "whitelist.yml"),
+			},
 			expectedError: nil,
 		},
 		{
 			stdin: false,
 			args:  []string{"../testdata/**/*.yml"},
 			expectedArgs: []string{
-				"../testdata/good.yml",
-				"../testdata/whitelist.yml",
-				"../testdata/subdir1/good.yml",
-				"../testdata/subdir1/whitelist.yml",
-				"../testdata/subdir1/subdir2/good.yml",
-				"../testdata/subdir1/subdir2/whitelist.yml",
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "whitelist.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "whitelist.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "whitelist.yml"),
 			},
 			expectedError: nil,
 		},
