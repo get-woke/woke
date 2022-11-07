@@ -91,7 +91,7 @@ func TestParseArgs(t *testing.T) {
 		{
 			stdin:         false,
 			args:          []string{"../.."},
-			expectedArgs:  []string{"../.."},
+			expectedArgs:  []string{filepath.Join("..", "..")},
 			expectedError: nil,
 		},
 
