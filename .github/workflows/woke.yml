@@ -33,4 +33,4 @@ jobs:
         with:
           # Cause the check to fail on any broke rules
           fail-on-error: true
-          args: "-o text"
+          woke-args: "-o text"
