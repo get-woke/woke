@@ -31,21 +31,21 @@ By default, `woke` will run against all text files in your current directory.
 To change this, supply a space-separated list of file glob patterns.
 `woke` supports the following glob pattern:
 
-```
+```console
 pattern:
-	{ term }
+  { term }
 term:
-	'*'         matches any sequence of non-Separator characters
-	'?'         matches any single non-Separator character
-	'[' [ '^' ] { character-range } ']'
-	            character class (must be non-empty)
-	c           matches character c (c != '*', '?', '\\', '[')
-	'\\' c      matches character c
+  '*'         matches any sequence of non-Separator characters
+  '?'         matches any single non-Separator character
+  '[' [ '^' ] { character-range } ']'
+              character class (must be non-empty)
+  c           matches character c (c != '*', '?', '\\', '[')
+  '\\' c      matches character c
 
 character-range:
-	c           matches character c (c != '\\', '-', ']')
-	'\\' c      matches character c
-	lo '-' hi   matches character c for lo <= c <= hi
+  c           matches character c (c != '\\', '-', ']')
+  '\\' c      matches character c
+  lo '-' hi   matches character c for lo <= c <= hi
 ```
 
 This can be something like `**/*.go`, or a space-separated list of filenames.
