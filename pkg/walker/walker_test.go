@@ -1,7 +1,6 @@
 package walker
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -11,7 +10,7 @@ import (
 )
 
 func TestWalker_Walk(t *testing.T) {
-	dir, err := ioutil.TempDir(os.TempDir(), "")
+	dir, err := os.MkdirTemp(os.TempDir(), "")
 	assert.NoError(t, err)
 	defer os.RemoveAll(dir)
 	assert.DirExists(t, dir)
