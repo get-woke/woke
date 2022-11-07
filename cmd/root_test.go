@@ -2,16 +2,16 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
-
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -22,9 +22,12 @@ import (
 // run profiling with
 // go test -v -cpuprofile cpu.prof -memprofile mem.prof -bench=. ./cmd
 // memory:
-//    go tool pprof mem.prof
+//
+//	go tool pprof mem.prof
+//
 // cpu:
-//    go tool pprof cpu.prof
+//
+//	go tool pprof cpu.prof
 func BenchmarkRootRunE(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	output.Stdout = io.Discard
@@ -135,7 +138,7 @@ func TestParseArgs(t *testing.T) {
 			stdin:         false,
 			args:          []string{"r[.go"},
 			expectedArgs:  nil,
-			expectedError: filepath.ErrBadPattern,
+			expectedError: doublestar.ErrBadPattern,
 		},
 
 		{
@@ -155,7 +158,8 @@ func TestParseArgs(t *testing.T) {
 		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
 			stdin = tt.stdin
 			files, err := parseArgs(tt.args)
-			assert.ErrorIs(t, err, tt.expectedError)
+			assert.ErrorIs(t, err, tt.expectedError,
+				fmt.Sprintf("arguments: %v. Expected '%v', Got '%v'", tt.args, err, tt.expectedError))
 			assert.Equal(t, tt.expectedArgs, files)
 		})
 	}
