@@ -174,18 +174,18 @@ func parseArgs(args []string) ([]string, error) {
 	if len(args) == 0 {
 		args = parser.DefaultPath
 	}
-
-	if stdin {
-		args = []string{os.Stdin.Name()}
-	}
-	// Perform glob expansion.
 	var files []string
-	for _, arg := range args {
-		f, err := doublestar.FilepathGlob(arg)
-		if err != nil {
-			return nil, err
+	if stdin {
+		files = []string{os.Stdin.Name()}
+	} else {
+		// Perform glob expansion.
+		for _, arg := range args {
+			f, err := doublestar.FilepathGlob(arg)
+			if err != nil {
+				return nil, err
+			}
+			files = append(files, f...)
 		}
-		files = append(files, f...)
 	}
 
 	return files, nil
