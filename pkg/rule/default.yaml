@@ -9,6 +9,7 @@
   alternatives:
     - allowlist
     - inclusion list
+    - allowed
   severity: warning
   note: "The underlying assumption of the whitelist/blacklist metaphor is that white = good and black = bad. Because colors in and of themselves have no predetermined meaning, any meaning we assign to them is cultural: for example, the color red in many Southeast Asian countries is lucky, and is often associated with events like marriages, whereas the color white carries the same connotations in many European countries. In the case of whitelist/blacklist, the terms originate in the publishing industry – one dominated by the USA and England, two countries which participated in slavery and which grapple with their racist legacies to this day."
 
@@ -22,6 +23,7 @@
     - denylist
     - blocklist
     - exclusion list
+    - denied
   severity: warning
   note: "The underlying assumption of the whitelist/blacklist metaphor is that white = good and black = bad. Because colors in and of themselves have no predetermined meaning, any meaning we assign to them is cultural: for example, the color red in many Southeast Asian countries is lucky, and is often associated with events like marriages, whereas the color white carries the same connotations in many European countries. In the case of whitelist/blacklist, the terms originate in the publishing industry – one dominated by the USA and England, two countries which participated in slavery and which grapple with their racist legacies to this day."
 
@@ -33,6 +35,9 @@
     - leader/follower
     - primary/replica
     - primary/standby
+    - control plane/control plane node
+    - primary/secondary
+    - parent/child
 
 - name: slave
   terms:
@@ -41,6 +46,9 @@
     - follower
     - replica
     - standby
+    - secondary
+    - child
+    - control plane node
 
 - name: grandfathered
   terms:
@@ -59,10 +67,18 @@
 - name: sanity
   terms:
     - sanity
+    - sanity-check
+    - sanity-test
+    - sanity check
+    - sanity test
   alternatives:
     - confidence
     - quick check
     - coherence check
+    - confidence check
+    - test
+    - verification
+  note: "This term might be derogatory to neurodiverse people. Jargon, such as 'sanity test', is difficult to translate and is difficult to understand by readers whose first language is not English."
 
 - name: dummy
   terms:
@@ -96,3 +112,90 @@
     - black box
   alternatives:
     - closed-box
+
+- name: abort
+  terms:
+    - abort
+    - abortion
+  alternatives:
+    - user-initiated termination
+    - force quit
+    - cancel
+    - system-initiated termination
+    - fail
+    - close (app, program, connection)
+    - end
+    - halt
+    - hard stop
+    - stop (something you triggered)
+
+- name: blackhat
+  terms:
+    - blackhat
+    - black-hat
+    - black hat
+  alternatives:
+    - unethical hacker
+    - attacker
+  note: "The terms white hat and black hat promote racial bias because black is used to indicate malevolence while white indicates ethical, positive behavior."
+
+- name: whitehat
+  terms:
+    - whitehat
+    - white-hat
+    - white hat
+  alternatives:
+    - ethical hacker
+  note: "The terms white hat and black hat promote racial bias because black is used to indicate malevolence while white indicates ethical, positive behavior."
+
+- name: cripple
+  terms:
+    - cripple
+    - crippled
+    - crippleware
+  alternatives:
+    - impact
+    - degraded
+    - restrict
+    - immobilize
+  note: "The terms cripple, crippled, and crippleware are sometimes used in writing about software or computer systems. These terms are rarely, if ever, used in software itself. The term is ableist, that is, a pejorative term for people with physical disabilities."
+
+- name: master
+  terms:
+    - master
+  alternatives:
+    - leader
+    - primary
+    - main
+    - original
+    - source
+    - control plane
+  note: "While master in and of itself is potentially neutral, the propensity in which it is associated with the term slave in computing makes master on its own guilty by association. Though it is used as a standalone, it’s impossible to remove the association with command and control entirely, and thus we recommend moving away from even singular use."
+
+- name: man-in-the-middle
+  terms:
+    - man-in-the-middle
+    - man in the middle
+  alternatives:
+    - adversary-in-the-middle attack
+    - interceptor attack
+    - intermediary attack
+  note: "When an attacker secretly intercepts and relays communications between two systems or people who believe that they are communicating directly with each other. Gendered language that can perpetuate bias and stereotypes. Implies that women do not have the skills to perpetrate this type of hacking."
+
+- name: segregate
+  terms:
+    - segregate
+    - segregation
+  alternatives:
+    - segment
+    - segmentation
+    - separate
+    - separation
+
+- name: tribe
+  terms:
+    - tribe
+  alternatives:
+    - squad of squads
+    - team
+  note: "Tribe is a term that can be associated with colonialism or can be considered cultural appropriation. The word has a history of being used to describe division along ethnic or racial lines. As such, choose other words to describe groups of people."
