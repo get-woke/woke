@@ -44,8 +44,8 @@ term:
 characters classes:
   [abc]	     matches any single character within the set
   [a-z]	     matches any single character in the range
-  [^class]	 matches any single character which does not match the class
-  [!class]	 same as ^: negates the class
+  [^class]   matches any single character which does not match the class
+  [!class]   same as ^: negates the class
 ```
 
 This can be something like `**/*.go`, or a space-separated list of filenames.
