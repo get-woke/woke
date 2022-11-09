@@ -108,14 +108,32 @@ func TestParseArgs(t *testing.T) {
 		},
 		{
 			stdin:         false,
-			args:          []string{"../testdata/g??d.yml"},
+			args:          []string{"../testdata/g??d.yml"}, // matches any single non-separator character
 			expectedArgs:  []string{filepath.Join("..", "testdata/good.yml")},
 			expectedError: nil,
 		},
 		{
 			stdin:         false,
-			args:          []string{"../testdata/[a-z]ood.yml"},
+			args:          []string{"../testdata/[a-z]ood.yml"}, // character range
 			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[^abc]ood.yml"}, // character class with negation.
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[!abc]ood.yml"}, // character class with negation.
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[^g]ood.yml"}, // character class with negation.
+			expectedArgs:  nil,
 			expectedError: nil,
 		},
 		{
@@ -136,6 +154,16 @@ func TestParseArgs(t *testing.T) {
 				filepath.Join("..", "testdata", "subdir1", "bad.yml"),
 				filepath.Join("..", "testdata", "subdir1", "good.yml"),
 				filepath.Join("..", "testdata", "subdir1", "subdir2", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/**/?ood.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
 				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
 			},
 			expectedError: nil,

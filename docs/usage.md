@@ -35,17 +35,17 @@ To change this, supply a space-separated list of file glob patterns.
 pattern:
   { term }
 term:
-  '*'         matches any sequence of non-Separator characters
-  '?'         matches any single non-Separator character
-  '[' [ '^' ] { character-range } ']'
-              character class (must be non-empty)
-  c           matches character c (c != '*', '?', '\\', '[')
-  '\\' c      matches character c
+  *          matches any sequence of non-separator characters
+  ?          matches any single non-separator character
+  /**/       matches zero or more directories
+  [class]    matches any single non-path-separator character against a class of characters
+  {alt1,...} matches a sequence of characters if one of the comma-separated alternatives matches
 
-character-range:
-  c           matches character c (c != '\\', '-', ']')
-  '\\' c      matches character c
-  lo '-' hi   matches character c for lo <= c <= hi
+characters classes:
+  [abc]	     matches any single character within the set
+  [a-z]	     matches any single character in the range
+  [^class]	 matches any single character which does not match the class
+  [!class]	 same as ^: negates the class
 ```
 
 This can be something like `**/*.go`, or a space-separated list of filenames.
