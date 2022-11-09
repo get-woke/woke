@@ -160,6 +160,19 @@ func TestParseArgs(t *testing.T) {
 		},
 		{
 			stdin: false,
+			args:  []string{"../testdata/**/{good,bad}.yml"}, // Alternate pattern
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "bad.yml"),
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
 			args:  []string{"../testdata/**/?ood.yml"},
 			expectedArgs: []string{
 				filepath.Join("..", "testdata", "good.yml"),
@@ -172,7 +185,13 @@ func TestParseArgs(t *testing.T) {
 		// Bad glob pattern
 		{
 			stdin:         false,
-			args:          []string{"r[.go"},
+			args:          []string{"r[.go"}, // Invalid character class
+			expectedArgs:  nil,
+			expectedError: doublestar.ErrBadPattern,
+		},
+		{
+			stdin:         false,
+			args:          []string{"{.go"}, // Bad alternate pattern
 			expectedArgs:  nil,
 			expectedError: doublestar.ErrBadPattern,
 		},
@@ -232,7 +251,7 @@ func TestRunE(t *testing.T) {
 		assert.Equal(t, expected, got)
 	})
 
-	t.Run("findings w error", func(t *testing.T) {
+	t.Run("findings with inclusive language issues", func(t *testing.T) {
 		exitOneOnFailure = true
 		// don't ignore testdata folder
 		noIgnore = true
@@ -243,6 +262,19 @@ func TestRunE(t *testing.T) {
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 		assert.Regexp(t, regexp.MustCompile(`^files with findings: \d`), err.Error())
+	})
+
+	t.Run("findings with invalid glob pattern", func(t *testing.T) {
+		exitOneOnFailure = true
+		// don't ignore testdata folder
+		noIgnore = true
+
+		t.Cleanup(func() {
+			exitOneOnFailure = false
+		})
+		err := rootRunE(new(cobra.Command), []string{"../testdata/**/[.yml"})
+		assert.Error(t, err)
+		assert.Regexp(t, regexp.MustCompile(`syntax error in pattern`), err.Error())
 	})
 
 	t.Run("no rules enabled", func(t *testing.T) {
