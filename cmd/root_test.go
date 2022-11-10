@@ -2,14 +2,18 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/get-woke/woke/pkg/output"
 	"github.com/get-woke/woke/pkg/parser"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -20,9 +24,12 @@ import (
 // run profiling with
 // go test -v -cpuprofile cpu.prof -memprofile mem.prof -bench=. ./cmd
 // memory:
-//    go tool pprof mem.prof
+//
+//	go tool pprof mem.prof
+//
 // cpu:
-//    go tool pprof cpu.prof
+//
+//	go tool pprof cpu.prof
 func BenchmarkRootRunE(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	output.Stdout = io.Discard
@@ -70,12 +77,147 @@ func TestParseArgs(t *testing.T) {
 	t.Cleanup(func() {
 		stdin = false
 	})
-	assert.Equal(t, parser.DefaultPath, parseArgs([]string{}))
-	assert.Equal(t, []string{"../.."}, parseArgs([]string{"../.."}))
+	tests := []struct {
+		stdin         bool
+		args          []string
+		expectedArgs  []string
+		expectedError error
+	}{
+		{
+			stdin:         false,
+			args:          []string{},
+			expectedArgs:  parser.DefaultPath,
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../.."},
+			expectedArgs:  []string{filepath.Join("..", "..")},
+			expectedError: nil,
+		},
 
-	stdin = true
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{}))
-	assert.Equal(t, []string{os.Stdin.Name()}, parseArgs([]string{"../.."}))
+		// Test glob expansion
+		{
+			stdin: false,
+			args:  []string{"../testdata/*.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata/bad.yml"),
+				filepath.Join("..", "testdata/good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/g??d.yml"}, // matches any single non-separator character
+			expectedArgs:  []string{filepath.Join("..", "testdata/good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[a-z]ood.yml"}, // character range
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[^abc]ood.yml"}, // character class with negation.
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[!abc]ood.yml"}, // character class with negation.
+			expectedArgs:  []string{filepath.Join("..", "testdata", "good.yml")},
+			expectedError: nil,
+		},
+		{
+			stdin:         false,
+			args:          []string{"../testdata/[^g]ood.yml"}, // character class with negation.
+			expectedArgs:  nil,
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/*/*.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "subdir1", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/**/*.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "bad.yml"),
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/**/{good,bad}.yml"}, // Alternate pattern
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "bad.yml"),
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "bad.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+			},
+			expectedError: nil,
+		},
+		{
+			stdin: false,
+			args:  []string{"../testdata/**/?ood.yml"},
+			expectedArgs: []string{
+				filepath.Join("..", "testdata", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "good.yml"),
+				filepath.Join("..", "testdata", "subdir1", "subdir2", "good.yml"),
+			},
+			expectedError: nil,
+		},
+
+		// Bad glob pattern
+		{
+			stdin:         false,
+			args:          []string{"r[.go"}, // Invalid character class
+			expectedArgs:  nil,
+			expectedError: doublestar.ErrBadPattern,
+		},
+		{
+			stdin:         false,
+			args:          []string{"{.go"}, // Bad alternate pattern
+			expectedArgs:  nil,
+			expectedError: doublestar.ErrBadPattern,
+		},
+
+		{
+			stdin:         true,
+			args:          []string{},
+			expectedArgs:  []string{os.Stdin.Name()},
+			expectedError: nil,
+		},
+		{
+			stdin:         true,
+			args:          []string{"../.."},
+			expectedArgs:  []string{os.Stdin.Name()},
+			expectedError: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(strings.Join(tt.args, " "), func(t *testing.T) {
+			stdin = tt.stdin
+			files, err := parseArgs(tt.args)
+			assert.ErrorIs(t, err, tt.expectedError,
+				fmt.Sprintf("arguments: %v. Expected '%v', Got '%v'", tt.args, err, tt.expectedError))
+			assert.Equal(t, tt.expectedArgs, files)
+		})
+	}
 }
 
 func TestRunE(t *testing.T) {
@@ -109,7 +251,7 @@ func TestRunE(t *testing.T) {
 		assert.Equal(t, expected, got)
 	})
 
-	t.Run("findings w error", func(t *testing.T) {
+	t.Run("findings with inclusive language issues", func(t *testing.T) {
 		exitOneOnFailure = true
 		// don't ignore testdata folder
 		noIgnore = true
@@ -120,6 +262,19 @@ func TestRunE(t *testing.T) {
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 		assert.Regexp(t, regexp.MustCompile(`^files with findings: \d`), err.Error())
+	})
+
+	t.Run("findings with invalid glob pattern", func(t *testing.T) {
+		exitOneOnFailure = true
+		// don't ignore testdata folder
+		noIgnore = true
+
+		t.Cleanup(func() {
+			exitOneOnFailure = false
+		})
+		err := rootRunE(new(cobra.Command), []string{"../testdata/**/[.yml"})
+		assert.Error(t, err)
+		assert.Regexp(t, regexp.MustCompile(`syntax error in pattern`), err.Error())
 	})
 
 	t.Run("no rules enabled", func(t *testing.T) {

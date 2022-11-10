@@ -28,9 +28,29 @@ No findings found.
 ### File globs
 
 By default, `woke` will run against all text files in your current directory.
-To change this, supply a space-separated list of globs as the first argument.
+To change this, supply a space-separated list of file glob patterns.
+`woke` supports the following glob pattern:
+
+```console
+pattern:
+  { term }
+term:
+  *          matches any sequence of non-separator characters
+  ?          matches any single non-separator character
+  /**/       matches zero or more directories
+  [class]    matches any single non-path-separator character against a class of characters
+  {alt1,...} matches a sequence of characters if one of the comma-separated alternatives matches
+
+characters classes:
+  [abc]      matches any single character within the set
+  [a-z]      matches any single character in the range
+  [^class]   matches any single character which does not match the class
+  [!class]   same as ^: negates the class
+```
 
 This can be something like `**/*.go`, or a space-separated list of filenames.
+
+If `woke` is invoked from a shell, the invoking shell performs file glob pattern expansion according to the shell glob rules.
 
 ```bash
 $ woke test.txt

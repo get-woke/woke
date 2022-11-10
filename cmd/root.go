@@ -36,6 +36,7 @@ import (
 	"github.com/get-woke/woke/pkg/parser"
 	"github.com/get-woke/woke/pkg/printer"
 
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -121,7 +122,11 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	findings := p.ParsePaths(print, parseArgs(args)...)
+	files, err := parseArgs(args)
+	if err != nil {
+		return err
+	}
+	findings := p.ParsePaths(print, files...)
 
 	if exitOneOnFailure && findings > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
@@ -162,16 +167,28 @@ func GetRootCmd() cobra.Command {
 	return *rootCmd
 }
 
-func parseArgs(args []string) []string {
+// parseArgs parses the command-line positional arguments that contain file glob patterns.
+// If no argument is provided, return the default path (current directory).
+// Perform glob pattern expansion.
+func parseArgs(args []string) ([]string, error) {
 	if len(args) == 0 {
 		args = parser.DefaultPath
 	}
-
+	var files []string
 	if stdin {
-		args = []string{os.Stdin.Name()}
+		files = []string{os.Stdin.Name()}
+	} else {
+		// Perform glob expansion.
+		for _, arg := range args {
+			f, err := doublestar.FilepathGlob(arg)
+			if err != nil {
+				return nil, err
+			}
+			files = append(files, f...)
+		}
 	}
 
-	return args
+	return files, nil
 }
 
 func setDebugLogLevel() {
