@@ -42,8 +42,8 @@ term:
   {alt1,...} matches a sequence of characters if one of the comma-separated alternatives matches
 
 characters classes:
-  [abc]	     matches any single character within the set
-  [a-z]	     matches any single character in the range
+  [abc]      matches any single character within the set
+  [a-z]      matches any single character in the range
   [^class]   matches any single character which does not match the class
   [!class]   same as ^: negates the class
 ```
