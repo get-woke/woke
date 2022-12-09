@@ -41,7 +41,7 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 }
 
 // ParsePaths parses all files provided and returns the number of files with findings
-func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
+func (p *Parser) ParsePaths(print printer.Printer, countOnlyErrorForFailure bool, paths ...string) int {
 	print.Start()
 	defer print.End()
 
@@ -79,7 +79,9 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	for r := range p.rchan {
 		sort.Sort(r)
 		print.Print(&r)
-		findings++
+		if !countOnlyErrorForFailure || r.HasError() {
+			findings++
+		}
 	}
 	return findings
 }

@@ -45,13 +45,14 @@ import (
 
 var (
 	// flags
-	exitOneOnFailure    bool
-	cfgFile             string
-	debug               bool
-	stdin               bool
-	outputName          string
-	noIgnore            bool
-	disableDefaultRules bool
+	exitOneOnFailure         bool
+	countOnlyErrorForFailure bool
+	cfgFile                  string
+	debug                    bool
+	stdin                    bool
+	outputName               string
+	noIgnore                 bool
+	disableDefaultRules      bool
 
 	// Version is populated by goreleaser during build
 	// Version...
@@ -121,7 +122,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	findings := p.ParsePaths(print, parseArgs(args)...)
+	findings := p.ParsePaths(print, countOnlyErrorForFailure, parseArgs(args)...)
 
 	if exitOneOnFailure && findings > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
@@ -150,6 +151,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Config file (default is .woke.yaml in current directory, or $HOME)")
 	rootCmd.PersistentFlags().BoolVar(&exitOneOnFailure, "exit-1-on-failure", false, "Exit with exit code 1 on failures")
+	rootCmd.PersistentFlags().BoolVar(&countOnlyErrorForFailure, "count-only-error-for-failure", false, "Count only error items, not warning and info, for failure")
 	rootCmd.PersistentFlags().BoolVar(&stdin, "stdin", false, "Read from stdin")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug logging")
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed")

@@ -59,7 +59,7 @@ func parsePathTests(t *testing.T) {
 		pr := new(testPrinter)
 		p, err := testParser()
 		assert.NoError(t, err)
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), findings)
 
@@ -96,7 +96,7 @@ func parsePathTests(t *testing.T) {
 		p, err := testParser()
 		assert.NoError(t, err)
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 0)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -108,7 +108,7 @@ func parsePathTests(t *testing.T) {
 		p, err := testParser()
 		assert.NoError(t, err)
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -120,7 +120,7 @@ func parsePathTests(t *testing.T) {
 		p, err := testParser()
 		assert.NoError(t, err)
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 0)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -135,7 +135,7 @@ func parsePathTests(t *testing.T) {
 		p, err := testParser()
 		assert.NoError(t, err)
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr, f1.Name(), f2.Name())
+		findings := p.ParsePaths(pr, false, f1.Name(), f2.Name())
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -154,7 +154,7 @@ func parsePathTests(t *testing.T) {
 		p.Ignorer = ignorer
 		pr := new(testPrinter)
 
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 0)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -167,7 +167,7 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 		pr := new(testPrinter)
 
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 0)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -181,7 +181,7 @@ func parsePathTests(t *testing.T) {
 		p.Ignorer = nil
 		pr := new(testPrinter)
 
-		findings := p.ParsePaths(pr, f.Name())
+		findings := p.ParsePaths(pr, false, f.Name())
 		assert.Len(t, pr.results, 1)
 		assert.Equal(t, len(pr.results), findings)
 	})
@@ -197,7 +197,7 @@ func parsePathTests(t *testing.T) {
 		assert.NoError(t, err)
 		p.Ignorer = ignorer
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr)
+		findings := p.ParsePaths(pr, false)
 
 		assert.Equal(t, len(pr.results), findings)
 		assert.Equal(t, len(pr.results), 0)
@@ -208,7 +208,7 @@ func parsePathTests(t *testing.T) {
 			p, err := testParser()
 			assert.NoError(t, err)
 			pr := new(testPrinter)
-			findings := p.ParsePaths(pr, os.Stdin.Name())
+			findings := p.ParsePaths(pr, false, os.Stdin.Name())
 			assert.Len(t, pr.results, 1)
 			assert.Equal(t, len(pr.results), findings)
 
@@ -249,7 +249,7 @@ func parsePathTests(t *testing.T) {
 		p.Rules[0].Note = TestNote
 		p.Rules[0].Options.IncludeNote = nil
 		pr := new(testPrinter)
-		p.ParsePaths(pr, f.Name())
+		p.ParsePaths(pr, false, f.Name())
 
 		assert.NotContains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})
@@ -266,7 +266,7 @@ func parsePathTests(t *testing.T) {
 		// Test IncludeNote flag doesn't get overridden with SetIncludeNote method
 		p.Rules[0].SetIncludeNote(false)
 		pr := new(testPrinter)
-		p.ParsePaths(pr, f.Name())
+		p.ParsePaths(pr, false, f.Name())
 
 		assert.Contains(t, pr.results[0].Results[0].Reason(), TestNote)
 	})
@@ -323,7 +323,7 @@ func BenchmarkParsePaths(b *testing.B) {
 		p, err := testParser()
 		assert.NoError(b, err)
 		pr := new(testPrinter)
-		findings := p.ParsePaths(pr, tmpFile.Name())
+		findings := p.ParsePaths(pr, false, tmpFile.Name())
 		assert.Equal(b, 1, findings)
 	}
 }
@@ -338,7 +338,7 @@ func BenchmarkParsePathsRoot(b *testing.B) {
 			pr := new(testPrinter)
 			// Unknown how many findings this will return since it's parsing the whole repo
 			// there's no way to know for sure at any given time, so just check that it doesn't panic
-			_ = p.ParsePaths(pr, "../..")
+			_ = p.ParsePaths(pr, false, "../..")
 		})
 	}
 }

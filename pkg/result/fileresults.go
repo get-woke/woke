@@ -34,3 +34,14 @@ func (fr FileResults) Less(i, j int) bool {
 
 	return fr.Results[i].GetStartPosition().Line < fr.Results[j].GetStartPosition().Line
 }
+
+// Returns true if any of the rule severity for the results is "error".
+// Returns false if all the rule severity for the results are "warning" or "info".
+func (fr FileResults) HasError() bool {
+	for _, r := range fr.Results {
+		if r.GetSeverity().String() == "error" {
+			return true
+		}
+	}
+	return false
+}
