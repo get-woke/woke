@@ -24,7 +24,7 @@ jobs:
           go-version: 1.18
 
       - name: Create snapshot
-        uses: goreleaser/goreleaser-action@v3
+        uses: goreleaser/goreleaser-action@v4
         with:
           version: latest
           args: release --snapshot --rm-dist
