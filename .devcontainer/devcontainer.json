@@ -1,12 +1,14 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "Woke",
+	"name": "woke",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:0-3-bullseye",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/go:1": {},
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.18"
+		},
 		"ghcr.io/guiyomh/features/golangci-lint:0": {},
 		"ghcr.io/lukewiwa/features/shellcheck:0": {}
 	},
