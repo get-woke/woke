@@ -103,7 +103,7 @@ func BenchmarkIgnore(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		ignorer, err := NewIgnore(fs, []string{})
+		ignorer, err := NewIgnore(fs, []string{}, false)
 		assert.NoError(b, err)
 		ignorer.Match(filepath.Join("not", "foo"), false)
 	}
@@ -136,7 +136,7 @@ func (suite *IgnoreTestSuite) TestGetRootGitDirNotExist() {
 	suite.Equal(fs.Root(), rootFs.Root())
 }
 func (suite *IgnoreTestSuite) TestIgnore_Match() {
-	i, err := NewIgnore(suite.GFS, []string{"my/files/*"})
+	i, err := NewIgnore(suite.GFS, []string{"my/files/*"}, false)
 	suite.NoError(err)
 	suite.NotNil(i)
 
@@ -148,7 +148,7 @@ func (suite *IgnoreTestSuite) TestIgnore_Match() {
 // Test all default ignore files, except for .git/info/exclude, since
 // that uses a .git directory that we cannot check in.
 func (suite *IgnoreTestSuite) TestIgnoreDefaultIgoreFiles_Match() {
-	i, err := NewIgnore(suite.GFS, []string{"*.FROMARGUMENT"})
+	i, err := NewIgnore(suite.GFS, []string{"*.FROMARGUMENT"}, false)
 	suite.NoError(err)
 	suite.NotNil(i)
 

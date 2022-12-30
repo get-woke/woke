@@ -43,7 +43,7 @@ func testParser() (parser *Parser, err error) {
 		return
 	}
 	fs := osfs.New(cwd)
-	ignorer, err := ignore.NewIgnore(fs, []string{})
+	ignorer, err := ignore.NewIgnore(fs, []string{}, false)
 	if err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func parsePathTests(t *testing.T) {
 		cwd, err := os.Getwd()
 		assert.NoError(t, err)
 		fs := osfs.New(cwd)
-		ignorer, err := ignore.NewIgnore(fs, []string{filepath.ToSlash(f.Name())})
+		ignorer, err := ignore.NewIgnore(fs, []string{filepath.ToSlash(f.Name())}, false)
 		assert.NoError(t, err)
 		p.Ignorer = ignorer
 		pr := new(testPrinter)
@@ -193,7 +193,7 @@ func parsePathTests(t *testing.T) {
 		cwd, err := os.Getwd()
 		assert.NoError(t, err)
 		fs := osfs.New(cwd)
-		ignorer, err := ignore.NewIgnore(fs, []string{"*_test.go"})
+		ignorer, err := ignore.NewIgnore(fs, []string{"*_test.go"}, false)
 		assert.NoError(t, err)
 		p.Ignorer = ignorer
 		pr := new(testPrinter)

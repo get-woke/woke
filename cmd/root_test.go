@@ -20,9 +20,12 @@ import (
 // run profiling with
 // go test -v -cpuprofile cpu.prof -memprofile mem.prof -bench=. ./cmd
 // memory:
-//    go tool pprof mem.prof
+//
+//	go tool pprof mem.prof
+//
 // cpu:
-//    go tool pprof cpu.prof
+//
+//	go tool pprof cpu.prof
 func BenchmarkRootRunE(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	output.Stdout = io.Discard
