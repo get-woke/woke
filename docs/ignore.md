@@ -79,6 +79,8 @@ func main() {
 
 `woke` will apply ignore rules from nested ignore files to any child files/folders, similar to a nested `.gitignore` file. Nested ignore files work for any ignore file type listed above.
 
+>Note: To disable nested ignore file functionality, run `woke` with the `--disable-nested-ignores` flag.
+
 ```txt
 project
 │   README.md

@@ -1,6 +1,9 @@
 package ignore
 
 import (
+	"bufio"
+	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -65,7 +68,7 @@ func GetRootGitDir(workingDir string) (filesystem billy.Filesystem, err error) {
 
 // NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
 // which you can match files against
-func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err error) {
+func NewIgnore(filesystem billy.Filesystem, lines []string, disableNestedIgnores bool) (ignore *Ignore, err error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
@@ -79,8 +82,16 @@ func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err
 	}
 
 	var ps []gitignore.Pattern
-	if ps, err = gitignore.ReadPatterns(filesystem, nil, defaultIgnoreFiles); err != nil {
-		return
+
+	// if opted-out of nested wokeignore traversal, only use top-level ignore files
+	if disableNestedIgnores {
+		for _, filename := range defaultIgnoreFiles {
+			lines = append(lines, readIgnoreFile(filesystem, filename)...)
+		}
+	} else {
+		if ps, err = gitignore.ReadPatterns(filesystem, nil, defaultIgnoreFiles); err != nil {
+			return
+		}
 	}
 
 	// get domain for git ignore rules supplied from the lines argument
@@ -90,11 +101,35 @@ func NewIgnore(filesystem billy.Filesystem, lines []string) (ignore *Ignore, err
 		ps = append(ps, pattern)
 	}
 
-	ignore = &Ignore{
+	return &Ignore{
 		matcher: gitignore.NewMatcher(ps),
+	}, nil
+}
+
+func readIgnoreFile(filesystem billy.Filesystem, file string) []string {
+	openFile, err := filesystem.Open(file)
+
+	if err != nil {
+		_event := log.Warn()
+		if errors.Is(err, os.ErrNotExist) {
+			_event = log.Debug()
+		}
+		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
+		return []string{}
 	}
 
-	return
+	defer openFile.Close()
+	var buffer []byte
+	buffer, err = io.ReadAll(bufio.NewReader(openFile))
+
+	if err != nil {
+		_event := log.Warn()
+		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
+		return []string{}
+	}
+
+	log.Debug().Str("file", file).Msg("adding ignorefile")
+	return strings.Split(strings.TrimSpace(string(buffer)), "\n")
 }
 
 // Match returns true if the provided file matches any of the defined ignores

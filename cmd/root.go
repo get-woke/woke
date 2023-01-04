@@ -45,13 +45,14 @@ import (
 
 var (
 	// flags
-	exitOneOnFailure    bool
-	cfgFile             string
-	debug               bool
-	stdin               bool
-	outputName          string
-	noIgnore            bool
-	disableDefaultRules bool
+	exitOneOnFailure     bool
+	cfgFile              string
+	debug                bool
+	stdin                bool
+	outputName           string
+	noIgnore             bool
+	disableDefaultRules  bool
+	disableNestedIgnores bool
 
 	// Version is populated by goreleaser during build
 	// Version...
@@ -109,7 +110,7 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		ignorer, err = ignore.NewIgnore(fs, cfg.IgnoreFiles)
+		ignorer, err = ignore.NewIgnore(fs, cfg.IgnoreFiles, disableNestedIgnores)
 		if err != nil {
 			return err
 		}
@@ -155,6 +156,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&noIgnore, "no-ignore", false, "Ignored files in .gitignore, .ignore, .wokeignore, .git/info/exclude, and inline ignores are processed")
 	rootCmd.PersistentFlags().StringVarP(&outputName, "output", "o", printer.OutFormatText, fmt.Sprintf("Output type [%s]", printer.OutFormatsString))
 	rootCmd.PersistentFlags().BoolVar(&disableDefaultRules, "disable-default-rules", false, "Disable the default ruleset")
+	rootCmd.PersistentFlags().BoolVar(&disableNestedIgnores, "disable-nested-ignores", false, "Disable nested woke ignore traversal")
 }
 
 // GetRootCmd returns the rootCmd, which should only be used by the docs generator in cmd/docs/main.go
