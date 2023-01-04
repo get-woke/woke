@@ -112,14 +112,14 @@ func BenchmarkIgnore(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	b.Run("ignore-traversal-enabled", func(b *testing.B) {
+	b.Run("nested-ignores-enabled", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			ignorer, err := NewIgnore(fs, []string{}, false)
 			assert.NoError(b, err)
 			ignorer.Match(filepath.Join("not", "foo"), false)
 		}
 	})
-	b.Run("ignore-traversal-disabled", func(b *testing.B) {
+	b.Run("nested-ignores-disabled", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			ignorer, err := NewIgnore(fs, []string{}, true)
 			assert.NoError(b, err)
@@ -185,7 +185,7 @@ func (suite *IgnoreTestSuite) TestIgnoreDefaultIgnoreFiles_Match() {
 	// Test top-level ignore files all match
 	suite.testCommonIgnoreDefaultIgnoreFilesMatch(i)
 
-	// Test match from the nested ./nestedIgnoreFolder/.wokeignore when ignore traversal is enabled
+	// Test match from the nested ./nestedIgnoreFolder/.wokeignore when nested ignores is enabled
 	suite.True(i.Match(filepath.Join("nestedIgnoreFolder", "testdata", "test.NESTEDIGNORE"), false))
 }
 
@@ -197,7 +197,7 @@ func (suite *IgnoreTestSuite) TestIgnoreDefaultIgnoreFilesNoTraversal_Match() {
 	// Test top-level ignore files all match
 	suite.testCommonIgnoreDefaultIgnoreFilesMatch(i)
 
-	// Test no match from the nested ./nestedIgnoreFolder/.wokeignore when ignore traversal is disabled
+	// Test no match from the nested ./nestedIgnoreFolder/.wokeignore when nested ignores is disabled
 	suite.False(i.Match(filepath.Join("nestedIgnoreFolder", "testdata", "test.NESTEDIGNORE"), false))
 }
 

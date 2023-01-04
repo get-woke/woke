@@ -68,7 +68,7 @@ func GetRootGitDir(workingDir string) (filesystem billy.Filesystem, err error) {
 
 // NewIgnore produces an Ignore object, with compiled lines from defaultIgnoreFiles
 // which you can match files against
-func NewIgnore(filesystem billy.Filesystem, lines []string, disableIgnoreTraversal bool) (ignore *Ignore, err error) {
+func NewIgnore(filesystem billy.Filesystem, lines []string, disableNestedIgnores bool) (ignore *Ignore, err error) {
 	start := time.Now()
 	defer func() {
 		log.Debug().
@@ -84,7 +84,7 @@ func NewIgnore(filesystem billy.Filesystem, lines []string, disableIgnoreTravers
 	var ps []gitignore.Pattern
 
 	// if opted-out of nested wokeignore traversal, only use top-level ignore files
-	if disableIgnoreTraversal {
+	if disableNestedIgnores {
 		for _, filename := range defaultIgnoreFiles {
 			lines = append(lines, readIgnoreFile(filesystem, filename)...)
 		}
