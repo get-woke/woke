@@ -1,8 +1,9 @@
 package ignore
 
 import (
+	"bufio"
 	"errors"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -85,7 +86,7 @@ func NewIgnore(filesystem billy.Filesystem, lines []string, disableIgnoreTravers
 	// if opted-out of nested wokeignore traversal, only use top-level ignore files
 	if disableIgnoreTraversal {
 		for _, filename := range defaultIgnoreFiles {
-			lines = append(lines, readIgnoreFile(filename)...)
+			lines = append(lines, readIgnoreFile(filesystem, filename)...)
 		}
 	} else {
 		if ps, err = gitignore.ReadPatterns(filesystem, nil, defaultIgnoreFiles); err != nil {
@@ -105,8 +106,9 @@ func NewIgnore(filesystem billy.Filesystem, lines []string, disableIgnoreTravers
 	}, nil
 }
 
-func readIgnoreFile(file string) []string {
-	buffer, err := ioutil.ReadFile(file)
+func readIgnoreFile(filesystem billy.Filesystem, file string) []string {
+	openFile, err := filesystem.Open(file)
+
 	if err != nil {
 		_event := log.Warn()
 		if errors.Is(err, os.ErrNotExist) {
@@ -116,8 +118,17 @@ func readIgnoreFile(file string) []string {
 		return []string{}
 	}
 
-	log.Debug().Str("file", file).Msg("adding ignorefile")
+	defer openFile.Close()
+	var buffer []byte
+	buffer, err = io.ReadAll(bufio.NewReader(openFile))
 
+	if err != nil {
+		_event := log.Warn()
+		_event.Err(err).Str("file", file).Msg("skipping ignorefile")
+		return []string{}
+	}
+
+	log.Debug().Str("file", file).Msg("adding ignorefile")
 	return strings.Split(strings.TrimSpace(string(buffer)), "\n")
 }
 

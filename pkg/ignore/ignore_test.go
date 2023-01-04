@@ -75,6 +75,16 @@ func (suite *IgnoreTestSuite) SetupTest() {
 	err = f.Close()
 	suite.NoError(err)
 
+	err = fs.MkdirAll("nestedIgnoreFolder", os.ModePerm)
+	suite.NoError(err)
+
+	f, err = fs.Create(fs.Join("nestedIgnoreFolder", ".wokeignore"))
+	suite.NoError(err)
+	_, err = f.Write([]byte("*.NESTEDIGNORE\n"))
+	suite.NoError(err)
+	err = f.Close()
+	suite.NoError(err)
+
 	suite.GFS = fs
 }
 
@@ -82,8 +92,8 @@ func BenchmarkIgnore(b *testing.B) {
 	zerolog.SetGlobalLevel(zerolog.NoLevel)
 	fs, clean := TempFileSystem()
 	defer clean()
-	for i := 0; i < 10; i++ {
-		for j := 0; j < 10; j++ {
+	for i := 0; i < 50; i++ {
+		for j := 0; j < 50; j++ {
 			err := fs.MkdirAll(fs.Join(fmt.Sprintf("%d", i), fmt.Sprintf("%d", j)), os.ModePerm)
 			assert.NoError(b, err)
 			f, err := fs.Create(".wokeignore")
@@ -102,11 +112,20 @@ func BenchmarkIgnore(b *testing.B) {
 	}
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ignorer, err := NewIgnore(fs, []string{}, false)
-		assert.NoError(b, err)
-		ignorer.Match(filepath.Join("not", "foo"), false)
-	}
+	b.Run("ignore-traversal-enabled", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			ignorer, err := NewIgnore(fs, []string{}, false)
+			assert.NoError(b, err)
+			ignorer.Match(filepath.Join("not", "foo"), false)
+		}
+	})
+	b.Run("ignore-traversal-disabled", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			ignorer, err := NewIgnore(fs, []string{}, true)
+			assert.NoError(b, err)
+			ignorer.Match(filepath.Join("not", "foo"), false)
+		}
+	})
 }
 
 func (suite *IgnoreTestSuite) TestGetDomainFromWorkingDir() {
@@ -135,8 +154,19 @@ func (suite *IgnoreTestSuite) TestGetRootGitDirNotExist() {
 	suite.NoError(err)
 	suite.Equal(fs.Root(), rootFs.Root())
 }
-func (suite *IgnoreTestSuite) TestIgnore_Match() {
+
+func (suite *IgnoreTestSuite) TestIgnoreLines_Match() {
 	i, err := NewIgnore(suite.GFS, []string{"my/files/*"}, false)
+	suite.NoError(err)
+	suite.NotNil(i)
+
+	suite.False(i.Match(filepath.Join("not", "foo"), false))
+	suite.True(i.Match(filepath.Join("my", "files", "file1"), false))
+	suite.False(i.Match(filepath.Join("my", "files"), false))
+}
+
+func (suite *IgnoreTestSuite) TestIgnoreLinesNoTraversal_Match() {
+	i, err := NewIgnore(suite.GFS, []string{"my/files/*"}, true)
 	suite.NoError(err)
 	suite.NotNil(i)
 
@@ -147,11 +177,31 @@ func (suite *IgnoreTestSuite) TestIgnore_Match() {
 
 // Test all default ignore files, except for .git/info/exclude, since
 // that uses a .git directory that we cannot check in.
-func (suite *IgnoreTestSuite) TestIgnoreDefaultIgoreFiles_Match() {
+func (suite *IgnoreTestSuite) TestIgnoreDefaultIgnoreFiles_Match() {
 	i, err := NewIgnore(suite.GFS, []string{"*.FROMARGUMENT"}, false)
 	suite.NoError(err)
 	suite.NotNil(i)
 
+	// Test top-level ignore files all match
+	suite.testCommonIgnoreDefaultIgnoreFilesMatch(i)
+
+	// Test match from the nested ./nestedIgnoreFolder/.wokeignore when ignore traversal is enabled
+	suite.True(i.Match(filepath.Join("nestedIgnoreFolder", "testdata", "test.NESTEDIGNORE"), false))
+}
+
+func (suite *IgnoreTestSuite) TestIgnoreDefaultIgnoreFilesNoTraversal_Match() {
+	i, err := NewIgnore(suite.GFS, []string{"*.FROMARGUMENT"}, true)
+	suite.NoError(err)
+	suite.NotNil(i)
+
+	// Test top-level ignore files all match
+	suite.testCommonIgnoreDefaultIgnoreFilesMatch(i)
+
+	// Test no match from the nested ./nestedIgnoreFolder/.wokeignore when ignore traversal is disabled
+	suite.False(i.Match(filepath.Join("nestedIgnoreFolder", "testdata", "test.NESTEDIGNORE"), false))
+}
+
+func (suite *IgnoreTestSuite) testCommonIgnoreDefaultIgnoreFilesMatch(i *Ignore) {
 	suite.False(i.Match(filepath.Join("testdata", "notfoo"), false))
 	suite.True(i.Match(filepath.Join("testdata", "test.FROMARGUMENT"), false)) // From .gitignore
 	suite.True(i.Match(filepath.Join("testdata", "test.DS_Store"), false))     // From .gitignore
@@ -160,6 +210,14 @@ func (suite *IgnoreTestSuite) TestIgnoreDefaultIgoreFiles_Match() {
 	suite.True(i.Match(filepath.Join("testdata", "testFolder"), true))         // From .wokeignore
 	suite.False(i.Match(filepath.Join("testdata", "notTestFolder"), true))     // From .wokeignore
 	suite.False(i.Match(filepath.Join("testdata", "test.NOTIGNORED"), false))  // From .notincluded - making sure only default are included
+}
+
+func (suite *IgnoreTestSuite) TestReadIgnoreFile() {
+	ignoreLines := readIgnoreFile(suite.GFS, ".gitignore")
+	suite.Equal([]string{"*.DS_Store"}, ignoreLines)
+
+	noIgnoreLines := readIgnoreFile(suite.GFS, "missing.gitignore")
+	suite.Equal([]string{}, noIgnoreLines)
 }
 
 // In order for 'go test' to run this suite, we need to create
