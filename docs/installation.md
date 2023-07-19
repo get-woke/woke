@@ -55,6 +55,14 @@ go install github.com/get-woke/woke@latest
 # Or pin a specific version
 go install github.com/get-woke/woke@v0.9.0
 ```
+## Ubuntu
+
+`woke` can be installed [as a snap](https://snapcraft.io/woke) on Ubuntu. To install, run the following
+from the command line:
+
+```bash
+sudo snap install woke
+```
 
 ## Docker
 
