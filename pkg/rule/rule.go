@@ -205,15 +205,7 @@ func maskInlineIgnore(line string) string {
 		return line
 	}
 
-	lineWithoutIgnoreRule := []rune(line)
-
-	start := inlineIgnoreMatch[0]
-	end := inlineIgnoreMatch[1]
-
-	for i := start; i < end; i++ {
-		// use null terminator to indicate a masked character
-		lineWithoutIgnoreRule[i] = rune(0)
-	}
+	lineWithoutIgnoreRule := ignoreRuleRegex.ReplaceAll([]byte(line), []byte{})
 
 	return string(lineWithoutIgnoreRule)
 }
