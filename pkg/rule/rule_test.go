@@ -171,12 +171,22 @@ func Test_maskInlineIgnore(t *testing.T) {
 		{
 			desc:     "replace wokeignore:rule",
 			line:     "wokeignore:rule=master-slave",
-			expected: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+			expected: "",
 		},
 		{
 			desc:     "not replace wokeignore:rule",
 			line:     "no inline ignore",
 			expected: "no inline ignore",
+		},
+		{
+			desc:     "text alongside wokeignore:rule is preserved",
+			line:     "abc wokeignore:rule=master-slave",
+			expected: "abc ",
+		},
+		{
+			desc:     "Non-ascii characters are handled correctly",
+			line:     "Include’s non-ascii wokeignore:rule=master",
+			expected: "Include’s non-ascii ",
 		},
 	}
 	for _, tt := range tests {
