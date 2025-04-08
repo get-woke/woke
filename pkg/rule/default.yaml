@@ -1,5 +1,5 @@
 
-# Most of these are based on https://twitter.com/TwitterEng/status/1278733303508418560
+# Most of these are based on https://web.archive.org/web/20200704015026/https://twitter.com/TwitterEng/status/1278733303508418560
 - name: whitelist
   terms:
     - whitelist
