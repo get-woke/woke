@@ -30,7 +30,7 @@ func TestFormatResultForGitHubAction(t *testing.T) {
 		},
 	}
 	got := formatResultForGitHubAction(&testResult)
-	assert.Equal(t, "::warning file=my/file,line=5,col=3::"+testResult.Rule.Reason(testResult.Finding), got)
+	assert.Equal(t, "::warning file=my/file,line=5,col=3::my/file:5:3: "+testResult.Rule.Reason(testResult.Finding), got)
 }
 
 func TestTranslateSeverityForAction(t *testing.T) {
@@ -51,7 +51,7 @@ func TestGitHubActions_Print(t *testing.T) {
 	res := generateFileResult()
 	assert.NoError(t, p.Print(res))
 	got := buf.String()
-	expected := fmt.Sprintf("::warning file=foo.txt,line=1,col=6::%s\n", res.Results[0].Reason())
+	expected := fmt.Sprintf("::warning file=foo.txt,line=1,col=6::foo.txt:1:6: %s\n", res.Results[0].Reason())
 	assert.Equal(t, expected, got)
 }
 
