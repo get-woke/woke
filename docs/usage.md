@@ -28,9 +28,10 @@ No findings found.
 ### File globs
 
 By default, `woke` will run against all text files in your current directory.
-To change this, supply a space-separated list of globs as the first argument.
+To change this, supply a space-separated list of file paths or glob patterns as positional arguments.
 
-This can be something like `**/*.go`, or a space-separated list of filenames.
+For shell-expanded patterns, this can be something like `**/*.go`, or a space-separated list of filenames.
+Globs are expanded by your shell before `woke` runs, so behavior may vary by shell and shell options.
 
 ```bash
 $ woke test.txt
