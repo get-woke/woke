@@ -30,6 +30,19 @@ type Parser struct {
 	rchan chan result.FileResults
 }
 
+// FindingLocation captures where a finding starts in source.
+type FindingLocation struct {
+	Filename string
+	Line     int
+	Column   int
+}
+
+// ParseReport summarizes ParsePaths results.
+type ParseReport struct {
+	FilesWithFindings int
+	FirstFinding      *FindingLocation
+}
+
 // NewParser returns a pointer to a Parser that is used to check for findings
 // based on the rules provided, ignoring files based on the ignorer provided
 func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
@@ -42,6 +55,13 @@ func NewParser(rules []*rule.Rule, ignorer *ignore.Ignore) *Parser {
 
 // ParsePaths parses all files provided and returns the number of files with findings
 func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
+	return p.ParsePathsWithReport(print, paths...).FilesWithFindings
+}
+
+// ParsePathsWithReport parses all files provided and returns a report including
+// the number of files with findings and the first finding location.
+func (p *Parser) ParsePathsWithReport(print printer.Printer, paths ...string) ParseReport {
+	report := ParseReport{}
 	print.Start()
 	defer print.End()
 
@@ -49,9 +69,11 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 	if util.InSlice(os.Stdin.Name(), paths) {
 		r, _ := p.generateFileFindings(os.Stdin)
 		if r.Len() > 0 {
+			report.FirstFinding = firstFindingLocation(r)
 			print.Print(r)
 		}
-		return r.Len()
+		report.FilesWithFindings = r.Len()
+		return report
 	}
 
 	if len(paths) == 0 {
@@ -75,13 +97,32 @@ func (p *Parser) ParsePaths(print printer.Printer, paths ...string) int {
 		close(p.rchan)
 	}()
 
-	findings := 0
 	for r := range p.rchan {
 		sort.Sort(r)
 		print.Print(&r)
-		findings++
+		report.FilesWithFindings++
+		if report.FirstFinding == nil {
+			report.FirstFinding = firstFindingLocation(&r)
+		}
 	}
-	return findings
+	return report
+}
+
+func firstFindingLocation(r *result.FileResults) *FindingLocation {
+	if r == nil || len(r.Results) == 0 {
+		return nil
+	}
+
+	start := r.Results[0].GetStartPosition()
+	if start == nil {
+		return nil
+	}
+
+	return &FindingLocation{
+		Filename: start.Filename,
+		Line:     start.Line,
+		Column:   start.Column,
+	}
 }
 
 func (p *Parser) processFiles(files <-chan string, done chan bool, wg *sync.WaitGroup) {

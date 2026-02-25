@@ -121,12 +121,21 @@ func rootRunE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	findings := p.ParsePaths(print, parseArgs(args)...)
+	parseReport := p.ParsePathsWithReport(print, parseArgs(args)...)
+	findings := parseReport.FilesWithFindings
 
 	if exitOneOnFailure && findings > 0 {
 		// We intentionally return an error if exitOneOnFailure is true, but don't want to show usage
 		cmd.SilenceUsage = true
 		err = fmt.Errorf("files with findings: %d", findings)
+		if parseReport.FirstFinding != nil {
+			err = fmt.Errorf("%w (first finding: %s:%d:%d)",
+				err,
+				parseReport.FirstFinding.Filename,
+				parseReport.FirstFinding.Line,
+				parseReport.FirstFinding.Column,
+			)
+		}
 	}
 
 	if findings == 0 {

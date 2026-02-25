@@ -89,6 +89,23 @@ func parsePathTests(t *testing.T) {
 		assert.EqualValues(t, &expected, pr.results[0])
 	})
 
+	t.Run("finding report includes first location", func(t *testing.T) {
+		f, err := newFile(t, "i have a whitelist")
+		assert.NoError(t, err)
+
+		pr := new(testPrinter)
+		p, err := testParser()
+		assert.NoError(t, err)
+		report := p.ParsePathsWithReport(pr, f.Name())
+
+		assert.Equal(t, 1, report.FilesWithFindings)
+		if assert.NotNil(t, report.FirstFinding) {
+			assert.Equal(t, filepath.ToSlash(f.Name()), report.FirstFinding.Filename)
+			assert.Equal(t, 1, report.FirstFinding.Line)
+			assert.Equal(t, 9, report.FirstFinding.Column)
+		}
+	})
+
 	t.Run("no findings", func(t *testing.T) {
 		f, err := newFile(t, "i have a no findings\n")
 		assert.NoError(t, err)
