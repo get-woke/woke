@@ -38,12 +38,17 @@ func (p *GitHubActions) End() {
 }
 
 func formatResultForGitHubAction(r result.Result) string {
+	location := fmt.Sprintf("%s:%d:%d: ",
+		r.GetStartPosition().Filename,
+		r.GetStartPosition().Line,
+		r.GetStartPosition().Column)
+
 	return fmt.Sprintf("::%s file=%s,line=%d,col=%d::%s",
 		translateSeverityForAction(r.GetSeverity()),
 		r.GetStartPosition().Filename,
 		r.GetStartPosition().Line,
 		r.GetStartPosition().Column,
-		r.Reason())
+		location+r.Reason())
 }
 
 func translateSeverityForAction(s rule.Severity) string {
