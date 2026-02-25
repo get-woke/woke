@@ -1,0 +1,529 @@
+# Speciesist Language Rules for woke
+#
+# Community-contributed ruleset for detecting speciesist language patterns.
+# These rules identify phrases that normalize violence toward animals,
+# infrastructure metaphors with animal exploitation origins, and
+# animal-as-object terminology.
+#
+# Usage:
+#   Copy these rules into your .woke.yaml, or run woke with:
+#   $ woke -c examples/speciesist-language.yaml
+#
+# You can also use this as a remote config:
+#   $ woke -c https://raw.githubusercontent.com/get-woke/woke/main/examples/speciesist-language.yaml
+#
+# To exclude these rules, add to your .woke.yaml:
+#   exclude_categories:
+#     - speciesism
+#
+# References:
+#   - Hagendorff, Bossert, Tse & Singer (2023). "Speciesist bias in AI." AI and Ethics.
+#     https://doi.org/10.1007/s43681-023-00380-w
+#   - Takeshita et al. (2022). "Speciesist language and nonhuman animal bias in
+#     English masked language models." Information Processing & Management.
+#   - Leach et al. (2023). "Speciesism in everyday language." British Journal of
+#     Social Psychology.
+
+rules:
+  # === Violent Animal Idioms ===
+  # Phrases that normalize violence toward animals, with clearer professional alternatives.
+
+  - name: kill-two-birds
+    terms:
+      - kill two birds with one stone
+      - killing two birds with one stone
+      - killed two birds with one stone
+    alternatives:
+      - accomplish two things at once
+      - solve two problems at once
+      - get two things done at once
+    severity: warning
+    note: >-
+      This phrase normalizes violence toward birds. The alternative is equally
+      expressive and more professional.
+      (source: Takeshita et al., 2022, Information Processing & Management)
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: beat-dead-horse
+    terms:
+      - beat a dead horse
+      - beating a dead horse
+    alternatives:
+      - belabor the point
+      - go over old ground
+    severity: warning
+    note: >-
+      This phrase trivializes violence toward horses. The alternatives convey
+      the same meaning without referencing animal harm.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: bring-home-bacon
+    terms:
+      - bring home the bacon
+      - bringing home the bacon
+      - brought home the bacon
+      - brings home the bacon
+    alternatives:
+      - bring home the results
+      - earn a living
+      - win the prize
+    severity: warning
+    note: >-
+      This phrase references animal slaughter. The alternatives convey the same
+      meaning without referencing animal products.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: guinea-pig
+    terms:
+      - be the guinea pig
+      - being the guinea pig
+      - guinea pig
+      - guinea pigged
+      - guinea pigging
+    alternatives:
+      - test subject
+      - beta tester
+      - first to try
+    severity: warning
+    note: >-
+      This phrase references animal experimentation. The alternatives are more
+      precise and don't normalize using animals as test subjects.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: skin-a-cat
+    terms:
+      - more than one way to skin a cat
+      - many ways to skin a cat
+      - other ways to skin a cat
+    alternatives:
+      - more than one way to solve this
+      - many ways to approach this
+    severity: warning
+    note: >-
+      This phrase depicts graphic violence toward cats. The alternatives are
+      clearer and more professional.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: let-cat-out-of-bag
+    terms:
+      - let the cat out of the bag
+      - letting the cat out of the bag
+    alternatives:
+      - reveal the secret
+      - spill the beans
+      - disclose the information
+    severity: warning
+    note: >-
+      This phrase originates from the practice of selling piglets in bags and
+      substituting cats. The alternatives are clearer in professional contexts.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: open-can-of-worms
+    terms:
+      - open a can of worms
+      - opening a can of worms
+      - opened a can of worms
+    alternatives:
+      - open a Pandora's box
+      - create a complicated situation
+      - raise a difficult issue
+    severity: warning
+    note: >-
+      This phrase references using live animals as fishing bait. The alternatives
+      convey the same meaning more precisely.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: wild-goose-chase
+    terms:
+      - wild goose chase
+      - wild-goose chase
+    alternatives:
+      - futile search
+      - pointless pursuit
+      - fool's errand
+    severity: warning
+    note: >-
+      This phrase references the historical practice of chasing wild geese.
+      The alternatives are more precise descriptions of the concept.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: flog-dead-horse
+    terms:
+      - flog a dead horse
+      - flogging a dead horse
+    alternatives:
+      - belabor the point
+      - waste effort on a lost cause
+    severity: warning
+    note: >-
+      This phrase depicts violence toward horses. The alternatives convey the
+      same meaning without referencing animal harm.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: hold-your-horses
+    terms:
+      - hold your horses
+    alternatives:
+      - hold on
+      - wait a moment
+      - be patient
+    severity: info
+    note: >-
+      This phrase references controlling animals. The alternatives convey the
+      same meaning more directly.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: take-bull-by-horns
+    terms:
+      - take the bull by the horns
+      - taking the bull by the horns
+      - took the bull by the horns
+    alternatives:
+      - face the challenge head-on
+      - tackle the problem directly
+    severity: warning
+    note: >-
+      This phrase references bullfighting. The alternatives convey the same
+      assertiveness without referencing animal exploitation.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: elephant-in-room
+    terms:
+      - elephant in the room
+    alternatives:
+      - obvious issue
+      - unaddressed problem
+      - obvious problem no one is discussing
+    severity: info
+    note: >-
+      This phrase references captive elephants as spectacle. The alternatives
+      are more direct descriptions of the concept.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: rat-race
+    terms:
+      - rat race
+    alternatives:
+      - competitive grind
+      - relentless routine
+      - daily grind
+    severity: info
+    note: >-
+      This phrase references laboratory animal experiments. The alternatives
+      convey the same meaning without referencing animal exploitation.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: dog-eat-dog
+    terms:
+      - dog-eat-dog
+      - dog eat dog
+    alternatives:
+      - ruthlessly competitive
+      - cutthroat
+      - fiercely competitive
+    severity: info
+    note: >-
+      This phrase characterizes animals as violent. The alternatives convey
+      the same meaning more precisely.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: like-shooting-fish
+    terms:
+      - like shooting fish in a barrel
+    alternatives:
+      - like taking candy from a baby
+      - extremely easy
+      - effortless
+    severity: warning
+    note: >-
+      This phrase depicts gratuitous violence toward fish. The alternatives
+      convey the same meaning without referencing animal harm.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: red-herring
+    terms:
+      - red herring
+    alternatives:
+      - distraction
+      - false lead
+      - misleading clue
+    severity: info
+    note: >-
+      This phrase references the use of smoked fish to mislead hunting dogs.
+      The alternatives are more direct descriptions of the concept.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: fly-on-the-wall
+    terms:
+      - fly on the wall
+    alternatives:
+      - silent observer
+      - unnoticed onlooker
+    severity: info
+    note: >-
+      Consider using a more direct description. The alternatives are clearer
+      in professional contexts.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: sacred-cow
+    terms:
+      - sacred cow
+      - sacred cows
+    alternatives:
+      - untouchable topic
+      - unquestioned belief
+      - protected idea
+    severity: warning
+    note: >-
+      This phrase is both speciesist and culturally insensitive, trivializing
+      Hindu religious practices while objectifying cattle. The alternatives
+      convey the same meaning more precisely and respectfully.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: scapegoat
+    terms:
+      - scapegoat
+      - scapegoated
+      - scapegoating
+    alternatives:
+      - fall guy
+      - blamed unfairly
+      - wrongly blamed
+    severity: info
+    note: >-
+      This term originates from the ritual sacrifice of goats. The alternatives
+      convey the same meaning without referencing animal harm.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: straight-from-horses-mouth
+    terms:
+      - straight from the horse's mouth
+      - from the horse's mouth
+    alternatives:
+      - from a reliable source
+      - directly from the source
+      - on good authority
+    severity: info
+    note: >-
+      This phrase references examining horses' teeth to determine age for sale.
+      The alternatives are more precise in professional contexts.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: whack-a-mole
+    terms:
+      - whack-a-mole
+      - whack a mole
+    alternatives:
+      - endless loop
+      - recurring problem
+      - unwinnable game
+    severity: info
+    note: >-
+      This phrase references a game based on hitting animals. The alternatives
+      more precisely describe the pattern being referenced.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  # === Infrastructure Metaphors with Animal Exploitation Origins ===
+
+  - name: cattle-vs-pets
+    terms:
+      - cattle vs. pets
+      - cattle vs pets
+      - cattle versus pets
+      - cattle not pets
+      - treat servers like cattle
+      - servers are cattle
+      - treat them like cattle
+    alternatives:
+      - ephemeral vs. persistent
+      - fungible vs. unique
+      - disposable vs. maintained
+    severity: warning
+    note: >-
+      The cattle/pets metaphor normalizes treating sentient beings as disposable
+      commodities. The terms 'ephemeral' and 'persistent' more precisely describe
+      the infrastructure management concept. Kubernetes and CNCF founded the
+      Inclusive Naming Initiative in 2020 for similar terminology improvements.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: canary-deployment
+    terms:
+      - canary deployment
+      - canary release
+      - canary test
+      - canary testing
+    alternatives:
+      - progressive rollout
+      - incremental deployment
+      - staged release
+    severity: info
+    note: >-
+      This term references using canaries in coal mines as expendable early
+      warning systems. The alternatives more precisely describe modern deployment
+      practices.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: canary-value
+    terms:
+      - stack canary
+      - canary value
+      - canary word
+    alternatives:
+      - sentinel value
+      - guard value
+      - stack sentinel
+    severity: info
+    note: >-
+      This term references using canaries in coal mines as expendable early
+      warning systems. 'Sentinel value' and 'guard value' are already used in
+      related security contexts.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: monkey-patch
+    terms:
+      - monkey patch
+      - monkey-patch
+      - monkeypatch
+      - monkey patching
+      - monkey-patching
+      - monkeypatching
+    alternatives:
+      - runtime patch
+      - dynamic patch
+      - hot patch
+    severity: info
+    note: >-
+      Consider using more descriptive technical terminology. 'Runtime patch'
+      and 'dynamic patch' more precisely describe the technique.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: duck-typing
+    terms:
+      - duck typing
+      - duck-typing
+      - duck typed
+      - duck-typed
+    alternatives:
+      - structural typing
+      - implicit typing
+      - protocol-based typing
+    severity: info
+    note: >-
+      'Structural typing' is the formal computer science term for this concept
+      and more precisely describes the mechanism.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
+
+  - name: rubber-duck
+    terms:
+      - rubber duck debugging
+      - rubber ducking
+      - rubber duck method
+    alternatives:
+      - talk-through debugging
+      - explain-aloud debugging
+      - narrated debugging
+    severity: info
+    note: >-
+      Consider using a more descriptive term. 'Talk-through debugging' more
+      precisely describes the technique.
+    options:
+      word_boundary: false
+      categories:
+        - speciesism
+
+  - name: dogfooding
+    terms:
+      - dogfood
+      - dogfooding
+      - eating your own dogfood
+      - eat your own dogfood
+    alternatives:
+      - self-hosting
+      - self-testing
+      - using your own product
+    severity: info
+    note: >-
+      'Self-hosting' and 'self-testing' more precisely describe the practice
+      of using your own product internally.
+    options:
+      word_boundary: true
+      categories:
+        - speciesism
