@@ -13,7 +13,7 @@
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/get-woke/woke?logo=github&sort=semver)](https://github.com/get-woke/woke/releases)
 ![GitHub All Releases](https://img.shields.io/github/downloads/get-woke/woke/total)
-[![Build](https://github.com/get-woke/woke/workflows/Build/badge.svg?branch=main)](https://github.com/get-woke/woke/actions)
+[![Go tests](https://github.com/get-woke/woke/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/get-woke/woke/actions/workflows/go.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/get-woke/woke)](https://goreportcard.com/report/github.com/get-woke/woke)
 [![codecov](https://codecov.io/gh/get-woke/woke/branch/main/graph/badge.svg?token=BP133BM3HP)](https://codecov.io/gh/get-woke/woke/branch/main)
