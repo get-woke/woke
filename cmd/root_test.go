@@ -120,6 +120,7 @@ func TestRunE(t *testing.T) {
 		err := rootRunE(new(cobra.Command), []string{"../testdata"})
 		assert.Error(t, err)
 		assert.Regexp(t, regexp.MustCompile(`^files with findings: \d`), err.Error())
+		assert.Regexp(t, regexp.MustCompile(`first finding: .+:\d+:\d+`), err.Error())
 	})
 
 	t.Run("no rules enabled", func(t *testing.T) {
